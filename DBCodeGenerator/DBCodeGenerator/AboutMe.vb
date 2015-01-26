@@ -1,7 +1,7 @@
 ﻿Public NotInheritable Class AboutMe
 
     Private Sub AboutMe_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
-        ' Set the title of the form.
+        ' Set the title of the for
         Dim ApplicationTitle As String
         If My.Application.Info.Title <> "" Then
             ApplicationTitle = My.Application.Info.Title
