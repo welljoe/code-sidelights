@@ -1,0 +1,1827 @@
+/* *******************************************************************/
+/* *   File               :    TRD_DAT.pc
+/* *   Short Description  :    ORACLE DATABASE ACCESS
+/* * 		                   TREND DATA(Before Cut Buffer)
+/* *   Author             :    DB CODE Generator
+/* *   Created Date       :    13.06.2013
+/* *   Tech.Support       :    LiuWeiZhao. email:welljoe@hotmail.com 
+/* *******************************************************************/
+/* *   Copyright (c)  SGAI AI 2009   All Rights Reserved
+/* *******************************************************************/
+
+#include "LOG.h"
+#include "TRD_DAT.h"
+//
+// Declare ORACLE Host Variables
+//
+
+#define SQLCA_STORAGE_CLASS static
+#define ORACA_STORAGE_CLASS static
+EXEC SQL INCLUDE sqlca;
+EXEC SQL INCLUDE oraca;
+
+#define OPENED 1
+#define CLOSED 2
+EXEC SQL BEGIN DECLARE SECTION;
+/* ****************************************************************************** */
+/*                                                                                */
+/*                               define Oracle                                    */
+/*                               Host Variables                                   */
+/*                                                          .                     */
+/*                                                                                */
+/* ****************************************************************************** */
+
+static VARCHAR	dynstr[16000];
+static long		rowCnt;       
+static long		cuFl;         
+//Unit[-]:Hot coil number.Limit:[-,-]
+static VARCHAR  ora_hcoil[17];
+//Unit[-]:Trend Data NO.Limit:[-,-]
+static short    ora_trdtno;
+//Unit[-]:Stand1MesPos.Limit:[-,1]
+static short    ora_s1pos;
+static short    ora_s1posZi;
+//Unit[-]:Stand2MesPos.Limit:[-,-]
+static short    ora_s2pos;
+static short    ora_s2posZi;
+//Unit[-]:Stand3MesPos.Limit:[-,-]
+static short    ora_s3pos;
+static short    ora_s3posZi;
+//Unit[I]:Stand4MesPos.Limit:[-,-]
+static short    ora_s4pos;
+static short    ora_s4posZi;
+//Unit[I]:Stand5MesPos.Limit:[-,-]
+static short    ora_s5pos;
+static short    ora_s5posZi;
+//Unit[I]:Stand1MesTim.Limit:[-,-]
+static VARCHAR  ora_stime[17];
+static short    ora_stimeZi;
+//Unit[I]:Roll Force #1.Limit:[-,-]
+static short    ora_trdt_rf1;
+static short    ora_trdt_rf1Zi;
+//Unit[I]:Roll Force #2.Limit:[-,-]
+static short    ora_trdt_rf2;
+static short    ora_trdt_rf2Zi;
+//Unit[I]:Roll Force #3.Limit:[-,-]
+static short    ora_trdt_rf3;
+static short    ora_trdt_rf3Zi;
+//Unit[I]:Roll Force #4.Limit:[-,-]
+static short    ora_trdt_rf4;
+static short    ora_trdt_rf4Zi;
+//Unit[I]:Roll Force #5.Limit:[-,-]
+static short    ora_trdt_rf5;
+static short    ora_trdt_rf5Zi;
+//Unit[I]:Tension #1E.Limit:[-,-]
+static short    ora_trdt_ten1;
+static short    ora_trdt_ten1Zi;
+//Unit[I]:Tension #1-#2.Limit:[-,-]
+static short    ora_trdt_ten2;
+static short    ora_trdt_ten2Zi;
+//Unit[I]:Tension #2-#3.Limit:[-,-]
+static short    ora_trdt_ten3;
+static short    ora_trdt_ten3Zi;
+//Unit[I]:Tension #3-#4.Limit:[-,-]
+static short    ora_trdt_ten4;
+static short    ora_trdt_ten4Zi;
+//Unit[I]:Tension #4-#5.Limit:[-,-]
+static short    ora_trdt_ten5;
+static short    ora_trdt_ten5Zi;
+//Unit[I]:Tension #5D.Limit:[-,-]
+static short    ora_trdt_ten6;
+static short    ora_trdt_ten6Zi;
+//Unit[I]:X-ray Thickness #1E.Limit:[-,-]
+static short    ora_trdt_h1;
+static short    ora_trdt_h1Zi;
+//Unit[I]:X-ray Thickness  #1-#2.Limit:[-,-]
+static short    ora_trdt_h2;
+static short    ora_trdt_h2Zi;
+//Unit[I]:X-ray Thickness  #4-#5.Limit:[-,-]
+static short    ora_trdt_h3;
+static short    ora_trdt_h3Zi;
+//Unit[I]:X-ray Thickness  #5D.Limit:[-,-]
+static short    ora_trdt_h4;
+static short    ora_trdt_h4Zi;
+//Unit[I]:Strip Speed #1D.Limit:[-,-]
+static short    ora_trdt_vs1;
+static short    ora_trdt_vs1Zi;
+//Unit[I]:Strip Speed #2D.Limit:[-,-]
+static short    ora_trdt_vs2;
+static short    ora_trdt_vs2Zi;
+//Unit[I]:Strip Speed #3D.Limit:[-,-]
+static short    ora_trdt_vs3;
+static short    ora_trdt_vs3Zi;
+//Unit[I]:Strip Speed #4D.Limit:[-,-]
+static short    ora_trdt_vs4;
+static short    ora_trdt_vs4Zi;
+//Unit[I]:Strip Speed #5D.Limit:[-,-]
+static short    ora_trdt_vs5;
+static short    ora_trdt_vs5Zi;
+//Unit[I]:Motor Current #1.Limit:[-,-]
+static short    ora_trdt_cur1;
+static short    ora_trdt_cur1Zi;
+//Unit[I]:Motor Current #2.Limit:[-,-]
+static short    ora_trdt_cur2;
+static short    ora_trdt_cur2Zi;
+//Unit[I]:Motor Current #3.Limit:[-,-]
+static short    ora_trdt_cur3;
+static short    ora_trdt_cur3Zi;
+//Unit[I]:Motor Current #4.Limit:[-,-]
+static short    ora_trdt_cur4;
+static short    ora_trdt_cur4Zi;
+//Unit[I]:Motor Current #5.Limit:[-,-]
+static short    ora_trdt_cur5;
+static short    ora_trdt_cur5Zi;
+//Unit[I]:WR Bender #1.Limit:[-,-]
+static short    ora_trdt_wsben1;
+static short    ora_trdt_wsben1Zi;
+//Unit[I]:WR Bender #2.Limit:[-,-]
+static short    ora_trdt_wsben2;
+static short    ora_trdt_wsben2Zi;
+//Unit[I]:WR Bender #3.Limit:[-,-]
+static short    ora_trdt_wsben3;
+static short    ora_trdt_wsben3Zi;
+//Unit[I]:WR Bender #4.Limit:[-,-]
+static short    ora_trdt_wsben4;
+static short    ora_trdt_wsben4Zi;
+//Unit[I]:WR Bender #5.Limit:[-,-]
+static short    ora_trdt_wsben5;
+static short    ora_trdt_wsben5Zi;
+//Unit[I]:IMR Bender #1.Limit:[-,-]
+static short    ora_trdt_imrben1;
+static short    ora_trdt_imrben1Zi;
+//Unit[I]:IMR Bender #2.Limit:[-,-]
+static short    ora_trdt_imrben2;
+static short    ora_trdt_imrben2Zi;
+//Unit[I]:IMR Bender #3.Limit:[-,-]
+static short    ora_trdt_imrben3;
+static short    ora_trdt_imrben3Zi;
+//Unit[I]:IMR Bender #4.Limit:[-,-]
+static short    ora_trdt_imrben4;
+static short    ora_trdt_imrben4Zi;
+//Unit[I]:IMR Bender #5.Limit:[-,-]
+static short    ora_trdt_imrben5;
+static short    ora_trdt_imrben5Zi;
+//Unit[-]:create time.Limit:[-,-]
+static VARCHAR  ora_toc[15];
+static short    ora_tocZi;
+//Unit[-]:modify time.Limit:[-,-]
+static VARCHAR  ora_tom[15];
+static short    ora_tomZi;
+//Unit[-]:creator or modifyer.Limit:[-,-]
+static VARCHAR  ora_mop[121];
+static short    ora_mopZi;
+// Host arguments for Primary key
+static VARCHAR  k_ora_hcoil[17];   // Unit[-]:Hot coil number.Limit:[-,-]
+static short    k_ora_trdtno;   // Unit[-]:Trend Data NO.Limit:[-,-]
+
+EXEC SQL END DECLARE SECTION;   
+             
+// 				             
+//C O N S T R U C T O R S    
+//=======================    
+//                           
+TRD_DAT::TRD_DAT()
+{
+	initial();                                             
+}
+
+//					
+//C O P Y  -  C O N S T R U C T O R 
+//==================================
+TRD_DAT::TRD_DAT(const TRD_DAT &inst)
+{
+//----------------------------------------------------------
+	this->set_hcoil(inst.hcoil());
+//----------------------------------------------------------
+	this->set_trdtno(inst.trdtno());
+//----------------------------------------------------------
+	this->set_s1pos(inst.s1pos());
+	this->set_s1posZi(inst.s1posZi());
+//----------------------------------------------------------
+	this->set_s2pos(inst.s2pos());
+	this->set_s2posZi(inst.s2posZi());
+//----------------------------------------------------------
+	this->set_s3pos(inst.s3pos());
+	this->set_s3posZi(inst.s3posZi());
+//----------------------------------------------------------
+	this->set_s4pos(inst.s4pos());
+	this->set_s4posZi(inst.s4posZi());
+//----------------------------------------------------------
+	this->set_s5pos(inst.s5pos());
+	this->set_s5posZi(inst.s5posZi());
+//----------------------------------------------------------
+	this->set_stime(inst.stime());
+	this->set_stimeZi(inst.stimeZi());
+//----------------------------------------------------------
+	this->set_trdt_rf1(inst.trdt_rf1());
+	this->set_trdt_rf1Zi(inst.trdt_rf1Zi());
+//----------------------------------------------------------
+	this->set_trdt_rf2(inst.trdt_rf2());
+	this->set_trdt_rf2Zi(inst.trdt_rf2Zi());
+//----------------------------------------------------------
+	this->set_trdt_rf3(inst.trdt_rf3());
+	this->set_trdt_rf3Zi(inst.trdt_rf3Zi());
+//----------------------------------------------------------
+	this->set_trdt_rf4(inst.trdt_rf4());
+	this->set_trdt_rf4Zi(inst.trdt_rf4Zi());
+//----------------------------------------------------------
+	this->set_trdt_rf5(inst.trdt_rf5());
+	this->set_trdt_rf5Zi(inst.trdt_rf5Zi());
+//----------------------------------------------------------
+	this->set_trdt_ten1(inst.trdt_ten1());
+	this->set_trdt_ten1Zi(inst.trdt_ten1Zi());
+//----------------------------------------------------------
+	this->set_trdt_ten2(inst.trdt_ten2());
+	this->set_trdt_ten2Zi(inst.trdt_ten2Zi());
+//----------------------------------------------------------
+	this->set_trdt_ten3(inst.trdt_ten3());
+	this->set_trdt_ten3Zi(inst.trdt_ten3Zi());
+//----------------------------------------------------------
+	this->set_trdt_ten4(inst.trdt_ten4());
+	this->set_trdt_ten4Zi(inst.trdt_ten4Zi());
+//----------------------------------------------------------
+	this->set_trdt_ten5(inst.trdt_ten5());
+	this->set_trdt_ten5Zi(inst.trdt_ten5Zi());
+//----------------------------------------------------------
+	this->set_trdt_ten6(inst.trdt_ten6());
+	this->set_trdt_ten6Zi(inst.trdt_ten6Zi());
+//----------------------------------------------------------
+	this->set_trdt_h1(inst.trdt_h1());
+	this->set_trdt_h1Zi(inst.trdt_h1Zi());
+//----------------------------------------------------------
+	this->set_trdt_h2(inst.trdt_h2());
+	this->set_trdt_h2Zi(inst.trdt_h2Zi());
+//----------------------------------------------------------
+	this->set_trdt_h3(inst.trdt_h3());
+	this->set_trdt_h3Zi(inst.trdt_h3Zi());
+//----------------------------------------------------------
+	this->set_trdt_h4(inst.trdt_h4());
+	this->set_trdt_h4Zi(inst.trdt_h4Zi());
+//----------------------------------------------------------
+	this->set_trdt_vs1(inst.trdt_vs1());
+	this->set_trdt_vs1Zi(inst.trdt_vs1Zi());
+//----------------------------------------------------------
+	this->set_trdt_vs2(inst.trdt_vs2());
+	this->set_trdt_vs2Zi(inst.trdt_vs2Zi());
+//----------------------------------------------------------
+	this->set_trdt_vs3(inst.trdt_vs3());
+	this->set_trdt_vs3Zi(inst.trdt_vs3Zi());
+//----------------------------------------------------------
+	this->set_trdt_vs4(inst.trdt_vs4());
+	this->set_trdt_vs4Zi(inst.trdt_vs4Zi());
+//----------------------------------------------------------
+	this->set_trdt_vs5(inst.trdt_vs5());
+	this->set_trdt_vs5Zi(inst.trdt_vs5Zi());
+//----------------------------------------------------------
+	this->set_trdt_cur1(inst.trdt_cur1());
+	this->set_trdt_cur1Zi(inst.trdt_cur1Zi());
+//----------------------------------------------------------
+	this->set_trdt_cur2(inst.trdt_cur2());
+	this->set_trdt_cur2Zi(inst.trdt_cur2Zi());
+//----------------------------------------------------------
+	this->set_trdt_cur3(inst.trdt_cur3());
+	this->set_trdt_cur3Zi(inst.trdt_cur3Zi());
+//----------------------------------------------------------
+	this->set_trdt_cur4(inst.trdt_cur4());
+	this->set_trdt_cur4Zi(inst.trdt_cur4Zi());
+//----------------------------------------------------------
+	this->set_trdt_cur5(inst.trdt_cur5());
+	this->set_trdt_cur5Zi(inst.trdt_cur5Zi());
+//----------------------------------------------------------
+	this->set_trdt_wsben1(inst.trdt_wsben1());
+	this->set_trdt_wsben1Zi(inst.trdt_wsben1Zi());
+//----------------------------------------------------------
+	this->set_trdt_wsben2(inst.trdt_wsben2());
+	this->set_trdt_wsben2Zi(inst.trdt_wsben2Zi());
+//----------------------------------------------------------
+	this->set_trdt_wsben3(inst.trdt_wsben3());
+	this->set_trdt_wsben3Zi(inst.trdt_wsben3Zi());
+//----------------------------------------------------------
+	this->set_trdt_wsben4(inst.trdt_wsben4());
+	this->set_trdt_wsben4Zi(inst.trdt_wsben4Zi());
+//----------------------------------------------------------
+	this->set_trdt_wsben5(inst.trdt_wsben5());
+	this->set_trdt_wsben5Zi(inst.trdt_wsben5Zi());
+//----------------------------------------------------------
+	this->set_trdt_imrben1(inst.trdt_imrben1());
+	this->set_trdt_imrben1Zi(inst.trdt_imrben1Zi());
+//----------------------------------------------------------
+	this->set_trdt_imrben2(inst.trdt_imrben2());
+	this->set_trdt_imrben2Zi(inst.trdt_imrben2Zi());
+//----------------------------------------------------------
+	this->set_trdt_imrben3(inst.trdt_imrben3());
+	this->set_trdt_imrben3Zi(inst.trdt_imrben3Zi());
+//----------------------------------------------------------
+	this->set_trdt_imrben4(inst.trdt_imrben4());
+	this->set_trdt_imrben4Zi(inst.trdt_imrben4Zi());
+//----------------------------------------------------------
+	this->set_trdt_imrben5(inst.trdt_imrben5());
+	this->set_trdt_imrben5Zi(inst.trdt_imrben5Zi());
+//----------------------------------------------------------
+	this->set_toc(inst.toc());
+	this->set_tocZi(inst.tocZi());
+//----------------------------------------------------------
+	this->set_tom(inst.tom());
+	this->set_tomZi(inst.tomZi());
+//----------------------------------------------------------
+	this->set_mop(inst.mop());
+	this->set_mopZi(inst.mopZi());
+}
+
+//					
+//C O N S T R U C T O R -W I T H P A R A M E T E R S
+//===================================================
+//					
+TRD_DAT::TRD_DAT(char* arg1,short arg2)
+{
+	initial();					               
+	setPrimKey (arg1,arg2);    
+	//read DB record                           
+	dbAccess = true;                           
+	dbMessage = readDB();                      
+	if ( dbMessage != NULL ) dbAccess = false; 
+}
+
+//D E S T R U C T O R S  
+//=======================
+//                       
+TRD_DAT::~TRD_DAT()
+{
+}
+
+//initialise all member variables
+void TRD_DAT::initial()
+{
+	set_hcoil("");
+	set_trdtno(0);
+	set_s1pos(0);
+	set_s1posZi(-1);
+	set_s2pos(0);
+	set_s2posZi(-1);
+	set_s3pos(0);
+	set_s3posZi(-1);
+	set_s4pos(0);
+	set_s4posZi(-1);
+	set_s5pos(0);
+	set_s5posZi(-1);
+	set_stime("");
+	set_stimeZi(-1);
+	set_trdt_rf1(0);
+	set_trdt_rf1Zi(-1);
+	set_trdt_rf2(0);
+	set_trdt_rf2Zi(-1);
+	set_trdt_rf3(0);
+	set_trdt_rf3Zi(-1);
+	set_trdt_rf4(0);
+	set_trdt_rf4Zi(-1);
+	set_trdt_rf5(0);
+	set_trdt_rf5Zi(-1);
+	set_trdt_ten1(0);
+	set_trdt_ten1Zi(-1);
+	set_trdt_ten2(0);
+	set_trdt_ten2Zi(-1);
+	set_trdt_ten3(0);
+	set_trdt_ten3Zi(-1);
+	set_trdt_ten4(0);
+	set_trdt_ten4Zi(-1);
+	set_trdt_ten5(0);
+	set_trdt_ten5Zi(-1);
+	set_trdt_ten6(0);
+	set_trdt_ten6Zi(-1);
+	set_trdt_h1(0);
+	set_trdt_h1Zi(-1);
+	set_trdt_h2(0);
+	set_trdt_h2Zi(-1);
+	set_trdt_h3(0);
+	set_trdt_h3Zi(-1);
+	set_trdt_h4(0);
+	set_trdt_h4Zi(-1);
+	set_trdt_vs1(0);
+	set_trdt_vs1Zi(-1);
+	set_trdt_vs2(0);
+	set_trdt_vs2Zi(-1);
+	set_trdt_vs3(0);
+	set_trdt_vs3Zi(-1);
+	set_trdt_vs4(0);
+	set_trdt_vs4Zi(-1);
+	set_trdt_vs5(0);
+	set_trdt_vs5Zi(-1);
+	set_trdt_cur1(0);
+	set_trdt_cur1Zi(-1);
+	set_trdt_cur2(0);
+	set_trdt_cur2Zi(-1);
+	set_trdt_cur3(0);
+	set_trdt_cur3Zi(-1);
+	set_trdt_cur4(0);
+	set_trdt_cur4Zi(-1);
+	set_trdt_cur5(0);
+	set_trdt_cur5Zi(-1);
+	set_trdt_wsben1(0);
+	set_trdt_wsben1Zi(-1);
+	set_trdt_wsben2(0);
+	set_trdt_wsben2Zi(-1);
+	set_trdt_wsben3(0);
+	set_trdt_wsben3Zi(-1);
+	set_trdt_wsben4(0);
+	set_trdt_wsben4Zi(-1);
+	set_trdt_wsben5(0);
+	set_trdt_wsben5Zi(-1);
+	set_trdt_imrben1(0);
+	set_trdt_imrben1Zi(-1);
+	set_trdt_imrben2(0);
+	set_trdt_imrben2Zi(-1);
+	set_trdt_imrben3(0);
+	set_trdt_imrben3Zi(-1);
+	set_trdt_imrben4(0);
+	set_trdt_imrben4Zi(-1);
+	set_trdt_imrben5(0);
+	set_trdt_imrben5Zi(-1);
+	set_toc("");
+	set_tocZi(-1);
+	set_tom("");
+	set_tomZi(-1);
+	set_mop("");
+	set_mopZi(-1);
+	//initialies Primary key members
+	set_k_hcoil("");
+	set_k_trdtno(0);
+// Initial Oracle Options
+	oraca.oradbgf  = 1; // gather debug informations       
+	oraca.oracchf  = 1; // gather cursor cache informations
+	oraca.orahchf  = 1; // check heap                      
+	oraca.orastxtf = 3; // always save last sql-statement  
+	                                                       
+	EXEC ORACLE OPTION (ORACA=YES);                        
+	EXEC ORACLE OPTION (HOLD_CURSOR=YES);                  
+	EXEC ORACLE OPTION (RELEASE_CURSOR=NO);                
+	EXEC ORACLE OPTION (MAXOPENCURSORS=50);                
+	pCatch = CatchDbaxError::instance();                   
+	                                                       
+}
+
+//read a single entry from DB.
+char* TRD_DAT::readDB()
+{
+	//
+	//copy the host variables (k_...) to Oracle Host Keys (k_ora_..)
+	//
+		copyKeyToHost();
+	//
+	// Do SELECT
+	//
+	EXEC SQL SELECT 
+		hcoil,
+		trdtno,
+		s1pos,
+		s2pos,
+		s3pos,
+		s4pos,
+		s5pos,
+		stime,
+		trdt_rf1,
+		trdt_rf2,
+		trdt_rf3,
+		trdt_rf4,
+		trdt_rf5,
+		trdt_ten1,
+		trdt_ten2,
+		trdt_ten3,
+		trdt_ten4,
+		trdt_ten5,
+		trdt_ten6,
+		trdt_h1,
+		trdt_h2,
+		trdt_h3,
+		trdt_h4,
+		trdt_vs1,
+		trdt_vs2,
+		trdt_vs3,
+		trdt_vs4,
+		trdt_vs5,
+		trdt_cur1,
+		trdt_cur2,
+		trdt_cur3,
+		trdt_cur4,
+		trdt_cur5,
+		trdt_wsben1,
+		trdt_wsben2,
+		trdt_wsben3,
+		trdt_wsben4,
+		trdt_wsben5,
+		trdt_imrben1,
+		trdt_imrben2,
+		trdt_imrben3,
+		trdt_imrben4,
+		trdt_imrben5,
+		TO_CHAR(toc , 'YYYYMMDDHH24MISS'),
+		TO_CHAR(tom , 'YYYYMMDDHH24MISS'),
+		mop
+	INTO
+		:ora_hcoil,
+		:ora_trdtno,
+		:ora_s1pos:ora_s1posZi,
+		:ora_s2pos:ora_s2posZi,
+		:ora_s3pos:ora_s3posZi,
+		:ora_s4pos:ora_s4posZi,
+		:ora_s5pos:ora_s5posZi,
+		:ora_stime:ora_stimeZi,
+		:ora_trdt_rf1:ora_trdt_rf1Zi,
+		:ora_trdt_rf2:ora_trdt_rf2Zi,
+		:ora_trdt_rf3:ora_trdt_rf3Zi,
+		:ora_trdt_rf4:ora_trdt_rf4Zi,
+		:ora_trdt_rf5:ora_trdt_rf5Zi,
+		:ora_trdt_ten1:ora_trdt_ten1Zi,
+		:ora_trdt_ten2:ora_trdt_ten2Zi,
+		:ora_trdt_ten3:ora_trdt_ten3Zi,
+		:ora_trdt_ten4:ora_trdt_ten4Zi,
+		:ora_trdt_ten5:ora_trdt_ten5Zi,
+		:ora_trdt_ten6:ora_trdt_ten6Zi,
+		:ora_trdt_h1:ora_trdt_h1Zi,
+		:ora_trdt_h2:ora_trdt_h2Zi,
+		:ora_trdt_h3:ora_trdt_h3Zi,
+		:ora_trdt_h4:ora_trdt_h4Zi,
+		:ora_trdt_vs1:ora_trdt_vs1Zi,
+		:ora_trdt_vs2:ora_trdt_vs2Zi,
+		:ora_trdt_vs3:ora_trdt_vs3Zi,
+		:ora_trdt_vs4:ora_trdt_vs4Zi,
+		:ora_trdt_vs5:ora_trdt_vs5Zi,
+		:ora_trdt_cur1:ora_trdt_cur1Zi,
+		:ora_trdt_cur2:ora_trdt_cur2Zi,
+		:ora_trdt_cur3:ora_trdt_cur3Zi,
+		:ora_trdt_cur4:ora_trdt_cur4Zi,
+		:ora_trdt_cur5:ora_trdt_cur5Zi,
+		:ora_trdt_wsben1:ora_trdt_wsben1Zi,
+		:ora_trdt_wsben2:ora_trdt_wsben2Zi,
+		:ora_trdt_wsben3:ora_trdt_wsben3Zi,
+		:ora_trdt_wsben4:ora_trdt_wsben4Zi,
+		:ora_trdt_wsben5:ora_trdt_wsben5Zi,
+		:ora_trdt_imrben1:ora_trdt_imrben1Zi,
+		:ora_trdt_imrben2:ora_trdt_imrben2Zi,
+		:ora_trdt_imrben3:ora_trdt_imrben3Zi,
+		:ora_trdt_imrben4:ora_trdt_imrben4Zi,
+		:ora_trdt_imrben5:ora_trdt_imrben5Zi,
+		:ora_toc:ora_tocZi,
+		:ora_tom:ora_tomZi,
+		:ora_mop:ora_mopZi
+	FROM TRD_DAT
+	WHERE
+				hcoil           = :k_ora_hcoil AND 
+				trdtno          = :k_ora_trdtno ;
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	//
+	// copy host variables into Class attributes
+	//
+	copyOracleToAttribute();
+	return ( NULL );
+}
+
+//updates a single entry from DB
+char* TRD_DAT::updateDB()
+{
+	//
+	//copy the host variables (k_...) to Oracle Host Keys (k_ora_..)
+	//
+		copyKeyToHost();
+	//copy the attributes ( ...) to Oracle Hosts( ora_..)
+	//
+		copyAttributeToOracle();
+	//
+	// Do UPDATE
+	//
+	EXEC SQL UPDATE TRD_DAT
+	SET 
+		hcoil               =:ora_hcoil,
+		trdtno              =:ora_trdtno,
+		s1pos               =:ora_s1pos:ora_s1posZi,
+		s2pos               =:ora_s2pos:ora_s2posZi,
+		s3pos               =:ora_s3pos:ora_s3posZi,
+		s4pos               =:ora_s4pos:ora_s4posZi,
+		s5pos               =:ora_s5pos:ora_s5posZi,
+		stime               =:ora_stime:ora_stimeZi,
+		trdt_rf1            =:ora_trdt_rf1:ora_trdt_rf1Zi,
+		trdt_rf2            =:ora_trdt_rf2:ora_trdt_rf2Zi,
+		trdt_rf3            =:ora_trdt_rf3:ora_trdt_rf3Zi,
+		trdt_rf4            =:ora_trdt_rf4:ora_trdt_rf4Zi,
+		trdt_rf5            =:ora_trdt_rf5:ora_trdt_rf5Zi,
+		trdt_ten1           =:ora_trdt_ten1:ora_trdt_ten1Zi,
+		trdt_ten2           =:ora_trdt_ten2:ora_trdt_ten2Zi,
+		trdt_ten3           =:ora_trdt_ten3:ora_trdt_ten3Zi,
+		trdt_ten4           =:ora_trdt_ten4:ora_trdt_ten4Zi,
+		trdt_ten5           =:ora_trdt_ten5:ora_trdt_ten5Zi,
+		trdt_ten6           =:ora_trdt_ten6:ora_trdt_ten6Zi,
+		trdt_h1             =:ora_trdt_h1:ora_trdt_h1Zi,
+		trdt_h2             =:ora_trdt_h2:ora_trdt_h2Zi,
+		trdt_h3             =:ora_trdt_h3:ora_trdt_h3Zi,
+		trdt_h4             =:ora_trdt_h4:ora_trdt_h4Zi,
+		trdt_vs1            =:ora_trdt_vs1:ora_trdt_vs1Zi,
+		trdt_vs2            =:ora_trdt_vs2:ora_trdt_vs2Zi,
+		trdt_vs3            =:ora_trdt_vs3:ora_trdt_vs3Zi,
+		trdt_vs4            =:ora_trdt_vs4:ora_trdt_vs4Zi,
+		trdt_vs5            =:ora_trdt_vs5:ora_trdt_vs5Zi,
+		trdt_cur1           =:ora_trdt_cur1:ora_trdt_cur1Zi,
+		trdt_cur2           =:ora_trdt_cur2:ora_trdt_cur2Zi,
+		trdt_cur3           =:ora_trdt_cur3:ora_trdt_cur3Zi,
+		trdt_cur4           =:ora_trdt_cur4:ora_trdt_cur4Zi,
+		trdt_cur5           =:ora_trdt_cur5:ora_trdt_cur5Zi,
+		trdt_wsben1         =:ora_trdt_wsben1:ora_trdt_wsben1Zi,
+		trdt_wsben2         =:ora_trdt_wsben2:ora_trdt_wsben2Zi,
+		trdt_wsben3         =:ora_trdt_wsben3:ora_trdt_wsben3Zi,
+		trdt_wsben4         =:ora_trdt_wsben4:ora_trdt_wsben4Zi,
+		trdt_wsben5         =:ora_trdt_wsben5:ora_trdt_wsben5Zi,
+		trdt_imrben1        =:ora_trdt_imrben1:ora_trdt_imrben1Zi,
+		trdt_imrben2        =:ora_trdt_imrben2:ora_trdt_imrben2Zi,
+		trdt_imrben3        =:ora_trdt_imrben3:ora_trdt_imrben3Zi,
+		trdt_imrben4        =:ora_trdt_imrben4:ora_trdt_imrben4Zi,
+		trdt_imrben5        =:ora_trdt_imrben5:ora_trdt_imrben5Zi,
+		toc                 =TO_DATE( :ora_toc:ora_tocZi,'YYYYMMDDHH24MISS'),
+		tom                 =TO_DATE( :ora_tom:ora_tomZi,'YYYYMMDDHH24MISS'),
+		mop                 =:ora_mop:ora_mopZi
+	WHERE
+		hcoil           = :k_ora_hcoil AND 
+		trdtno          = :k_ora_trdtno ;
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//inserts a single entry from DB
+char* TRD_DAT::insertDB()
+{
+	//
+	//copy the attributes ( ...) to Oracle Hosts( ora_..) 
+	//
+		copyAttributeToOracle();
+	//
+	// Do INSERT
+	//
+	EXEC SQL INSERT INTO TRD_DAT
+	(
+		hcoil,
+		trdtno,
+		s1pos,
+		s2pos,
+		s3pos,
+		s4pos,
+		s5pos,
+		stime,
+		trdt_rf1,
+		trdt_rf2,
+		trdt_rf3,
+		trdt_rf4,
+		trdt_rf5,
+		trdt_ten1,
+		trdt_ten2,
+		trdt_ten3,
+		trdt_ten4,
+		trdt_ten5,
+		trdt_ten6,
+		trdt_h1,
+		trdt_h2,
+		trdt_h3,
+		trdt_h4,
+		trdt_vs1,
+		trdt_vs2,
+		trdt_vs3,
+		trdt_vs4,
+		trdt_vs5,
+		trdt_cur1,
+		trdt_cur2,
+		trdt_cur3,
+		trdt_cur4,
+		trdt_cur5,
+		trdt_wsben1,
+		trdt_wsben2,
+		trdt_wsben3,
+		trdt_wsben4,
+		trdt_wsben5,
+		trdt_imrben1,
+		trdt_imrben2,
+		trdt_imrben3,
+		trdt_imrben4,
+		trdt_imrben5,
+		toc,
+		tom,
+		mop
+	)
+
+	VALUES
+	(
+		:ora_hcoil,
+		:ora_trdtno,
+		:ora_s1pos:ora_s1posZi,
+		:ora_s2pos:ora_s2posZi,
+		:ora_s3pos:ora_s3posZi,
+		:ora_s4pos:ora_s4posZi,
+		:ora_s5pos:ora_s5posZi,
+		:ora_stime:ora_stimeZi,
+		:ora_trdt_rf1:ora_trdt_rf1Zi,
+		:ora_trdt_rf2:ora_trdt_rf2Zi,
+		:ora_trdt_rf3:ora_trdt_rf3Zi,
+		:ora_trdt_rf4:ora_trdt_rf4Zi,
+		:ora_trdt_rf5:ora_trdt_rf5Zi,
+		:ora_trdt_ten1:ora_trdt_ten1Zi,
+		:ora_trdt_ten2:ora_trdt_ten2Zi,
+		:ora_trdt_ten3:ora_trdt_ten3Zi,
+		:ora_trdt_ten4:ora_trdt_ten4Zi,
+		:ora_trdt_ten5:ora_trdt_ten5Zi,
+		:ora_trdt_ten6:ora_trdt_ten6Zi,
+		:ora_trdt_h1:ora_trdt_h1Zi,
+		:ora_trdt_h2:ora_trdt_h2Zi,
+		:ora_trdt_h3:ora_trdt_h3Zi,
+		:ora_trdt_h4:ora_trdt_h4Zi,
+		:ora_trdt_vs1:ora_trdt_vs1Zi,
+		:ora_trdt_vs2:ora_trdt_vs2Zi,
+		:ora_trdt_vs3:ora_trdt_vs3Zi,
+		:ora_trdt_vs4:ora_trdt_vs4Zi,
+		:ora_trdt_vs5:ora_trdt_vs5Zi,
+		:ora_trdt_cur1:ora_trdt_cur1Zi,
+		:ora_trdt_cur2:ora_trdt_cur2Zi,
+		:ora_trdt_cur3:ora_trdt_cur3Zi,
+		:ora_trdt_cur4:ora_trdt_cur4Zi,
+		:ora_trdt_cur5:ora_trdt_cur5Zi,
+		:ora_trdt_wsben1:ora_trdt_wsben1Zi,
+		:ora_trdt_wsben2:ora_trdt_wsben2Zi,
+		:ora_trdt_wsben3:ora_trdt_wsben3Zi,
+		:ora_trdt_wsben4:ora_trdt_wsben4Zi,
+		:ora_trdt_wsben5:ora_trdt_wsben5Zi,
+		:ora_trdt_imrben1:ora_trdt_imrben1Zi,
+		:ora_trdt_imrben2:ora_trdt_imrben2Zi,
+		:ora_trdt_imrben3:ora_trdt_imrben3Zi,
+		:ora_trdt_imrben4:ora_trdt_imrben4Zi,
+		:ora_trdt_imrben5:ora_trdt_imrben5Zi,
+		TO_DATE( :ora_toc:ora_tocZi,'YYYYMMDDHH24MISS'),
+		TO_DATE( :ora_tom:ora_tomZi,'YYYYMMDDHH24MISS'),
+		:ora_mop:ora_mopZi
+	);
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//this methode tries to update a DB record,when the update fails.
+char* TRD_DAT::storeDB()
+{
+	char* ret = NULL;
+	setKeysFromRecord();
+	ret=updateDB();
+	if(ret != NULL)
+	{
+		ret=insertDB();
+		if(ret != NULL)
+		{
+			dbAccess = false;
+			return(ret);
+		}
+	}
+	return(ret);
+}
+
+//deletes a single entry from DB
+char* TRD_DAT::deleteDB()
+{
+//
+//copy the host variables (k_...) to Oracle Host Keys (k_ora_..)
+//
+	copyKeyToHost();
+
+//
+// Do Delete 
+//
+	EXEC SQL DELETE FROM TRD_DAT
+	WHERE
+				hcoil           = :k_ora_hcoil AND 
+				trdtno          = :k_ora_trdtno ;
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+// Executes the SQL DELETE with a where clause
+char* TRD_DAT::deleteDB(const char* where,long* count)
+{
+	*(count) = -1L;
+// Create dynamic statement.
+//
+	strcpy((char*)dynstr.arr,"DELETE");
+	strcat((char*)dynstr.arr," FROM TRD_DAT");
+	if ( where != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, where );
+	}
+
+	dynstr.len = strlen( (char*) dynstr.arr);
+	EXEC SQL EXECUTE IMMEDIATE :dynstr;
+	oracleSqlCode = sqlca.sqlcode;
+		oracleRowsProcessed = sqlca.sqlerrd[2];
+	if (sqlca.sqlcode == 0 )
+		*(count) = sqlca.sqlerrd[2];
+	else 
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//openSetDB data with where condition and sort order.
+char* TRD_DAT::openSetDB(const char* where,char* order)
+{
+//
+// Create dynamic statement.
+//
+	strcpy((char*)dynstr.arr,"SELECT ");
+	strcat((char*)dynstr.arr,"hcoil,");
+	strcat((char*)dynstr.arr,"trdtno,");
+	strcat((char*)dynstr.arr,"s1pos,");
+	strcat((char*)dynstr.arr,"s2pos,");
+	strcat((char*)dynstr.arr,"s3pos,");
+	strcat((char*)dynstr.arr,"s4pos,");
+	strcat((char*)dynstr.arr,"s5pos,");
+	strcat((char*)dynstr.arr,"stime,");
+	strcat((char*)dynstr.arr,"trdt_rf1,");
+	strcat((char*)dynstr.arr,"trdt_rf2,");
+	strcat((char*)dynstr.arr,"trdt_rf3,");
+	strcat((char*)dynstr.arr,"trdt_rf4,");
+	strcat((char*)dynstr.arr,"trdt_rf5,");
+	strcat((char*)dynstr.arr,"trdt_ten1,");
+	strcat((char*)dynstr.arr,"trdt_ten2,");
+	strcat((char*)dynstr.arr,"trdt_ten3,");
+	strcat((char*)dynstr.arr,"trdt_ten4,");
+	strcat((char*)dynstr.arr,"trdt_ten5,");
+	strcat((char*)dynstr.arr,"trdt_ten6,");
+	strcat((char*)dynstr.arr,"trdt_h1,");
+	strcat((char*)dynstr.arr,"trdt_h2,");
+	strcat((char*)dynstr.arr,"trdt_h3,");
+	strcat((char*)dynstr.arr,"trdt_h4,");
+	strcat((char*)dynstr.arr,"trdt_vs1,");
+	strcat((char*)dynstr.arr,"trdt_vs2,");
+	strcat((char*)dynstr.arr,"trdt_vs3,");
+	strcat((char*)dynstr.arr,"trdt_vs4,");
+	strcat((char*)dynstr.arr,"trdt_vs5,");
+	strcat((char*)dynstr.arr,"trdt_cur1,");
+	strcat((char*)dynstr.arr,"trdt_cur2,");
+	strcat((char*)dynstr.arr,"trdt_cur3,");
+	strcat((char*)dynstr.arr,"trdt_cur4,");
+	strcat((char*)dynstr.arr,"trdt_cur5,");
+	strcat((char*)dynstr.arr,"trdt_wsben1,");
+	strcat((char*)dynstr.arr,"trdt_wsben2,");
+	strcat((char*)dynstr.arr,"trdt_wsben3,");
+	strcat((char*)dynstr.arr,"trdt_wsben4,");
+	strcat((char*)dynstr.arr,"trdt_wsben5,");
+	strcat((char*)dynstr.arr,"trdt_imrben1,");
+	strcat((char*)dynstr.arr,"trdt_imrben2,");
+	strcat((char*)dynstr.arr,"trdt_imrben3,");
+	strcat((char*)dynstr.arr,"trdt_imrben4,");
+	strcat((char*)dynstr.arr,"trdt_imrben5,");
+	strcat((char*)dynstr.arr,"TO_CHAR(toc , 'YYYYMMDDHH24MISS'),");
+	strcat((char*)dynstr.arr,"TO_CHAR(tom , 'YYYYMMDDHH24MISS'),");
+	strcat((char*)dynstr.arr,"mop");
+
+	strcat((char*)dynstr.arr," FROM TRD_DAT ");
+	if ( where != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, where);
+	}
+	if ( order != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, order);
+	}
+
+	dynstr.len = strlen( (char*) dynstr.arr);
+	EXEC SQL PREPARE set_TRD_DAT FROM :dynstr;
+	if (sqlca.sqlcode == 0 )
+	{
+		EXEC SQL DECLARE cu_TRD_DAT CURSOR FOR set_TRD_DAT;
+		if (sqlca.sqlcode == 0 )
+			EXEC SQL OPEN cu_TRD_DAT;
+	}
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	cuFl = OPENED;
+	return ( NULL );
+}
+
+//Executes the SQL FETCH Statement .
+char* TRD_DAT::getSetDB()
+{
+	if ( cuFl != OPENED ) return ("No open Cursor Table:Me");
+	EXEC SQL FETCH cu_TRD_DAT INTO
+		:ora_hcoil,
+		:ora_trdtno,
+		:ora_s1pos:ora_s1posZi,
+		:ora_s2pos:ora_s2posZi,
+		:ora_s3pos:ora_s3posZi,
+		:ora_s4pos:ora_s4posZi,
+		:ora_s5pos:ora_s5posZi,
+		:ora_stime:ora_stimeZi,
+		:ora_trdt_rf1:ora_trdt_rf1Zi,
+		:ora_trdt_rf2:ora_trdt_rf2Zi,
+		:ora_trdt_rf3:ora_trdt_rf3Zi,
+		:ora_trdt_rf4:ora_trdt_rf4Zi,
+		:ora_trdt_rf5:ora_trdt_rf5Zi,
+		:ora_trdt_ten1:ora_trdt_ten1Zi,
+		:ora_trdt_ten2:ora_trdt_ten2Zi,
+		:ora_trdt_ten3:ora_trdt_ten3Zi,
+		:ora_trdt_ten4:ora_trdt_ten4Zi,
+		:ora_trdt_ten5:ora_trdt_ten5Zi,
+		:ora_trdt_ten6:ora_trdt_ten6Zi,
+		:ora_trdt_h1:ora_trdt_h1Zi,
+		:ora_trdt_h2:ora_trdt_h2Zi,
+		:ora_trdt_h3:ora_trdt_h3Zi,
+		:ora_trdt_h4:ora_trdt_h4Zi,
+		:ora_trdt_vs1:ora_trdt_vs1Zi,
+		:ora_trdt_vs2:ora_trdt_vs2Zi,
+		:ora_trdt_vs3:ora_trdt_vs3Zi,
+		:ora_trdt_vs4:ora_trdt_vs4Zi,
+		:ora_trdt_vs5:ora_trdt_vs5Zi,
+		:ora_trdt_cur1:ora_trdt_cur1Zi,
+		:ora_trdt_cur2:ora_trdt_cur2Zi,
+		:ora_trdt_cur3:ora_trdt_cur3Zi,
+		:ora_trdt_cur4:ora_trdt_cur4Zi,
+		:ora_trdt_cur5:ora_trdt_cur5Zi,
+		:ora_trdt_wsben1:ora_trdt_wsben1Zi,
+		:ora_trdt_wsben2:ora_trdt_wsben2Zi,
+		:ora_trdt_wsben3:ora_trdt_wsben3Zi,
+		:ora_trdt_wsben4:ora_trdt_wsben4Zi,
+		:ora_trdt_wsben5:ora_trdt_wsben5Zi,
+		:ora_trdt_imrben1:ora_trdt_imrben1Zi,
+		:ora_trdt_imrben2:ora_trdt_imrben2Zi,
+		:ora_trdt_imrben3:ora_trdt_imrben3Zi,
+		:ora_trdt_imrben4:ora_trdt_imrben4Zi,
+		:ora_trdt_imrben5:ora_trdt_imrben5Zi,
+		:ora_toc:ora_tocZi,
+		:ora_tom:ora_tomZi,
+		:ora_mop:ora_mopZi;
+
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		pCatch->catchError(sqlca.sqlcode);
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		return (char*) sqlca.sqlerrm.sqlerrmc ;
+	}
+	//
+	// copy host variables into Class attributes
+	//
+	copyOracleToAttribute();
+	copyHostToKey();
+	return ( NULL );
+}
+
+//Close a Oracle Cursor
+char* TRD_DAT::closeSetDB()
+{
+	EXEC SQL CLOSE cu_TRD_DAT;
+	oracleSqlCode = sqlca.sqlcode;         
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		pCatch->catchError(sqlca.sqlcode);
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		return (char*) sqlca.sqlerrm.sqlerrmc ;
+	}
+	cuFl = CLOSED;
+	return ( NULL );
+}
+
+//Executes the SQL count(key) for a where clause
+char* TRD_DAT::countDB(const char* where,long* count)
+{
+	*(count) = -1L;
+//
+// Create dynamic statement. 
+//
+	strncpy((char*)dynstr.arr,"SELECT count(hcoil)", sizeof(dynstr.arr));
+	strcat((char*)dynstr.arr," FROM TRD_DAT");
+	if ( where != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, where );
+	}
+	dynstr.len = strlen( (char*) dynstr.arr);
+	EXEC SQL PREPARE c_TRD_DAT FROM :dynstr;
+	
+	if (sqlca.sqlcode == 0 )
+	{
+		EXEC SQL DECLARE ct_TRD_DAT CURSOR FOR c_TRD_DAT;
+		if (sqlca.sqlcode == 0 )
+		{
+			EXEC SQL OPEN ct_TRD_DAT;
+			if (sqlca.sqlcode == 0 )			{
+				EXEC SQL FETCH ct_TRD_DAT INTO :rowCnt;
+				if (sqlca.sqlcode == 0 )
+				*(count) = rowCnt;
+			}
+			EXEC SQL CLOSE ct_TRD_DAT;
+		}
+	}
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//private methode copy Attribute to Oracle
+//copys Object attributes into Oracle Host variables.
+void TRD_DAT::copyAttributeToOracle()
+{
+	char* ptrStr;
+	ptrStr = this->hcoil();
+	if( strlen(ptrStr)< sizeof(ora_hcoil.arr))
+	{
+		strncpy((char*)ora_hcoil.arr, ptrStr, sizeof(ora_hcoil.arr));
+		ora_hcoil.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_hcoil.len = 0;
+	ora_trdtno = this->trdtno();
+	ora_s1pos = this->s1pos();
+	ora_s1posZi = this->s1posZi();
+	ora_s2pos = this->s2pos();
+	ora_s2posZi = this->s2posZi();
+	ora_s3pos = this->s3pos();
+	ora_s3posZi = this->s3posZi();
+	ora_s4pos = this->s4pos();
+	ora_s4posZi = this->s4posZi();
+	ora_s5pos = this->s5pos();
+	ora_s5posZi = this->s5posZi();
+	ptrStr = this->stime();
+	if( strlen(ptrStr)< sizeof(ora_stime.arr))
+	{
+		strncpy((char*)ora_stime.arr, ptrStr, sizeof(ora_stime.arr));
+		ora_stime.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_stime.len = 0;
+	ora_stimeZi = this->stimeZi();
+	ora_trdt_rf1 = this->trdt_rf1();
+	ora_trdt_rf1Zi = this->trdt_rf1Zi();
+	ora_trdt_rf2 = this->trdt_rf2();
+	ora_trdt_rf2Zi = this->trdt_rf2Zi();
+	ora_trdt_rf3 = this->trdt_rf3();
+	ora_trdt_rf3Zi = this->trdt_rf3Zi();
+	ora_trdt_rf4 = this->trdt_rf4();
+	ora_trdt_rf4Zi = this->trdt_rf4Zi();
+	ora_trdt_rf5 = this->trdt_rf5();
+	ora_trdt_rf5Zi = this->trdt_rf5Zi();
+	ora_trdt_ten1 = this->trdt_ten1();
+	ora_trdt_ten1Zi = this->trdt_ten1Zi();
+	ora_trdt_ten2 = this->trdt_ten2();
+	ora_trdt_ten2Zi = this->trdt_ten2Zi();
+	ora_trdt_ten3 = this->trdt_ten3();
+	ora_trdt_ten3Zi = this->trdt_ten3Zi();
+	ora_trdt_ten4 = this->trdt_ten4();
+	ora_trdt_ten4Zi = this->trdt_ten4Zi();
+	ora_trdt_ten5 = this->trdt_ten5();
+	ora_trdt_ten5Zi = this->trdt_ten5Zi();
+	ora_trdt_ten6 = this->trdt_ten6();
+	ora_trdt_ten6Zi = this->trdt_ten6Zi();
+	ora_trdt_h1 = this->trdt_h1();
+	ora_trdt_h1Zi = this->trdt_h1Zi();
+	ora_trdt_h2 = this->trdt_h2();
+	ora_trdt_h2Zi = this->trdt_h2Zi();
+	ora_trdt_h3 = this->trdt_h3();
+	ora_trdt_h3Zi = this->trdt_h3Zi();
+	ora_trdt_h4 = this->trdt_h4();
+	ora_trdt_h4Zi = this->trdt_h4Zi();
+	ora_trdt_vs1 = this->trdt_vs1();
+	ora_trdt_vs1Zi = this->trdt_vs1Zi();
+	ora_trdt_vs2 = this->trdt_vs2();
+	ora_trdt_vs2Zi = this->trdt_vs2Zi();
+	ora_trdt_vs3 = this->trdt_vs3();
+	ora_trdt_vs3Zi = this->trdt_vs3Zi();
+	ora_trdt_vs4 = this->trdt_vs4();
+	ora_trdt_vs4Zi = this->trdt_vs4Zi();
+	ora_trdt_vs5 = this->trdt_vs5();
+	ora_trdt_vs5Zi = this->trdt_vs5Zi();
+	ora_trdt_cur1 = this->trdt_cur1();
+	ora_trdt_cur1Zi = this->trdt_cur1Zi();
+	ora_trdt_cur2 = this->trdt_cur2();
+	ora_trdt_cur2Zi = this->trdt_cur2Zi();
+	ora_trdt_cur3 = this->trdt_cur3();
+	ora_trdt_cur3Zi = this->trdt_cur3Zi();
+	ora_trdt_cur4 = this->trdt_cur4();
+	ora_trdt_cur4Zi = this->trdt_cur4Zi();
+	ora_trdt_cur5 = this->trdt_cur5();
+	ora_trdt_cur5Zi = this->trdt_cur5Zi();
+	ora_trdt_wsben1 = this->trdt_wsben1();
+	ora_trdt_wsben1Zi = this->trdt_wsben1Zi();
+	ora_trdt_wsben2 = this->trdt_wsben2();
+	ora_trdt_wsben2Zi = this->trdt_wsben2Zi();
+	ora_trdt_wsben3 = this->trdt_wsben3();
+	ora_trdt_wsben3Zi = this->trdt_wsben3Zi();
+	ora_trdt_wsben4 = this->trdt_wsben4();
+	ora_trdt_wsben4Zi = this->trdt_wsben4Zi();
+	ora_trdt_wsben5 = this->trdt_wsben5();
+	ora_trdt_wsben5Zi = this->trdt_wsben5Zi();
+	ora_trdt_imrben1 = this->trdt_imrben1();
+	ora_trdt_imrben1Zi = this->trdt_imrben1Zi();
+	ora_trdt_imrben2 = this->trdt_imrben2();
+	ora_trdt_imrben2Zi = this->trdt_imrben2Zi();
+	ora_trdt_imrben3 = this->trdt_imrben3();
+	ora_trdt_imrben3Zi = this->trdt_imrben3Zi();
+	ora_trdt_imrben4 = this->trdt_imrben4();
+	ora_trdt_imrben4Zi = this->trdt_imrben4Zi();
+	ora_trdt_imrben5 = this->trdt_imrben5();
+	ora_trdt_imrben5Zi = this->trdt_imrben5Zi();
+	ptrStr = this->toc();
+	if( strlen(ptrStr)< sizeof(ora_toc.arr))
+	{
+		strncpy((char*)ora_toc.arr, ptrStr, sizeof(ora_toc.arr));
+		ora_toc.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_toc.len = 0;
+	ora_tocZi = this->tocZi();
+	ptrStr = this->tom();
+	if( strlen(ptrStr)< sizeof(ora_tom.arr))
+	{
+		strncpy((char*)ora_tom.arr, ptrStr, sizeof(ora_tom.arr));
+		ora_tom.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_tom.len = 0;
+	ora_tomZi = this->tomZi();
+	ptrStr = this->mop();
+	if( strlen(ptrStr)< sizeof(ora_mop.arr))
+	{
+		strncpy((char*)ora_mop.arr, ptrStr, sizeof(ora_mop.arr));
+		ora_mop.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_mop.len = 0;
+	ora_mopZi = this->mopZi();
+}
+
+//private methode copy Oracle to Attribute
+//copys Oracle Host variables into Object attributes.
+void TRD_DAT::copyOracleToAttribute()
+{
+	ora_hcoil.arr[ora_hcoil.len] = '\0';
+	this->set_hcoil((char*) ora_hcoil.arr);
+	this->set_trdtno((short)ora_trdtno);
+	this->set_s1pos((short)ora_s1pos);
+	this->set_s1posZi((short)ora_s1posZi);
+	this->set_s2pos((short)ora_s2pos);
+	this->set_s2posZi((short)ora_s2posZi);
+	this->set_s3pos((short)ora_s3pos);
+	this->set_s3posZi((short)ora_s3posZi);
+	this->set_s4pos((short)ora_s4pos);
+	this->set_s4posZi((short)ora_s4posZi);
+	this->set_s5pos((short)ora_s5pos);
+	this->set_s5posZi((short)ora_s5posZi);
+	ora_stime.arr[ora_stime.len] = '\0';
+	this->set_stime((char*) ora_stime.arr);
+	this->set_stimeZi((short)ora_stimeZi);
+	this->set_trdt_rf1((short)ora_trdt_rf1);
+	this->set_trdt_rf1Zi((short)ora_trdt_rf1Zi);
+	this->set_trdt_rf2((short)ora_trdt_rf2);
+	this->set_trdt_rf2Zi((short)ora_trdt_rf2Zi);
+	this->set_trdt_rf3((short)ora_trdt_rf3);
+	this->set_trdt_rf3Zi((short)ora_trdt_rf3Zi);
+	this->set_trdt_rf4((short)ora_trdt_rf4);
+	this->set_trdt_rf4Zi((short)ora_trdt_rf4Zi);
+	this->set_trdt_rf5((short)ora_trdt_rf5);
+	this->set_trdt_rf5Zi((short)ora_trdt_rf5Zi);
+	this->set_trdt_ten1((short)ora_trdt_ten1);
+	this->set_trdt_ten1Zi((short)ora_trdt_ten1Zi);
+	this->set_trdt_ten2((short)ora_trdt_ten2);
+	this->set_trdt_ten2Zi((short)ora_trdt_ten2Zi);
+	this->set_trdt_ten3((short)ora_trdt_ten3);
+	this->set_trdt_ten3Zi((short)ora_trdt_ten3Zi);
+	this->set_trdt_ten4((short)ora_trdt_ten4);
+	this->set_trdt_ten4Zi((short)ora_trdt_ten4Zi);
+	this->set_trdt_ten5((short)ora_trdt_ten5);
+	this->set_trdt_ten5Zi((short)ora_trdt_ten5Zi);
+	this->set_trdt_ten6((short)ora_trdt_ten6);
+	this->set_trdt_ten6Zi((short)ora_trdt_ten6Zi);
+	this->set_trdt_h1((short)ora_trdt_h1);
+	this->set_trdt_h1Zi((short)ora_trdt_h1Zi);
+	this->set_trdt_h2((short)ora_trdt_h2);
+	this->set_trdt_h2Zi((short)ora_trdt_h2Zi);
+	this->set_trdt_h3((short)ora_trdt_h3);
+	this->set_trdt_h3Zi((short)ora_trdt_h3Zi);
+	this->set_trdt_h4((short)ora_trdt_h4);
+	this->set_trdt_h4Zi((short)ora_trdt_h4Zi);
+	this->set_trdt_vs1((short)ora_trdt_vs1);
+	this->set_trdt_vs1Zi((short)ora_trdt_vs1Zi);
+	this->set_trdt_vs2((short)ora_trdt_vs2);
+	this->set_trdt_vs2Zi((short)ora_trdt_vs2Zi);
+	this->set_trdt_vs3((short)ora_trdt_vs3);
+	this->set_trdt_vs3Zi((short)ora_trdt_vs3Zi);
+	this->set_trdt_vs4((short)ora_trdt_vs4);
+	this->set_trdt_vs4Zi((short)ora_trdt_vs4Zi);
+	this->set_trdt_vs5((short)ora_trdt_vs5);
+	this->set_trdt_vs5Zi((short)ora_trdt_vs5Zi);
+	this->set_trdt_cur1((short)ora_trdt_cur1);
+	this->set_trdt_cur1Zi((short)ora_trdt_cur1Zi);
+	this->set_trdt_cur2((short)ora_trdt_cur2);
+	this->set_trdt_cur2Zi((short)ora_trdt_cur2Zi);
+	this->set_trdt_cur3((short)ora_trdt_cur3);
+	this->set_trdt_cur3Zi((short)ora_trdt_cur3Zi);
+	this->set_trdt_cur4((short)ora_trdt_cur4);
+	this->set_trdt_cur4Zi((short)ora_trdt_cur4Zi);
+	this->set_trdt_cur5((short)ora_trdt_cur5);
+	this->set_trdt_cur5Zi((short)ora_trdt_cur5Zi);
+	this->set_trdt_wsben1((short)ora_trdt_wsben1);
+	this->set_trdt_wsben1Zi((short)ora_trdt_wsben1Zi);
+	this->set_trdt_wsben2((short)ora_trdt_wsben2);
+	this->set_trdt_wsben2Zi((short)ora_trdt_wsben2Zi);
+	this->set_trdt_wsben3((short)ora_trdt_wsben3);
+	this->set_trdt_wsben3Zi((short)ora_trdt_wsben3Zi);
+	this->set_trdt_wsben4((short)ora_trdt_wsben4);
+	this->set_trdt_wsben4Zi((short)ora_trdt_wsben4Zi);
+	this->set_trdt_wsben5((short)ora_trdt_wsben5);
+	this->set_trdt_wsben5Zi((short)ora_trdt_wsben5Zi);
+	this->set_trdt_imrben1((short)ora_trdt_imrben1);
+	this->set_trdt_imrben1Zi((short)ora_trdt_imrben1Zi);
+	this->set_trdt_imrben2((short)ora_trdt_imrben2);
+	this->set_trdt_imrben2Zi((short)ora_trdt_imrben2Zi);
+	this->set_trdt_imrben3((short)ora_trdt_imrben3);
+	this->set_trdt_imrben3Zi((short)ora_trdt_imrben3Zi);
+	this->set_trdt_imrben4((short)ora_trdt_imrben4);
+	this->set_trdt_imrben4Zi((short)ora_trdt_imrben4Zi);
+	this->set_trdt_imrben5((short)ora_trdt_imrben5);
+	this->set_trdt_imrben5Zi((short)ora_trdt_imrben5Zi);
+	ora_toc.arr[ora_toc.len] = '\0';
+	this->set_toc((char*) ora_toc.arr);
+	this->set_tocZi((short)ora_tocZi);
+	ora_tom.arr[ora_tom.len] = '\0';
+	this->set_tom((char*) ora_tom.arr);
+	this->set_tomZi((short)ora_tomZi);
+	ora_mop.arr[ora_mop.len] = '\0';
+	this->set_mop((char*) ora_mop.arr);
+	this->set_mopZi((short)ora_mopZi);
+}
+
+//private methode copy Key to host
+//copys Object attributes into Oralce Key variables.
+void TRD_DAT::copyKeyToHost()
+{
+	char* ptrStr;
+	ptrStr = this->k_hcoil();
+	if( strlen(ptrStr)< sizeof(k_ora_hcoil.arr))
+	{
+		strncpy((char*)k_ora_hcoil.arr, ptrStr, sizeof(k_ora_hcoil.arr));
+		k_ora_hcoil.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		k_ora_hcoil.len = 0;
+	k_ora_trdtno = this->k_trdtno();
+}
+
+//private methode copy Host to Key
+// copys Oracle Host Key variables into Object Key attributes.
+void TRD_DAT::copyHostToKey()
+{
+	ora_hcoil.arr[ora_hcoil.len] = '\0';
+	this->set_k_hcoil((char*) ora_hcoil.arr);
+	this->set_k_trdtno((short)ora_trdtno);
+}
+
+//private methode log Oracle message information
+void TRD_DAT::logOraMessageInfo()
+{
+	LOG d("TRD_DAT::logOraMessageInfo()");
+	sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+	oraca.orastxt.orastxtc[oraca.orastxt.orastxtl] = '\0';
+	oraca.orasfnm.orasfnmc[oraca.orasfnm.orasfnml] = '\0';
+	
+	//* negating a error code submitted perhaps positively.
+	if (sqlca.sqlcode > 0) sqlca.sqlcode *= -1;
+	
+	//* Distribute fault text, SQL statement and file in the Debug System.
+	d << "ORA-Error: "<< sqlca.sqlerrm.sqlerrmc; d.Info();
+	d << "OracaText: "<< oraca.orastxt.orastxtc; d.Info();
+	d << "in line " << oraca.oraslnr << " in file " << oraca.orasfnm.orasfnmc; d.Info();
+}
+
+//this methode stores the unique key attributes
+void TRD_DAT::setPrimKey(char* arg1,short arg2)
+{
+	strncpy( (char*)c_k_hcoil, arg1, sizeof(c_k_hcoil));
+	c_k_hcoil[sizeof(c_k_hcoil)-1] = '\0';
+	s_k_trdtno = arg2;
+}
+
+//this methode stores the unique key attributes
+void TRD_DAT::initInsertKeys(char* arg1,short arg2)
+{
+	setPrimKey(arg1,arg2);
+	strncpy( (char*)c_hcoil, arg1, sizeof(c_hcoil));
+	c_hcoil[sizeof(c_hcoil)-1] = '\0';
+	s_trdtno = arg2;
+}
+
+//this methode set the unique key attributes from the DB Record Attributes
+void TRD_DAT::setKeysFromRecord()
+{
+	set_k_hcoil( hcoil() );
+	set_k_trdtno( trdtno() );
+}
+
+//			         
+//O P E R A T O R  + 
+//===================
+//                   
+TRD_DAT TRD_DAT::operator+(const TRD_DAT &inst) const
+{
+	TRD_DAT ptrTRD_DAT(*this);
+//----------------------------------------------------------
+	ptrTRD_DAT.set_hcoil(inst.hcoil());
+//----------------------------------------------------------
+	ptrTRD_DAT.set_trdtno(inst.trdtno());
+//----------------------------------------------------------
+	if(inst.s1posZi() != -1)
+	{
+		ptrTRD_DAT.set_s1pos(inst.s1pos());
+		ptrTRD_DAT.set_s1posZi(inst.s1posZi());
+	}
+//----------------------------------------------------------
+	if(inst.s2posZi() != -1)
+	{
+		ptrTRD_DAT.set_s2pos(inst.s2pos());
+		ptrTRD_DAT.set_s2posZi(inst.s2posZi());
+	}
+//----------------------------------------------------------
+	if(inst.s3posZi() != -1)
+	{
+		ptrTRD_DAT.set_s3pos(inst.s3pos());
+		ptrTRD_DAT.set_s3posZi(inst.s3posZi());
+	}
+//----------------------------------------------------------
+	if(inst.s4posZi() != -1)
+	{
+		ptrTRD_DAT.set_s4pos(inst.s4pos());
+		ptrTRD_DAT.set_s4posZi(inst.s4posZi());
+	}
+//----------------------------------------------------------
+	if(inst.s5posZi() != -1)
+	{
+		ptrTRD_DAT.set_s5pos(inst.s5pos());
+		ptrTRD_DAT.set_s5posZi(inst.s5posZi());
+	}
+//----------------------------------------------------------
+	if(inst.stimeZi() != -1)
+	{
+		ptrTRD_DAT.set_stime(inst.stime());
+		ptrTRD_DAT.set_stimeZi(inst.stimeZi());
+	}
+//----------------------------------------------------------
+	if(inst.trdt_rf1Zi() != -1)
+	{
+		ptrTRD_DAT.set_trdt_rf1(inst.trdt_rf1());
+		ptrTRD_DAT.set_trdt_rf1Zi(inst.trdt_rf1Zi());
+	}
+//----------------------------------------------------------
+	if(inst.trdt_rf2Zi() != -1)
+	{
+		ptrTRD_DAT.set_trdt_rf2(inst.trdt_rf2());
+		ptrTRD_DAT.set_trdt_rf2Zi(inst.trdt_rf2Zi());
+	}
+//----------------------------------------------------------
+	if(inst.trdt_rf3Zi() != -1)
+	{
+		ptrTRD_DAT.set_trdt_rf3(inst.trdt_rf3());
+		ptrTRD_DAT.set_trdt_rf3Zi(inst.trdt_rf3Zi());
+	}
+//----------------------------------------------------------
+	if(inst.trdt_rf4Zi() != -1)
+	{
+		ptrTRD_DAT.set_trdt_rf4(inst.trdt_rf4());
+		ptrTRD_DAT.set_trdt_rf4Zi(inst.trdt_rf4Zi());
+	}
+//----------------------------------------------------------
+	if(inst.trdt_rf5Zi() != -1)
+	{
+		ptrTRD_DAT.set_trdt_rf5(inst.trdt_rf5());
+		ptrTRD_DAT.set_trdt_rf5Zi(inst.trdt_rf5Zi());
+	}
+//----------------------------------------------------------
+	if(inst.trdt_ten1Zi() != -1)
+	{
+		ptrTRD_DAT.set_trdt_ten1(inst.trdt_ten1());
+		ptrTRD_DAT.set_trdt_ten1Zi(inst.trdt_ten1Zi());
+	}
+//----------------------------------------------------------
+	if(inst.trdt_ten2Zi() != -1)
+	{
+		ptrTRD_DAT.set_trdt_ten2(inst.trdt_ten2());
+		ptrTRD_DAT.set_trdt_ten2Zi(inst.trdt_ten2Zi());
+	}
+//----------------------------------------------------------
+	if(inst.trdt_ten3Zi() != -1)
+	{
+		ptrTRD_DAT.set_trdt_ten3(inst.trdt_ten3());
+		ptrTRD_DAT.set_trdt_ten3Zi(inst.trdt_ten3Zi());
+	}
+//----------------------------------------------------------
+	if(inst.trdt_ten4Zi() != -1)
+	{
+		ptrTRD_DAT.set_trdt_ten4(inst.trdt_ten4());
+		ptrTRD_DAT.set_trdt_ten4Zi(inst.trdt_ten4Zi());
+	}
+//----------------------------------------------------------
+	if(inst.trdt_ten5Zi() != -1)
+	{
+		ptrTRD_DAT.set_trdt_ten5(inst.trdt_ten5());
+		ptrTRD_DAT.set_trdt_ten5Zi(inst.trdt_ten5Zi());
+	}
+//----------------------------------------------------------
+	if(inst.trdt_ten6Zi() != -1)
+	{
+		ptrTRD_DAT.set_trdt_ten6(inst.trdt_ten6());
+		ptrTRD_DAT.set_trdt_ten6Zi(inst.trdt_ten6Zi());
+	}
+//----------------------------------------------------------
+	if(inst.trdt_h1Zi() != -1)
+	{
+		ptrTRD_DAT.set_trdt_h1(inst.trdt_h1());
+		ptrTRD_DAT.set_trdt_h1Zi(inst.trdt_h1Zi());
+	}
+//----------------------------------------------------------
+	if(inst.trdt_h2Zi() != -1)
+	{
+		ptrTRD_DAT.set_trdt_h2(inst.trdt_h2());
+		ptrTRD_DAT.set_trdt_h2Zi(inst.trdt_h2Zi());
+	}
+//----------------------------------------------------------
+	if(inst.trdt_h3Zi() != -1)
+	{
+		ptrTRD_DAT.set_trdt_h3(inst.trdt_h3());
+		ptrTRD_DAT.set_trdt_h3Zi(inst.trdt_h3Zi());
+	}
+//----------------------------------------------------------
+	if(inst.trdt_h4Zi() != -1)
+	{
+		ptrTRD_DAT.set_trdt_h4(inst.trdt_h4());
+		ptrTRD_DAT.set_trdt_h4Zi(inst.trdt_h4Zi());
+	}
+//----------------------------------------------------------
+	if(inst.trdt_vs1Zi() != -1)
+	{
+		ptrTRD_DAT.set_trdt_vs1(inst.trdt_vs1());
+		ptrTRD_DAT.set_trdt_vs1Zi(inst.trdt_vs1Zi());
+	}
+//----------------------------------------------------------
+	if(inst.trdt_vs2Zi() != -1)
+	{
+		ptrTRD_DAT.set_trdt_vs2(inst.trdt_vs2());
+		ptrTRD_DAT.set_trdt_vs2Zi(inst.trdt_vs2Zi());
+	}
+//----------------------------------------------------------
+	if(inst.trdt_vs3Zi() != -1)
+	{
+		ptrTRD_DAT.set_trdt_vs3(inst.trdt_vs3());
+		ptrTRD_DAT.set_trdt_vs3Zi(inst.trdt_vs3Zi());
+	}
+//----------------------------------------------------------
+	if(inst.trdt_vs4Zi() != -1)
+	{
+		ptrTRD_DAT.set_trdt_vs4(inst.trdt_vs4());
+		ptrTRD_DAT.set_trdt_vs4Zi(inst.trdt_vs4Zi());
+	}
+//----------------------------------------------------------
+	if(inst.trdt_vs5Zi() != -1)
+	{
+		ptrTRD_DAT.set_trdt_vs5(inst.trdt_vs5());
+		ptrTRD_DAT.set_trdt_vs5Zi(inst.trdt_vs5Zi());
+	}
+//----------------------------------------------------------
+	if(inst.trdt_cur1Zi() != -1)
+	{
+		ptrTRD_DAT.set_trdt_cur1(inst.trdt_cur1());
+		ptrTRD_DAT.set_trdt_cur1Zi(inst.trdt_cur1Zi());
+	}
+//----------------------------------------------------------
+	if(inst.trdt_cur2Zi() != -1)
+	{
+		ptrTRD_DAT.set_trdt_cur2(inst.trdt_cur2());
+		ptrTRD_DAT.set_trdt_cur2Zi(inst.trdt_cur2Zi());
+	}
+//----------------------------------------------------------
+	if(inst.trdt_cur3Zi() != -1)
+	{
+		ptrTRD_DAT.set_trdt_cur3(inst.trdt_cur3());
+		ptrTRD_DAT.set_trdt_cur3Zi(inst.trdt_cur3Zi());
+	}
+//----------------------------------------------------------
+	if(inst.trdt_cur4Zi() != -1)
+	{
+		ptrTRD_DAT.set_trdt_cur4(inst.trdt_cur4());
+		ptrTRD_DAT.set_trdt_cur4Zi(inst.trdt_cur4Zi());
+	}
+//----------------------------------------------------------
+	if(inst.trdt_cur5Zi() != -1)
+	{
+		ptrTRD_DAT.set_trdt_cur5(inst.trdt_cur5());
+		ptrTRD_DAT.set_trdt_cur5Zi(inst.trdt_cur5Zi());
+	}
+//----------------------------------------------------------
+	if(inst.trdt_wsben1Zi() != -1)
+	{
+		ptrTRD_DAT.set_trdt_wsben1(inst.trdt_wsben1());
+		ptrTRD_DAT.set_trdt_wsben1Zi(inst.trdt_wsben1Zi());
+	}
+//----------------------------------------------------------
+	if(inst.trdt_wsben2Zi() != -1)
+	{
+		ptrTRD_DAT.set_trdt_wsben2(inst.trdt_wsben2());
+		ptrTRD_DAT.set_trdt_wsben2Zi(inst.trdt_wsben2Zi());
+	}
+//----------------------------------------------------------
+	if(inst.trdt_wsben3Zi() != -1)
+	{
+		ptrTRD_DAT.set_trdt_wsben3(inst.trdt_wsben3());
+		ptrTRD_DAT.set_trdt_wsben3Zi(inst.trdt_wsben3Zi());
+	}
+//----------------------------------------------------------
+	if(inst.trdt_wsben4Zi() != -1)
+	{
+		ptrTRD_DAT.set_trdt_wsben4(inst.trdt_wsben4());
+		ptrTRD_DAT.set_trdt_wsben4Zi(inst.trdt_wsben4Zi());
+	}
+//----------------------------------------------------------
+	if(inst.trdt_wsben5Zi() != -1)
+	{
+		ptrTRD_DAT.set_trdt_wsben5(inst.trdt_wsben5());
+		ptrTRD_DAT.set_trdt_wsben5Zi(inst.trdt_wsben5Zi());
+	}
+//----------------------------------------------------------
+	if(inst.trdt_imrben1Zi() != -1)
+	{
+		ptrTRD_DAT.set_trdt_imrben1(inst.trdt_imrben1());
+		ptrTRD_DAT.set_trdt_imrben1Zi(inst.trdt_imrben1Zi());
+	}
+//----------------------------------------------------------
+	if(inst.trdt_imrben2Zi() != -1)
+	{
+		ptrTRD_DAT.set_trdt_imrben2(inst.trdt_imrben2());
+		ptrTRD_DAT.set_trdt_imrben2Zi(inst.trdt_imrben2Zi());
+	}
+//----------------------------------------------------------
+	if(inst.trdt_imrben3Zi() != -1)
+	{
+		ptrTRD_DAT.set_trdt_imrben3(inst.trdt_imrben3());
+		ptrTRD_DAT.set_trdt_imrben3Zi(inst.trdt_imrben3Zi());
+	}
+//----------------------------------------------------------
+	if(inst.trdt_imrben4Zi() != -1)
+	{
+		ptrTRD_DAT.set_trdt_imrben4(inst.trdt_imrben4());
+		ptrTRD_DAT.set_trdt_imrben4Zi(inst.trdt_imrben4Zi());
+	}
+//----------------------------------------------------------
+	if(inst.trdt_imrben5Zi() != -1)
+	{
+		ptrTRD_DAT.set_trdt_imrben5(inst.trdt_imrben5());
+		ptrTRD_DAT.set_trdt_imrben5Zi(inst.trdt_imrben5Zi());
+	}
+//----------------------------------------------------------
+	if(inst.tocZi() != -1)
+	{
+		ptrTRD_DAT.set_toc(inst.toc());
+		ptrTRD_DAT.set_tocZi(inst.tocZi());
+	}
+//----------------------------------------------------------
+	if(inst.tomZi() != -1)
+	{
+		ptrTRD_DAT.set_tom(inst.tom());
+		ptrTRD_DAT.set_tomZi(inst.tomZi());
+	}
+//----------------------------------------------------------
+	if(inst.mopZi() != -1)
+	{
+		ptrTRD_DAT.set_mop(inst.mop());
+		ptrTRD_DAT.set_mopZi(inst.mopZi());
+	}
+	return( ptrTRD_DAT );
+}
+
+//			         
+//O P E R A T O R  = 
+//===================
+//                   
+const TRD_DAT& TRD_DAT::operator=(const TRD_DAT &inst)
+{
+//----------------------------------------------------------
+	this->set_hcoil(inst.hcoil());
+//----------------------------------------------------------
+	this->set_trdtno(inst.trdtno());
+//----------------------------------------------------------
+	this->set_s1pos(inst.s1pos());
+	this->set_s1posZi(inst.s1posZi());
+//----------------------------------------------------------
+	this->set_s2pos(inst.s2pos());
+	this->set_s2posZi(inst.s2posZi());
+//----------------------------------------------------------
+	this->set_s3pos(inst.s3pos());
+	this->set_s3posZi(inst.s3posZi());
+//----------------------------------------------------------
+	this->set_s4pos(inst.s4pos());
+	this->set_s4posZi(inst.s4posZi());
+//----------------------------------------------------------
+	this->set_s5pos(inst.s5pos());
+	this->set_s5posZi(inst.s5posZi());
+//----------------------------------------------------------
+	this->set_stime(inst.stime());
+	this->set_stimeZi(inst.stimeZi());
+//----------------------------------------------------------
+	this->set_trdt_rf1(inst.trdt_rf1());
+	this->set_trdt_rf1Zi(inst.trdt_rf1Zi());
+//----------------------------------------------------------
+	this->set_trdt_rf2(inst.trdt_rf2());
+	this->set_trdt_rf2Zi(inst.trdt_rf2Zi());
+//----------------------------------------------------------
+	this->set_trdt_rf3(inst.trdt_rf3());
+	this->set_trdt_rf3Zi(inst.trdt_rf3Zi());
+//----------------------------------------------------------
+	this->set_trdt_rf4(inst.trdt_rf4());
+	this->set_trdt_rf4Zi(inst.trdt_rf4Zi());
+//----------------------------------------------------------
+	this->set_trdt_rf5(inst.trdt_rf5());
+	this->set_trdt_rf5Zi(inst.trdt_rf5Zi());
+//----------------------------------------------------------
+	this->set_trdt_ten1(inst.trdt_ten1());
+	this->set_trdt_ten1Zi(inst.trdt_ten1Zi());
+//----------------------------------------------------------
+	this->set_trdt_ten2(inst.trdt_ten2());
+	this->set_trdt_ten2Zi(inst.trdt_ten2Zi());
+//----------------------------------------------------------
+	this->set_trdt_ten3(inst.trdt_ten3());
+	this->set_trdt_ten3Zi(inst.trdt_ten3Zi());
+//----------------------------------------------------------
+	this->set_trdt_ten4(inst.trdt_ten4());
+	this->set_trdt_ten4Zi(inst.trdt_ten4Zi());
+//----------------------------------------------------------
+	this->set_trdt_ten5(inst.trdt_ten5());
+	this->set_trdt_ten5Zi(inst.trdt_ten5Zi());
+//----------------------------------------------------------
+	this->set_trdt_ten6(inst.trdt_ten6());
+	this->set_trdt_ten6Zi(inst.trdt_ten6Zi());
+//----------------------------------------------------------
+	this->set_trdt_h1(inst.trdt_h1());
+	this->set_trdt_h1Zi(inst.trdt_h1Zi());
+//----------------------------------------------------------
+	this->set_trdt_h2(inst.trdt_h2());
+	this->set_trdt_h2Zi(inst.trdt_h2Zi());
+//----------------------------------------------------------
+	this->set_trdt_h3(inst.trdt_h3());
+	this->set_trdt_h3Zi(inst.trdt_h3Zi());
+//----------------------------------------------------------
+	this->set_trdt_h4(inst.trdt_h4());
+	this->set_trdt_h4Zi(inst.trdt_h4Zi());
+//----------------------------------------------------------
+	this->set_trdt_vs1(inst.trdt_vs1());
+	this->set_trdt_vs1Zi(inst.trdt_vs1Zi());
+//----------------------------------------------------------
+	this->set_trdt_vs2(inst.trdt_vs2());
+	this->set_trdt_vs2Zi(inst.trdt_vs2Zi());
+//----------------------------------------------------------
+	this->set_trdt_vs3(inst.trdt_vs3());
+	this->set_trdt_vs3Zi(inst.trdt_vs3Zi());
+//----------------------------------------------------------
+	this->set_trdt_vs4(inst.trdt_vs4());
+	this->set_trdt_vs4Zi(inst.trdt_vs4Zi());
+//----------------------------------------------------------
+	this->set_trdt_vs5(inst.trdt_vs5());
+	this->set_trdt_vs5Zi(inst.trdt_vs5Zi());
+//----------------------------------------------------------
+	this->set_trdt_cur1(inst.trdt_cur1());
+	this->set_trdt_cur1Zi(inst.trdt_cur1Zi());
+//----------------------------------------------------------
+	this->set_trdt_cur2(inst.trdt_cur2());
+	this->set_trdt_cur2Zi(inst.trdt_cur2Zi());
+//----------------------------------------------------------
+	this->set_trdt_cur3(inst.trdt_cur3());
+	this->set_trdt_cur3Zi(inst.trdt_cur3Zi());
+//----------------------------------------------------------
+	this->set_trdt_cur4(inst.trdt_cur4());
+	this->set_trdt_cur4Zi(inst.trdt_cur4Zi());
+//----------------------------------------------------------
+	this->set_trdt_cur5(inst.trdt_cur5());
+	this->set_trdt_cur5Zi(inst.trdt_cur5Zi());
+//----------------------------------------------------------
+	this->set_trdt_wsben1(inst.trdt_wsben1());
+	this->set_trdt_wsben1Zi(inst.trdt_wsben1Zi());
+//----------------------------------------------------------
+	this->set_trdt_wsben2(inst.trdt_wsben2());
+	this->set_trdt_wsben2Zi(inst.trdt_wsben2Zi());
+//----------------------------------------------------------
+	this->set_trdt_wsben3(inst.trdt_wsben3());
+	this->set_trdt_wsben3Zi(inst.trdt_wsben3Zi());
+//----------------------------------------------------------
+	this->set_trdt_wsben4(inst.trdt_wsben4());
+	this->set_trdt_wsben4Zi(inst.trdt_wsben4Zi());
+//----------------------------------------------------------
+	this->set_trdt_wsben5(inst.trdt_wsben5());
+	this->set_trdt_wsben5Zi(inst.trdt_wsben5Zi());
+//----------------------------------------------------------
+	this->set_trdt_imrben1(inst.trdt_imrben1());
+	this->set_trdt_imrben1Zi(inst.trdt_imrben1Zi());
+//----------------------------------------------------------
+	this->set_trdt_imrben2(inst.trdt_imrben2());
+	this->set_trdt_imrben2Zi(inst.trdt_imrben2Zi());
+//----------------------------------------------------------
+	this->set_trdt_imrben3(inst.trdt_imrben3());
+	this->set_trdt_imrben3Zi(inst.trdt_imrben3Zi());
+//----------------------------------------------------------
+	this->set_trdt_imrben4(inst.trdt_imrben4());
+	this->set_trdt_imrben4Zi(inst.trdt_imrben4Zi());
+//----------------------------------------------------------
+	this->set_trdt_imrben5(inst.trdt_imrben5());
+	this->set_trdt_imrben5Zi(inst.trdt_imrben5Zi());
+//----------------------------------------------------------
+	this->set_toc(inst.toc());
+	this->set_tocZi(inst.tocZi());
+//----------------------------------------------------------
+	this->set_tom(inst.tom());
+	this->set_tomZi(inst.tomZi());
+//----------------------------------------------------------
+	this->set_mop(inst.mop());
+	this->set_mopZi(inst.mopZi());
+	return(*this);
+}
+

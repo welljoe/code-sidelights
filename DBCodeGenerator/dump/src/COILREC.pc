@@ -1,0 +1,858 @@
+/* *******************************************************************/
+/* *   File               :    COILREC.pc
+/* *   Short Description  :    ORACLE DATABASE ACCESS
+/* * 		                   COIL MANAGE TABLE
+/* *   Author             :    DB CODE Generator
+/* *   Created Date       :    13.06.2013
+/* *   Tech.Support       :    LiuWeiZhao. email:welljoe@hotmail.com 
+/* *******************************************************************/
+/* *   Copyright (c)  SGAI AI 2009   All Rights Reserved
+/* *******************************************************************/
+
+#include "LOG.h"
+#include "COILREC.h"
+//
+// Declare ORACLE Host Variables
+//
+
+#define SQLCA_STORAGE_CLASS static
+#define ORACA_STORAGE_CLASS static
+EXEC SQL INCLUDE sqlca;
+EXEC SQL INCLUDE oraca;
+
+#define OPENED 1
+#define CLOSED 2
+EXEC SQL BEGIN DECLARE SECTION;
+/* ****************************************************************************** */
+/*                                                                                */
+/*                               define Oracle                                    */
+/*                               Host Variables                                   */
+/*                                                          .                     */
+/*                                                                                */
+/* ****************************************************************************** */
+
+static VARCHAR	dynstr[16000];
+static long		rowCnt;       
+static long		cuFl;         
+//Unit[-]:Product coil number.Limit:[-,-]
+static VARCHAR  ora_pcoil[17];
+//Unit[-]:Hot coil number.Limit:[-,-]
+static VARCHAR  ora_hcoil[17];
+//Unit[-]:Act Value Flag.Limit:[-,-]
+static short    ora_actflag;
+static short    ora_actflagZi;
+//Unit[-]:Setup Value Flag.Limit:[-,-]
+static short    ora_septflag;
+static short    ora_septflagZi;
+//Unit[-]:Shape Value Flag.Limit:[-,-]
+static short    ora_shapflag;
+static short    ora_shapflagZi;
+//Unit[-]:Edrop Value Flag.Limit:[-,-]
+static short    ora_edropflag;
+static short    ora_edropflagZi;
+//Unit[-]:Static Value Flag.Limit:[-,-]
+static short    ora_stadataflag;
+static short    ora_stadataflagZi;
+//Unit[-]:Tech Value Flag.Limit:[-,-]
+static short    ora_techdataflag;
+static short    ora_techdataflagZi;
+//Unit[-]: -,-]
+static VARCHAR  ora_toc[15];
+static short    ora_tocZi;
+//Unit[-]: -,-]
+static VARCHAR  ora_tom[15];
+static short    ora_tomZi;
+//Unit[-]: -,-]
+static VARCHAR  ora_mop[121];
+static short    ora_mopZi;
+// Host arguments for Primary key
+static VARCHAR  k_ora_pcoil[17];   // Unit[-]:Product coil number.Limit:[-,-]
+static VARCHAR  k_ora_hcoil[17];   // Unit[-]:Hot coil number.Limit:[-,-]
+
+EXEC SQL END DECLARE SECTION;   
+             
+// 				             
+//C O N S T R U C T O R S    
+//=======================    
+//                           
+COILREC::COILREC()
+{
+	initial();                                             
+}
+
+//					
+//C O P Y  -  C O N S T R U C T O R 
+//==================================
+COILREC::COILREC(const COILREC &inst)
+{
+//----------------------------------------------------------
+	this->set_pcoil(inst.pcoil());
+//----------------------------------------------------------
+	this->set_hcoil(inst.hcoil());
+//----------------------------------------------------------
+	this->set_actflag(inst.actflag());
+	this->set_actflagZi(inst.actflagZi());
+//----------------------------------------------------------
+	this->set_septflag(inst.septflag());
+	this->set_septflagZi(inst.septflagZi());
+//----------------------------------------------------------
+	this->set_shapflag(inst.shapflag());
+	this->set_shapflagZi(inst.shapflagZi());
+//----------------------------------------------------------
+	this->set_edropflag(inst.edropflag());
+	this->set_edropflagZi(inst.edropflagZi());
+//----------------------------------------------------------
+	this->set_stadataflag(inst.stadataflag());
+	this->set_stadataflagZi(inst.stadataflagZi());
+//----------------------------------------------------------
+	this->set_techdataflag(inst.techdataflag());
+	this->set_techdataflagZi(inst.techdataflagZi());
+//----------------------------------------------------------
+	this->set_toc(inst.toc());
+	this->set_tocZi(inst.tocZi());
+//----------------------------------------------------------
+	this->set_tom(inst.tom());
+	this->set_tomZi(inst.tomZi());
+//----------------------------------------------------------
+	this->set_mop(inst.mop());
+	this->set_mopZi(inst.mopZi());
+}
+
+//					
+//C O N S T R U C T O R -W I T H P A R A M E T E R S
+//===================================================
+//					
+COILREC::COILREC(char* arg1,char* arg2)
+{
+	initial();					               
+	setPrimKey (arg1,arg2);    
+	//read DB record                           
+	dbAccess = true;                           
+	dbMessage = readDB();                      
+	if ( dbMessage != NULL ) dbAccess = false; 
+}
+
+//D E S T R U C T O R S  
+//=======================
+//                       
+COILREC::~COILREC()
+{
+}
+
+//initialise all member variables
+void COILREC::initial()
+{
+	set_pcoil("");
+	set_hcoil("");
+	set_actflag(0);
+	set_actflagZi(-1);
+	set_septflag(0);
+	set_septflagZi(-1);
+	set_shapflag(0);
+	set_shapflagZi(-1);
+	set_edropflag(0);
+	set_edropflagZi(-1);
+	set_stadataflag(0);
+	set_stadataflagZi(-1);
+	set_techdataflag(0);
+	set_techdataflagZi(-1);
+	set_toc("");
+	set_tocZi(-1);
+	set_tom("");
+	set_tomZi(-1);
+	set_mop("");
+	set_mopZi(-1);
+	//initialies Primary key members
+	set_k_pcoil("");
+	set_k_hcoil("");
+// Initial Oracle Options
+	oraca.oradbgf  = 1; // gather debug informations       
+	oraca.oracchf  = 1; // gather cursor cache informations
+	oraca.orahchf  = 1; // check heap                      
+	oraca.orastxtf = 3; // always save last sql-statement  
+	                                                       
+	EXEC ORACLE OPTION (ORACA=YES);                        
+	EXEC ORACLE OPTION (HOLD_CURSOR=YES);                  
+	EXEC ORACLE OPTION (RELEASE_CURSOR=NO);                
+	EXEC ORACLE OPTION (MAXOPENCURSORS=50);                
+	pCatch = CatchDbaxError::instance();                   
+	                                                       
+}
+
+//read a single entry from DB.
+char* COILREC::readDB()
+{
+	//
+	//copy the host variables (k_...) to Oracle Host Keys (k_ora_..)
+	//
+		copyKeyToHost();
+	//
+	// Do SELECT
+	//
+	EXEC SQL SELECT 
+		pcoil,
+		hcoil,
+		actflag,
+		septflag,
+		shapflag,
+		edropflag,
+		stadataflag,
+		techdataflag,
+		TO_CHAR(toc , 'YYYYMMDDHH24MISS'),
+		TO_CHAR(tom , 'YYYYMMDDHH24MISS'),
+		mop
+	INTO
+		:ora_pcoil,
+		:ora_hcoil,
+		:ora_actflag:ora_actflagZi,
+		:ora_septflag:ora_septflagZi,
+		:ora_shapflag:ora_shapflagZi,
+		:ora_edropflag:ora_edropflagZi,
+		:ora_stadataflag:ora_stadataflagZi,
+		:ora_techdataflag:ora_techdataflagZi,
+		:ora_toc:ora_tocZi,
+		:ora_tom:ora_tomZi,
+		:ora_mop:ora_mopZi
+	FROM COILREC
+	WHERE
+				pcoil           = :k_ora_pcoil AND 
+				hcoil           = :k_ora_hcoil ;
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	//
+	// copy host variables into Class attributes
+	//
+	copyOracleToAttribute();
+	return ( NULL );
+}
+
+//updates a single entry from DB
+char* COILREC::updateDB()
+{
+	//
+	//copy the host variables (k_...) to Oracle Host Keys (k_ora_..)
+	//
+		copyKeyToHost();
+	//copy the attributes ( ...) to Oracle Hosts( ora_..)
+	//
+		copyAttributeToOracle();
+	//
+	// Do UPDATE
+	//
+	EXEC SQL UPDATE COILREC
+	SET 
+		pcoil               =:ora_pcoil,
+		hcoil               =:ora_hcoil,
+		actflag             =:ora_actflag:ora_actflagZi,
+		septflag            =:ora_septflag:ora_septflagZi,
+		shapflag            =:ora_shapflag:ora_shapflagZi,
+		edropflag           =:ora_edropflag:ora_edropflagZi,
+		stadataflag         =:ora_stadataflag:ora_stadataflagZi,
+		techdataflag        =:ora_techdataflag:ora_techdataflagZi,
+		toc                 =TO_DATE( :ora_toc:ora_tocZi,'YYYYMMDDHH24MISS'),
+		tom                 =TO_DATE( :ora_tom:ora_tomZi,'YYYYMMDDHH24MISS'),
+		mop                 =:ora_mop:ora_mopZi
+	WHERE
+		pcoil           = :k_ora_pcoil AND 
+		hcoil           = :k_ora_hcoil ;
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//inserts a single entry from DB
+char* COILREC::insertDB()
+{
+	//
+	//copy the attributes ( ...) to Oracle Hosts( ora_..) 
+	//
+		copyAttributeToOracle();
+	//
+	// Do INSERT
+	//
+	EXEC SQL INSERT INTO COILREC
+	(
+		pcoil,
+		hcoil,
+		actflag,
+		septflag,
+		shapflag,
+		edropflag,
+		stadataflag,
+		techdataflag,
+		toc,
+		tom,
+		mop
+	)
+
+	VALUES
+	(
+		:ora_pcoil,
+		:ora_hcoil,
+		:ora_actflag:ora_actflagZi,
+		:ora_septflag:ora_septflagZi,
+		:ora_shapflag:ora_shapflagZi,
+		:ora_edropflag:ora_edropflagZi,
+		:ora_stadataflag:ora_stadataflagZi,
+		:ora_techdataflag:ora_techdataflagZi,
+		TO_DATE( :ora_toc:ora_tocZi,'YYYYMMDDHH24MISS'),
+		TO_DATE( :ora_tom:ora_tomZi,'YYYYMMDDHH24MISS'),
+		:ora_mop:ora_mopZi
+	);
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//this methode tries to update a DB record,when the update fails.
+char* COILREC::storeDB()
+{
+	char* ret = NULL;
+	setKeysFromRecord();
+	ret=updateDB();
+	if(ret != NULL)
+	{
+		ret=insertDB();
+		if(ret != NULL)
+		{
+			dbAccess = false;
+			return(ret);
+		}
+	}
+	return(ret);
+}
+
+//deletes a single entry from DB
+char* COILREC::deleteDB()
+{
+//
+//copy the host variables (k_...) to Oracle Host Keys (k_ora_..)
+//
+	copyKeyToHost();
+
+//
+// Do Delete 
+//
+	EXEC SQL DELETE FROM COILREC
+	WHERE
+				pcoil           = :k_ora_pcoil AND 
+				hcoil           = :k_ora_hcoil ;
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+// Executes the SQL DELETE with a where clause
+char* COILREC::deleteDB(const char* where,long* count)
+{
+	*(count) = -1L;
+// Create dynamic statement.
+//
+	strcpy((char*)dynstr.arr,"DELETE");
+	strcat((char*)dynstr.arr," FROM COILREC");
+	if ( where != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, where );
+	}
+
+	dynstr.len = strlen( (char*) dynstr.arr);
+	EXEC SQL EXECUTE IMMEDIATE :dynstr;
+	oracleSqlCode = sqlca.sqlcode;
+		oracleRowsProcessed = sqlca.sqlerrd[2];
+	if (sqlca.sqlcode == 0 )
+		*(count) = sqlca.sqlerrd[2];
+	else 
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//openSetDB data with where condition and sort order.
+char* COILREC::openSetDB(const char* where,char* order)
+{
+//
+// Create dynamic statement.
+//
+	strcpy((char*)dynstr.arr,"SELECT ");
+	strcat((char*)dynstr.arr,"pcoil,");
+	strcat((char*)dynstr.arr,"hcoil,");
+	strcat((char*)dynstr.arr,"actflag,");
+	strcat((char*)dynstr.arr,"septflag,");
+	strcat((char*)dynstr.arr,"shapflag,");
+	strcat((char*)dynstr.arr,"edropflag,");
+	strcat((char*)dynstr.arr,"stadataflag,");
+	strcat((char*)dynstr.arr,"techdataflag,");
+	strcat((char*)dynstr.arr,"TO_CHAR(toc , 'YYYYMMDDHH24MISS'),");
+	strcat((char*)dynstr.arr,"TO_CHAR(tom , 'YYYYMMDDHH24MISS'),");
+	strcat((char*)dynstr.arr,"mop");
+
+	strcat((char*)dynstr.arr," FROM COILREC ");
+	if ( where != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, where);
+	}
+	if ( order != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, order);
+	}
+
+	dynstr.len = strlen( (char*) dynstr.arr);
+	EXEC SQL PREPARE set_COILREC FROM :dynstr;
+	if (sqlca.sqlcode == 0 )
+	{
+		EXEC SQL DECLARE cu_COILREC CURSOR FOR set_COILREC;
+		if (sqlca.sqlcode == 0 )
+			EXEC SQL OPEN cu_COILREC;
+	}
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	cuFl = OPENED;
+	return ( NULL );
+}
+
+//Executes the SQL FETCH Statement .
+char* COILREC::getSetDB()
+{
+	if ( cuFl != OPENED ) return ("No open Cursor Table:Me");
+	EXEC SQL FETCH cu_COILREC INTO
+		:ora_pcoil,
+		:ora_hcoil,
+		:ora_actflag:ora_actflagZi,
+		:ora_septflag:ora_septflagZi,
+		:ora_shapflag:ora_shapflagZi,
+		:ora_edropflag:ora_edropflagZi,
+		:ora_stadataflag:ora_stadataflagZi,
+		:ora_techdataflag:ora_techdataflagZi,
+		:ora_toc:ora_tocZi,
+		:ora_tom:ora_tomZi,
+		:ora_mop:ora_mopZi;
+
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		pCatch->catchError(sqlca.sqlcode);
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		return (char*) sqlca.sqlerrm.sqlerrmc ;
+	}
+	//
+	// copy host variables into Class attributes
+	//
+	copyOracleToAttribute();
+	copyHostToKey();
+	return ( NULL );
+}
+
+//Close a Oracle Cursor
+char* COILREC::closeSetDB()
+{
+	EXEC SQL CLOSE cu_COILREC;
+	oracleSqlCode = sqlca.sqlcode;         
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		pCatch->catchError(sqlca.sqlcode);
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		return (char*) sqlca.sqlerrm.sqlerrmc ;
+	}
+	cuFl = CLOSED;
+	return ( NULL );
+}
+
+//Executes the SQL count(key) for a where clause
+char* COILREC::countDB(const char* where,long* count)
+{
+	*(count) = -1L;
+//
+// Create dynamic statement. 
+//
+	strncpy((char*)dynstr.arr,"SELECT count(pcoil)", sizeof(dynstr.arr));
+	strcat((char*)dynstr.arr," FROM COILREC");
+	if ( where != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, where );
+	}
+	dynstr.len = strlen( (char*) dynstr.arr);
+	EXEC SQL PREPARE c_COILREC FROM :dynstr;
+	
+	if (sqlca.sqlcode == 0 )
+	{
+		EXEC SQL DECLARE ct_COILREC CURSOR FOR c_COILREC;
+		if (sqlca.sqlcode == 0 )
+		{
+			EXEC SQL OPEN ct_COILREC;
+			if (sqlca.sqlcode == 0 )			{
+				EXEC SQL FETCH ct_COILREC INTO :rowCnt;
+				if (sqlca.sqlcode == 0 )
+				*(count) = rowCnt;
+			}
+			EXEC SQL CLOSE ct_COILREC;
+		}
+	}
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//private methode copy Attribute to Oracle
+//copys Object attributes into Oracle Host variables.
+void COILREC::copyAttributeToOracle()
+{
+	char* ptrStr;
+	ptrStr = this->pcoil();
+	if( strlen(ptrStr)< sizeof(ora_pcoil.arr))
+	{
+		strncpy((char*)ora_pcoil.arr, ptrStr, sizeof(ora_pcoil.arr));
+		ora_pcoil.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_pcoil.len = 0;
+	ptrStr = this->hcoil();
+	if( strlen(ptrStr)< sizeof(ora_hcoil.arr))
+	{
+		strncpy((char*)ora_hcoil.arr, ptrStr, sizeof(ora_hcoil.arr));
+		ora_hcoil.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_hcoil.len = 0;
+	ora_actflag = this->actflag();
+	ora_actflagZi = this->actflagZi();
+	ora_septflag = this->septflag();
+	ora_septflagZi = this->septflagZi();
+	ora_shapflag = this->shapflag();
+	ora_shapflagZi = this->shapflagZi();
+	ora_edropflag = this->edropflag();
+	ora_edropflagZi = this->edropflagZi();
+	ora_stadataflag = this->stadataflag();
+	ora_stadataflagZi = this->stadataflagZi();
+	ora_techdataflag = this->techdataflag();
+	ora_techdataflagZi = this->techdataflagZi();
+	ptrStr = this->toc();
+	if( strlen(ptrStr)< sizeof(ora_toc.arr))
+	{
+		strncpy((char*)ora_toc.arr, ptrStr, sizeof(ora_toc.arr));
+		ora_toc.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_toc.len = 0;
+	ora_tocZi = this->tocZi();
+	ptrStr = this->tom();
+	if( strlen(ptrStr)< sizeof(ora_tom.arr))
+	{
+		strncpy((char*)ora_tom.arr, ptrStr, sizeof(ora_tom.arr));
+		ora_tom.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_tom.len = 0;
+	ora_tomZi = this->tomZi();
+	ptrStr = this->mop();
+	if( strlen(ptrStr)< sizeof(ora_mop.arr))
+	{
+		strncpy((char*)ora_mop.arr, ptrStr, sizeof(ora_mop.arr));
+		ora_mop.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_mop.len = 0;
+	ora_mopZi = this->mopZi();
+}
+
+//private methode copy Oracle to Attribute
+//copys Oracle Host variables into Object attributes.
+void COILREC::copyOracleToAttribute()
+{
+	ora_pcoil.arr[ora_pcoil.len] = '\0';
+	this->set_pcoil((char*) ora_pcoil.arr);
+	ora_hcoil.arr[ora_hcoil.len] = '\0';
+	this->set_hcoil((char*) ora_hcoil.arr);
+	this->set_actflag((short)ora_actflag);
+	this->set_actflagZi((short)ora_actflagZi);
+	this->set_septflag((short)ora_septflag);
+	this->set_septflagZi((short)ora_septflagZi);
+	this->set_shapflag((short)ora_shapflag);
+	this->set_shapflagZi((short)ora_shapflagZi);
+	this->set_edropflag((short)ora_edropflag);
+	this->set_edropflagZi((short)ora_edropflagZi);
+	this->set_stadataflag((short)ora_stadataflag);
+	this->set_stadataflagZi((short)ora_stadataflagZi);
+	this->set_techdataflag((short)ora_techdataflag);
+	this->set_techdataflagZi((short)ora_techdataflagZi);
+	ora_toc.arr[ora_toc.len] = '\0';
+	this->set_toc((char*) ora_toc.arr);
+	this->set_tocZi((short)ora_tocZi);
+	ora_tom.arr[ora_tom.len] = '\0';
+	this->set_tom((char*) ora_tom.arr);
+	this->set_tomZi((short)ora_tomZi);
+	ora_mop.arr[ora_mop.len] = '\0';
+	this->set_mop((char*) ora_mop.arr);
+	this->set_mopZi((short)ora_mopZi);
+}
+
+//private methode copy Key to host
+//copys Object attributes into Oralce Key variables.
+void COILREC::copyKeyToHost()
+{
+	char* ptrStr;
+	ptrStr = this->k_pcoil();
+	if( strlen(ptrStr)< sizeof(k_ora_pcoil.arr))
+	{
+		strncpy((char*)k_ora_pcoil.arr, ptrStr, sizeof(k_ora_pcoil.arr));
+		k_ora_pcoil.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		k_ora_pcoil.len = 0;
+	ptrStr = this->k_hcoil();
+	if( strlen(ptrStr)< sizeof(k_ora_hcoil.arr))
+	{
+		strncpy((char*)k_ora_hcoil.arr, ptrStr, sizeof(k_ora_hcoil.arr));
+		k_ora_hcoil.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		k_ora_hcoil.len = 0;
+}
+
+//private methode copy Host to Key
+// copys Oracle Host Key variables into Object Key attributes.
+void COILREC::copyHostToKey()
+{
+	ora_pcoil.arr[ora_pcoil.len] = '\0';
+	this->set_k_pcoil((char*) ora_pcoil.arr);
+	ora_hcoil.arr[ora_hcoil.len] = '\0';
+	this->set_k_hcoil((char*) ora_hcoil.arr);
+}
+
+//private methode log Oracle message information
+void COILREC::logOraMessageInfo()
+{
+	LOG d("COILREC::logOraMessageInfo()");
+	sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+	oraca.orastxt.orastxtc[oraca.orastxt.orastxtl] = '\0';
+	oraca.orasfnm.orasfnmc[oraca.orasfnm.orasfnml] = '\0';
+	
+	//* negating a error code submitted perhaps positively.
+	if (sqlca.sqlcode > 0) sqlca.sqlcode *= -1;
+	
+	//* Distribute fault text, SQL statement and file in the Debug System.
+	d << "ORA-Error: "<< sqlca.sqlerrm.sqlerrmc; d.Info();
+	d << "OracaText: "<< oraca.orastxt.orastxtc; d.Info();
+	d << "in line " << oraca.oraslnr << " in file " << oraca.orasfnm.orasfnmc; d.Info();
+}
+
+//this methode stores the unique key attributes
+void COILREC::setPrimKey(char* arg1,char* arg2)
+{
+	strncpy( (char*)c_k_pcoil, arg1, sizeof(c_k_pcoil));
+	c_k_pcoil[sizeof(c_k_pcoil)-1] = '\0';
+	strncpy( (char*)c_k_hcoil, arg2, sizeof(c_k_hcoil));
+	c_k_hcoil[sizeof(c_k_hcoil)-1] = '\0';
+}
+
+//this methode stores the unique key attributes
+void COILREC::initInsertKeys(char* arg1,char* arg2)
+{
+	setPrimKey(arg1,arg2);
+	strncpy( (char*)c_pcoil, arg1, sizeof(c_pcoil));
+	c_pcoil[sizeof(c_pcoil)-1] = '\0';
+	strncpy( (char*)c_hcoil, arg2, sizeof(c_hcoil));
+	c_hcoil[sizeof(c_hcoil)-1] = '\0';
+}
+
+//this methode set the unique key attributes from the DB Record Attributes
+void COILREC::setKeysFromRecord()
+{
+	set_k_pcoil( pcoil() );
+	set_k_hcoil( hcoil() );
+}
+
+//			         
+//O P E R A T O R  + 
+//===================
+//                   
+COILREC COILREC::operator+(const COILREC &inst) const
+{
+	COILREC ptrCOILREC(*this);
+//----------------------------------------------------------
+	ptrCOILREC.set_pcoil(inst.pcoil());
+//----------------------------------------------------------
+	ptrCOILREC.set_hcoil(inst.hcoil());
+//----------------------------------------------------------
+	if(inst.actflagZi() != -1)
+	{
+		ptrCOILREC.set_actflag(inst.actflag());
+		ptrCOILREC.set_actflagZi(inst.actflagZi());
+	}
+//----------------------------------------------------------
+	if(inst.septflagZi() != -1)
+	{
+		ptrCOILREC.set_septflag(inst.septflag());
+		ptrCOILREC.set_septflagZi(inst.septflagZi());
+	}
+//----------------------------------------------------------
+	if(inst.shapflagZi() != -1)
+	{
+		ptrCOILREC.set_shapflag(inst.shapflag());
+		ptrCOILREC.set_shapflagZi(inst.shapflagZi());
+	}
+//----------------------------------------------------------
+	if(inst.edropflagZi() != -1)
+	{
+		ptrCOILREC.set_edropflag(inst.edropflag());
+		ptrCOILREC.set_edropflagZi(inst.edropflagZi());
+	}
+//----------------------------------------------------------
+	if(inst.stadataflagZi() != -1)
+	{
+		ptrCOILREC.set_stadataflag(inst.stadataflag());
+		ptrCOILREC.set_stadataflagZi(inst.stadataflagZi());
+	}
+//----------------------------------------------------------
+	if(inst.techdataflagZi() != -1)
+	{
+		ptrCOILREC.set_techdataflag(inst.techdataflag());
+		ptrCOILREC.set_techdataflagZi(inst.techdataflagZi());
+	}
+//----------------------------------------------------------
+	if(inst.tocZi() != -1)
+	{
+		ptrCOILREC.set_toc(inst.toc());
+		ptrCOILREC.set_tocZi(inst.tocZi());
+	}
+//----------------------------------------------------------
+	if(inst.tomZi() != -1)
+	{
+		ptrCOILREC.set_tom(inst.tom());
+		ptrCOILREC.set_tomZi(inst.tomZi());
+	}
+//----------------------------------------------------------
+	if(inst.mopZi() != -1)
+	{
+		ptrCOILREC.set_mop(inst.mop());
+		ptrCOILREC.set_mopZi(inst.mopZi());
+	}
+	return( ptrCOILREC );
+}
+
+//			         
+//O P E R A T O R  = 
+//===================
+//                   
+const COILREC& COILREC::operator=(const COILREC &inst)
+{
+//----------------------------------------------------------
+	this->set_pcoil(inst.pcoil());
+//----------------------------------------------------------
+	this->set_hcoil(inst.hcoil());
+//----------------------------------------------------------
+	this->set_actflag(inst.actflag());
+	this->set_actflagZi(inst.actflagZi());
+//----------------------------------------------------------
+	this->set_septflag(inst.septflag());
+	this->set_septflagZi(inst.septflagZi());
+//----------------------------------------------------------
+	this->set_shapflag(inst.shapflag());
+	this->set_shapflagZi(inst.shapflagZi());
+//----------------------------------------------------------
+	this->set_edropflag(inst.edropflag());
+	this->set_edropflagZi(inst.edropflagZi());
+//----------------------------------------------------------
+	this->set_stadataflag(inst.stadataflag());
+	this->set_stadataflagZi(inst.stadataflagZi());
+//----------------------------------------------------------
+	this->set_techdataflag(inst.techdataflag());
+	this->set_techdataflagZi(inst.techdataflagZi());
+//----------------------------------------------------------
+	this->set_toc(inst.toc());
+	this->set_tocZi(inst.tocZi());
+//----------------------------------------------------------
+	this->set_tom(inst.tom());
+	this->set_tomZi(inst.tomZi());
+//----------------------------------------------------------
+	this->set_mop(inst.mop());
+	this->set_mopZi(inst.mopZi());
+	return(*this);
+}
+

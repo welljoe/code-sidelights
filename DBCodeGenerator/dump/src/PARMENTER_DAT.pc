@@ -1,0 +1,959 @@
+/* *******************************************************************/
+/* *   File               :    PARMENTER_DAT.pc
+/* *   Short Description  :    ORACLE DATABASE ACCESS
+/* * 		                   PARMENTERS CONFIG DATA
+/* *   Author             :    DB CODE Generator
+/* *   Created Date       :    13.06.2013
+/* *   Tech.Support       :    LiuWeiZhao. email:welljoe@hotmail.com 
+/* *******************************************************************/
+/* *   Copyright (c)  SGAI AI 2009   All Rights Reserved
+/* *******************************************************************/
+
+#include "LOG.h"
+#include "PARMENTER_DAT.h"
+//
+// Declare ORACLE Host Variables
+//
+
+#define SQLCA_STORAGE_CLASS static
+#define ORACA_STORAGE_CLASS static
+EXEC SQL INCLUDE sqlca;
+EXEC SQL INCLUDE oraca;
+
+#define OPENED 1
+#define CLOSED 2
+EXEC SQL BEGIN DECLARE SECTION;
+/* ****************************************************************************** */
+/*                                                                                */
+/*                               define Oracle                                    */
+/*                               Host Variables                                   */
+/*                                                          .                     */
+/*                                                                                */
+/* ****************************************************************************** */
+
+static VARCHAR	dynstr[16000];
+static long		rowCnt;       
+static long		cuFl;         
+//Unit[-]:paramenter no.Limit:[-,-]
+static short    ora_parmNo;
+//Unit[-]:paramenter name.Limit:[-,-]
+static VARCHAR  ora_parmName[65];
+//Unit[-]:paramenter grade (by steel grade ,width,thinckness etc.).Limit:[-,-]
+static short    ora_parmGrade;
+//Unit[-]:paramenter set value.Limit:[-,-]
+static float    ora_pSetVal;
+static short    ora_pSetValZi;
+//Unit[-]:paramenter max. value.Limit:[-,-]
+static float    ora_pMaxVal;
+static short    ora_pMaxValZi;
+//Unit[-]:paramenter min. value.Limit:[-,-]
+static float    ora_pMinVal;
+static short    ora_pMinValZi;
+//Unit[-]:paramenter avg. value.Limit:[-,-]
+static float    ora_pAvgVal;
+static short    ora_pAvgValZi;
+//Unit[-]:paramenter control set max. value.Limit:[-,-]
+static float    ora_pClMaxVal;
+static short    ora_pClMaxValZi;
+//Unit[-]:paramenter control set min.  value.Limit:[-,-]
+static float    ora_pClMinVal;
+static short    ora_pClMinValZi;
+//Unit[-]:paramenter alarm be show.Limit:[-,-]
+static short    ora_bShow;
+static short    ora_bShowZi;
+//Unit[-]:paramenter alarm be save.Limit:[-,-]
+static short    ora_bSave;
+static short    ora_bSaveZi;
+//Unit[-]:sp2.Limit:[-,-]
+static VARCHAR  ora_sp2[65];
+static short    ora_sp2Zi;
+//Unit[-]:create time.Limit:[-,-]
+static VARCHAR  ora_toc[15];
+static short    ora_tocZi;
+//Unit[-]:modify time.Limit:[-,-]
+static VARCHAR  ora_tom[15];
+static short    ora_tomZi;
+//Unit[-]:creator or modifyer.Limit:[-,-]
+static VARCHAR  ora_mop[51];
+static short    ora_mopZi;
+// Host arguments for Primary key
+static short    k_ora_parmNo;   // Unit[-]:paramenter no.Limit:[-,-]
+static VARCHAR  k_ora_parmName[65];   // Unit[-]:paramenter name.Limit:[-,-]
+static short    k_ora_parmGrade;   // Unit[-]:paramenter grade (by steel grade ,width,thinckness etc.).Limit:[-,-]
+
+EXEC SQL END DECLARE SECTION;    
+             
+// 				             
+//C O N S T R U C T O R S    
+//=======================    
+//                           
+PARMENTER_DAT::PARMENTER_DAT()
+{
+	initial();                                             
+}
+
+//					
+//C O P Y  -  C O N S T R U C T O R 
+//==================================
+PARMENTER_DAT::PARMENTER_DAT(const PARMENTER_DAT &inst)
+{
+//----------------------------------------------------------
+	this->set_parmNo(inst.parmNo());
+//----------------------------------------------------------
+	this->set_parmName(inst.parmName());
+//----------------------------------------------------------
+	this->set_parmGrade(inst.parmGrade());
+//----------------------------------------------------------
+	this->set_pSetVal(inst.pSetVal());
+	this->set_pSetValZi(inst.pSetValZi());
+//----------------------------------------------------------
+	this->set_pMaxVal(inst.pMaxVal());
+	this->set_pMaxValZi(inst.pMaxValZi());
+//----------------------------------------------------------
+	this->set_pMinVal(inst.pMinVal());
+	this->set_pMinValZi(inst.pMinValZi());
+//----------------------------------------------------------
+	this->set_pAvgVal(inst.pAvgVal());
+	this->set_pAvgValZi(inst.pAvgValZi());
+//----------------------------------------------------------
+	this->set_pClMaxVal(inst.pClMaxVal());
+	this->set_pClMaxValZi(inst.pClMaxValZi());
+//----------------------------------------------------------
+	this->set_pClMinVal(inst.pClMinVal());
+	this->set_pClMinValZi(inst.pClMinValZi());
+//----------------------------------------------------------
+	this->set_bShow(inst.bShow());
+	this->set_bShowZi(inst.bShowZi());
+//----------------------------------------------------------
+	this->set_bSave(inst.bSave());
+	this->set_bSaveZi(inst.bSaveZi());
+//----------------------------------------------------------
+	this->set_sp2(inst.sp2());
+	this->set_sp2Zi(inst.sp2Zi());
+//----------------------------------------------------------
+	this->set_toc(inst.toc());
+	this->set_tocZi(inst.tocZi());
+//----------------------------------------------------------
+	this->set_tom(inst.tom());
+	this->set_tomZi(inst.tomZi());
+//----------------------------------------------------------
+	this->set_mop(inst.mop());
+	this->set_mopZi(inst.mopZi());
+}
+
+//					
+//C O N S T R U C T O R -W I T H P A R A M E T E R S
+//===================================================
+//					
+PARMENTER_DAT::PARMENTER_DAT(short arg1,char* arg2,short arg3)
+{
+	initial();					               
+	setPrimKey (arg1,arg2,arg3);    
+	//read DB record                           
+	dbAccess = true;                           
+	dbMessage = readDB();                      
+	if ( dbMessage != NULL ) dbAccess = false; 
+}
+
+//D E S T R U C T O R S  
+//=======================
+//                       
+PARMENTER_DAT::~PARMENTER_DAT()
+{
+}
+
+//initialise all member variables
+void PARMENTER_DAT::initial()
+{
+	set_parmNo(0);
+	set_parmName("");
+	set_parmGrade(0);
+	set_pSetVal(0);
+	set_pSetValZi(-1);
+	set_pMaxVal(0);
+	set_pMaxValZi(-1);
+	set_pMinVal(0);
+	set_pMinValZi(-1);
+	set_pAvgVal(0);
+	set_pAvgValZi(-1);
+	set_pClMaxVal(0);
+	set_pClMaxValZi(-1);
+	set_pClMinVal(0);
+	set_pClMinValZi(-1);
+	set_bShow(0);
+	set_bShowZi(-1);
+	set_bSave(0);
+	set_bSaveZi(-1);
+	set_sp2("");
+	set_sp2Zi(-1);
+	set_toc("");
+	set_tocZi(-1);
+	set_tom("");
+	set_tomZi(-1);
+	set_mop("");
+	set_mopZi(-1);
+	//initialies Primary key members
+	set_k_parmNo(0);
+	set_k_parmName("");
+	set_k_parmGrade(0);
+// Initial Oracle Options
+	oraca.oradbgf  = 1; // gather debug informations       
+	oraca.oracchf  = 1; // gather cursor cache informations
+	oraca.orahchf  = 1; // check heap                      
+	oraca.orastxtf = 3; // always save last sql-statement  
+	                                                       
+	EXEC ORACLE OPTION (ORACA=YES);                        
+	EXEC ORACLE OPTION (HOLD_CURSOR=YES);                  
+	EXEC ORACLE OPTION (RELEASE_CURSOR=NO);                
+	EXEC ORACLE OPTION (MAXOPENCURSORS=50);                
+	pCatch = CatchDbaxError::instance();                   
+	                                                       
+}
+
+//read a single entry from DB.
+char* PARMENTER_DAT::readDB()
+{
+	//
+	//copy the host variables (k_...) to Oracle Host Keys (k_ora_..)
+	//
+		copyKeyToHost();
+	//
+	// Do SELECT
+	//
+	EXEC SQL SELECT 
+		parmNo,
+		parmName,
+		parmGrade,
+		pSetVal,
+		pMaxVal,
+		pMinVal,
+		pAvgVal,
+		pClMaxVal,
+		pClMinVal,
+		bShow,
+		bSave,
+		sp2,
+		TO_CHAR(toc , 'YYYYMMDDHH24MISS'),
+		TO_CHAR(tom , 'YYYYMMDDHH24MISS'),
+		mop
+	INTO
+		:ora_parmNo,
+		:ora_parmName,
+		:ora_parmGrade,
+		:ora_pSetVal:ora_pSetValZi,
+		:ora_pMaxVal:ora_pMaxValZi,
+		:ora_pMinVal:ora_pMinValZi,
+		:ora_pAvgVal:ora_pAvgValZi,
+		:ora_pClMaxVal:ora_pClMaxValZi,
+		:ora_pClMinVal:ora_pClMinValZi,
+		:ora_bShow:ora_bShowZi,
+		:ora_bSave:ora_bSaveZi,
+		:ora_sp2:ora_sp2Zi,
+		:ora_toc:ora_tocZi,
+		:ora_tom:ora_tomZi,
+		:ora_mop:ora_mopZi
+	FROM PARMENTER_DAT
+	WHERE
+				parmNo          = :k_ora_parmNo AND 
+				parmName        = :k_ora_parmName AND 
+				parmGrade       = :k_ora_parmGrade ;
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	//
+	// copy host variables into Class attributes
+	//
+	copyOracleToAttribute();
+	return ( NULL );
+}
+
+//updates a single entry from DB
+char* PARMENTER_DAT::updateDB()
+{
+	//
+	//copy the host variables (k_...) to Oracle Host Keys (k_ora_..)
+	//
+		copyKeyToHost();
+	//copy the attributes ( ...) to Oracle Hosts( ora_..)
+	//
+		copyAttributeToOracle();
+	//
+	// Do UPDATE
+	//
+	EXEC SQL UPDATE PARMENTER_DAT
+	SET 
+		parmNo              =:ora_parmNo,
+		parmName            =:ora_parmName,
+		parmGrade           =:ora_parmGrade,
+		pSetVal             =:ora_pSetVal:ora_pSetValZi,
+		pMaxVal             =:ora_pMaxVal:ora_pMaxValZi,
+		pMinVal             =:ora_pMinVal:ora_pMinValZi,
+		pAvgVal             =:ora_pAvgVal:ora_pAvgValZi,
+		pClMaxVal           =:ora_pClMaxVal:ora_pClMaxValZi,
+		pClMinVal           =:ora_pClMinVal:ora_pClMinValZi,
+		bShow               =:ora_bShow:ora_bShowZi,
+		bSave               =:ora_bSave:ora_bSaveZi,
+		sp2                 =:ora_sp2:ora_sp2Zi,
+		toc                 =TO_DATE( :ora_toc:ora_tocZi,'YYYYMMDDHH24MISS'),
+		tom                 =TO_DATE( :ora_tom:ora_tomZi,'YYYYMMDDHH24MISS'),
+		mop                 =:ora_mop:ora_mopZi
+	WHERE
+		parmNo          = :k_ora_parmNo AND 
+		parmName        = :k_ora_parmName AND 
+		parmGrade       = :k_ora_parmGrade ;
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//inserts a single entry from DB
+char* PARMENTER_DAT::insertDB()
+{
+	//
+	//copy the attributes ( ...) to Oracle Hosts( ora_..) 
+	//
+		copyAttributeToOracle();
+	//
+	// Do INSERT
+	//
+	EXEC SQL INSERT INTO PARMENTER_DAT
+	(
+		parmNo,
+		parmName,
+		parmGrade,
+		pSetVal,
+		pMaxVal,
+		pMinVal,
+		pAvgVal,
+		pClMaxVal,
+		pClMinVal,
+		bShow,
+		bSave,
+		sp2,
+		toc,
+		tom,
+		mop
+	)
+
+	VALUES
+	(
+		:ora_parmNo,
+		:ora_parmName,
+		:ora_parmGrade,
+		:ora_pSetVal:ora_pSetValZi,
+		:ora_pMaxVal:ora_pMaxValZi,
+		:ora_pMinVal:ora_pMinValZi,
+		:ora_pAvgVal:ora_pAvgValZi,
+		:ora_pClMaxVal:ora_pClMaxValZi,
+		:ora_pClMinVal:ora_pClMinValZi,
+		:ora_bShow:ora_bShowZi,
+		:ora_bSave:ora_bSaveZi,
+		:ora_sp2:ora_sp2Zi,
+		TO_DATE( :ora_toc:ora_tocZi,'YYYYMMDDHH24MISS'),
+		TO_DATE( :ora_tom:ora_tomZi,'YYYYMMDDHH24MISS'),
+		:ora_mop:ora_mopZi
+	);
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//this methode tries to update a DB record,when the update fails.
+char* PARMENTER_DAT::storeDB()
+{
+	char* ret = NULL;
+	setKeysFromRecord();
+	ret=updateDB();
+	if(ret != NULL)
+	{
+		ret=insertDB();
+		if(ret != NULL)
+		{
+			dbAccess = false;
+			return(ret);
+		}
+	}
+	return(ret);
+}
+
+//deletes a single entry from DB
+char* PARMENTER_DAT::deleteDB()
+{
+//
+//copy the host variables (k_...) to Oracle Host Keys (k_ora_..)
+//
+	copyKeyToHost();
+
+//
+// Do Delete 
+//
+	EXEC SQL DELETE FROM PARMENTER_DAT
+	WHERE
+				parmNo          = :k_ora_parmNo AND 
+				parmName        = :k_ora_parmName AND 
+				parmGrade       = :k_ora_parmGrade ;
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+// Executes the SQL DELETE with a where clause
+char* PARMENTER_DAT::deleteDB(const char* where,long* count)
+{
+	*(count) = -1L;
+// Create dynamic statement.
+//
+	strcpy((char*)dynstr.arr,"DELETE");
+	strcat((char*)dynstr.arr," FROM PARMENTER_DAT");
+	if ( where != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, where );
+	}
+
+	dynstr.len = strlen( (char*) dynstr.arr);
+	EXEC SQL EXECUTE IMMEDIATE :dynstr;
+	oracleSqlCode = sqlca.sqlcode;
+		oracleRowsProcessed = sqlca.sqlerrd[2];
+	if (sqlca.sqlcode == 0 )
+		*(count) = sqlca.sqlerrd[2];
+	else 
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//openSetDB data with where condition and sort order.
+char* PARMENTER_DAT::openSetDB(const char* where,char* order)
+{
+//
+// Create dynamic statement.
+//
+	strcpy((char*)dynstr.arr,"SELECT ");
+	strcat((char*)dynstr.arr,"parmNo,");
+	strcat((char*)dynstr.arr,"parmName,");
+	strcat((char*)dynstr.arr,"parmGrade,");
+	strcat((char*)dynstr.arr,"pSetVal,");
+	strcat((char*)dynstr.arr,"pMaxVal,");
+	strcat((char*)dynstr.arr,"pMinVal,");
+	strcat((char*)dynstr.arr,"pAvgVal,");
+	strcat((char*)dynstr.arr,"pClMaxVal,");
+	strcat((char*)dynstr.arr,"pClMinVal,");
+	strcat((char*)dynstr.arr,"bShow,");
+	strcat((char*)dynstr.arr,"bSave,");
+	strcat((char*)dynstr.arr,"sp2,");
+	strcat((char*)dynstr.arr,"TO_CHAR(toc , 'YYYYMMDDHH24MISS'),");
+	strcat((char*)dynstr.arr,"TO_CHAR(tom , 'YYYYMMDDHH24MISS'),");
+	strcat((char*)dynstr.arr,"mop");
+
+	strcat((char*)dynstr.arr," FROM PARMENTER_DAT ");
+	if ( where != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, where);
+	}
+	if ( order != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, order);
+	}
+
+	dynstr.len = strlen( (char*) dynstr.arr);
+	EXEC SQL PREPARE set_PARMENTER_DAT FROM :dynstr;
+	if (sqlca.sqlcode == 0 )
+	{
+		EXEC SQL DECLARE cu_PARMENTER_DAT CURSOR FOR set_PARMENTER_DAT;
+		if (sqlca.sqlcode == 0 )
+			EXEC SQL OPEN cu_PARMENTER_DAT;
+	}
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	cuFl = OPENED;
+	return ( NULL );
+}
+
+//Executes the SQL FETCH Statement .
+char* PARMENTER_DAT::getSetDB()
+{
+	if ( cuFl != OPENED ) return ("No open Cursor Table:Me");
+	EXEC SQL FETCH cu_PARMENTER_DAT INTO
+		:ora_parmNo,
+		:ora_parmName,
+		:ora_parmGrade,
+		:ora_pSetVal:ora_pSetValZi,
+		:ora_pMaxVal:ora_pMaxValZi,
+		:ora_pMinVal:ora_pMinValZi,
+		:ora_pAvgVal:ora_pAvgValZi,
+		:ora_pClMaxVal:ora_pClMaxValZi,
+		:ora_pClMinVal:ora_pClMinValZi,
+		:ora_bShow:ora_bShowZi,
+		:ora_bSave:ora_bSaveZi,
+		:ora_sp2:ora_sp2Zi,
+		:ora_toc:ora_tocZi,
+		:ora_tom:ora_tomZi,
+		:ora_mop:ora_mopZi;
+
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		pCatch->catchError(sqlca.sqlcode);
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		return (char*) sqlca.sqlerrm.sqlerrmc ;
+	}
+	//
+	// copy host variables into Class attributes
+	//
+	copyOracleToAttribute();
+	copyHostToKey();
+	return ( NULL );
+}
+
+//Close a Oracle Cursor
+char* PARMENTER_DAT::closeSetDB()
+{
+	EXEC SQL CLOSE cu_PARMENTER_DAT;
+	oracleSqlCode = sqlca.sqlcode;         
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		pCatch->catchError(sqlca.sqlcode);
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		return (char*) sqlca.sqlerrm.sqlerrmc ;
+	}
+	cuFl = CLOSED;
+	return ( NULL );
+}
+
+//Executes the SQL count(key) for a where clause
+char* PARMENTER_DAT::countDB(const char* where,long* count)
+{
+	*(count) = -1L;
+//
+// Create dynamic statement. 
+//
+	strncpy((char*)dynstr.arr,"SELECT count(parmNo)", sizeof(dynstr.arr));
+	strcat((char*)dynstr.arr," FROM PARMENTER_DAT");
+	if ( where != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, where );
+	}
+	dynstr.len = strlen( (char*) dynstr.arr);
+	EXEC SQL PREPARE c_PARMENTER_DAT FROM :dynstr;
+	
+	if (sqlca.sqlcode == 0 )
+	{
+		EXEC SQL DECLARE ct_PARMENTER_DAT CURSOR FOR c_PARMENTER_DAT;
+		if (sqlca.sqlcode == 0 )
+		{
+			EXEC SQL OPEN ct_PARMENTER_DAT;
+			if (sqlca.sqlcode == 0 )			{
+				EXEC SQL FETCH ct_PARMENTER_DAT INTO :rowCnt;
+				if (sqlca.sqlcode == 0 )
+				*(count) = rowCnt;
+			}
+			EXEC SQL CLOSE ct_PARMENTER_DAT;
+		}
+	}
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//private methode copy Attribute to Oracle
+//copys Object attributes into Oracle Host variables.
+void PARMENTER_DAT::copyAttributeToOracle()
+{
+	char* ptrStr;
+	ora_parmNo = this->parmNo();
+	ptrStr = this->parmName();
+	if( strlen(ptrStr)< sizeof(ora_parmName.arr))
+	{
+		strncpy((char*)ora_parmName.arr, ptrStr, sizeof(ora_parmName.arr));
+		ora_parmName.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_parmName.len = 0;
+	ora_parmGrade = this->parmGrade();
+	ora_pSetVal = this->pSetVal();
+	ora_pSetValZi = this->pSetValZi();
+	ora_pMaxVal = this->pMaxVal();
+	ora_pMaxValZi = this->pMaxValZi();
+	ora_pMinVal = this->pMinVal();
+	ora_pMinValZi = this->pMinValZi();
+	ora_pAvgVal = this->pAvgVal();
+	ora_pAvgValZi = this->pAvgValZi();
+	ora_pClMaxVal = this->pClMaxVal();
+	ora_pClMaxValZi = this->pClMaxValZi();
+	ora_pClMinVal = this->pClMinVal();
+	ora_pClMinValZi = this->pClMinValZi();
+	ora_bShow = this->bShow();
+	ora_bShowZi = this->bShowZi();
+	ora_bSave = this->bSave();
+	ora_bSaveZi = this->bSaveZi();
+	ptrStr = this->sp2();
+	if( strlen(ptrStr)< sizeof(ora_sp2.arr))
+	{
+		strncpy((char*)ora_sp2.arr, ptrStr, sizeof(ora_sp2.arr));
+		ora_sp2.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_sp2.len = 0;
+	ora_sp2Zi = this->sp2Zi();
+	ptrStr = this->toc();
+	if( strlen(ptrStr)< sizeof(ora_toc.arr))
+	{
+		strncpy((char*)ora_toc.arr, ptrStr, sizeof(ora_toc.arr));
+		ora_toc.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_toc.len = 0;
+	ora_tocZi = this->tocZi();
+	ptrStr = this->tom();
+	if( strlen(ptrStr)< sizeof(ora_tom.arr))
+	{
+		strncpy((char*)ora_tom.arr, ptrStr, sizeof(ora_tom.arr));
+		ora_tom.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_tom.len = 0;
+	ora_tomZi = this->tomZi();
+	ptrStr = this->mop();
+	if( strlen(ptrStr)< sizeof(ora_mop.arr))
+	{
+		strncpy((char*)ora_mop.arr, ptrStr, sizeof(ora_mop.arr));
+		ora_mop.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_mop.len = 0;
+	ora_mopZi = this->mopZi();
+}
+
+//private methode copy Oracle to Attribute
+//copys Oracle Host variables into Object attributes.
+void PARMENTER_DAT::copyOracleToAttribute()
+{
+	this->set_parmNo((short)ora_parmNo);
+	ora_parmName.arr[ora_parmName.len] = '\0';
+	this->set_parmName((char*) ora_parmName.arr);
+	this->set_parmGrade((short)ora_parmGrade);
+	this->set_pSetVal((float)ora_pSetVal);
+	this->set_pSetValZi((short)ora_pSetValZi);
+	this->set_pMaxVal((float)ora_pMaxVal);
+	this->set_pMaxValZi((short)ora_pMaxValZi);
+	this->set_pMinVal((float)ora_pMinVal);
+	this->set_pMinValZi((short)ora_pMinValZi);
+	this->set_pAvgVal((float)ora_pAvgVal);
+	this->set_pAvgValZi((short)ora_pAvgValZi);
+	this->set_pClMaxVal((float)ora_pClMaxVal);
+	this->set_pClMaxValZi((short)ora_pClMaxValZi);
+	this->set_pClMinVal((float)ora_pClMinVal);
+	this->set_pClMinValZi((short)ora_pClMinValZi);
+	this->set_bShow((short)ora_bShow);
+	this->set_bShowZi((short)ora_bShowZi);
+	this->set_bSave((short)ora_bSave);
+	this->set_bSaveZi((short)ora_bSaveZi);
+	ora_sp2.arr[ora_sp2.len] = '\0';
+	this->set_sp2((char*) ora_sp2.arr);
+	this->set_sp2Zi((short)ora_sp2Zi);
+	ora_toc.arr[ora_toc.len] = '\0';
+	this->set_toc((char*) ora_toc.arr);
+	this->set_tocZi((short)ora_tocZi);
+	ora_tom.arr[ora_tom.len] = '\0';
+	this->set_tom((char*) ora_tom.arr);
+	this->set_tomZi((short)ora_tomZi);
+	ora_mop.arr[ora_mop.len] = '\0';
+	this->set_mop((char*) ora_mop.arr);
+	this->set_mopZi((short)ora_mopZi);
+}
+
+//private methode copy Key to host
+//copys Object attributes into Oralce Key variables.
+void PARMENTER_DAT::copyKeyToHost()
+{
+	char* ptrStr;
+	k_ora_parmNo = this->k_parmNo();
+	ptrStr = this->k_parmName();
+	if( strlen(ptrStr)< sizeof(k_ora_parmName.arr))
+	{
+		strncpy((char*)k_ora_parmName.arr, ptrStr, sizeof(k_ora_parmName.arr));
+		k_ora_parmName.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		k_ora_parmName.len = 0;
+	k_ora_parmGrade = this->k_parmGrade();
+}
+
+//private methode copy Host to Key
+// copys Oracle Host Key variables into Object Key attributes.
+void PARMENTER_DAT::copyHostToKey()
+{
+	this->set_k_parmNo((short)ora_parmNo);
+	ora_parmName.arr[ora_parmName.len] = '\0';
+	this->set_k_parmName((char*) ora_parmName.arr);
+	this->set_k_parmGrade((short)ora_parmGrade);
+}
+
+//private methode log Oracle message information
+void PARMENTER_DAT::logOraMessageInfo()
+{
+	LOG d("PARMENTER_DAT::logOraMessageInfo()");
+	sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+	oraca.orastxt.orastxtc[oraca.orastxt.orastxtl] = '\0';
+	oraca.orasfnm.orasfnmc[oraca.orasfnm.orasfnml] = '\0';
+	
+	//* negating a error code submitted perhaps positively.
+	if (sqlca.sqlcode > 0) sqlca.sqlcode *= -1;
+	
+	//* Distribute fault text, SQL statement and file in the Debug System.
+	d << "ORA-Error: "<< sqlca.sqlerrm.sqlerrmc; d.Info();
+	d << "OracaText: "<< oraca.orastxt.orastxtc; d.Info();
+	d << "in line " << oraca.oraslnr << " in file " << oraca.orasfnm.orasfnmc; d.Info();
+}
+
+//this methode stores the unique key attributes
+void PARMENTER_DAT::setPrimKey(short arg1,char* arg2,short arg3)
+{
+	s_k_parmNo = arg1;
+	strncpy( (char*)c_k_parmName, arg2, sizeof(c_k_parmName));
+	c_k_parmName[sizeof(c_k_parmName)-1] = '\0';
+	s_k_parmGrade = arg3;
+}
+
+//this methode stores the unique key attributes
+void PARMENTER_DAT::initInsertKeys(short arg1,char* arg2,short arg3)
+{
+	setPrimKey(arg1,arg2,arg3);
+	s_parmNo = arg1;
+	strncpy( (char*)c_parmName, arg2, sizeof(c_parmName));
+	c_parmName[sizeof(c_parmName)-1] = '\0';
+	s_parmGrade = arg3;
+}
+
+//this methode set the unique key attributes from the DB Record Attributes
+void PARMENTER_DAT::setKeysFromRecord()
+{
+	set_k_parmNo( parmNo() );
+	set_k_parmName( parmName() );
+	set_k_parmGrade( parmGrade() );
+}
+
+//			         
+//O P E R A T O R  + 
+//===================
+//                   
+PARMENTER_DAT PARMENTER_DAT::operator+(const PARMENTER_DAT &inst) const
+{
+	PARMENTER_DAT ptrPARMENTER_DAT(*this);
+//----------------------------------------------------------
+	ptrPARMENTER_DAT.set_parmNo(inst.parmNo());
+//----------------------------------------------------------
+	ptrPARMENTER_DAT.set_parmName(inst.parmName());
+//----------------------------------------------------------
+	ptrPARMENTER_DAT.set_parmGrade(inst.parmGrade());
+//----------------------------------------------------------
+	if(inst.pSetValZi() != -1)
+	{
+		ptrPARMENTER_DAT.set_pSetVal(inst.pSetVal());
+		ptrPARMENTER_DAT.set_pSetValZi(inst.pSetValZi());
+	}
+//----------------------------------------------------------
+	if(inst.pMaxValZi() != -1)
+	{
+		ptrPARMENTER_DAT.set_pMaxVal(inst.pMaxVal());
+		ptrPARMENTER_DAT.set_pMaxValZi(inst.pMaxValZi());
+	}
+//----------------------------------------------------------
+	if(inst.pMinValZi() != -1)
+	{
+		ptrPARMENTER_DAT.set_pMinVal(inst.pMinVal());
+		ptrPARMENTER_DAT.set_pMinValZi(inst.pMinValZi());
+	}
+//----------------------------------------------------------
+	if(inst.pAvgValZi() != -1)
+	{
+		ptrPARMENTER_DAT.set_pAvgVal(inst.pAvgVal());
+		ptrPARMENTER_DAT.set_pAvgValZi(inst.pAvgValZi());
+	}
+//----------------------------------------------------------
+	if(inst.pClMaxValZi() != -1)
+	{
+		ptrPARMENTER_DAT.set_pClMaxVal(inst.pClMaxVal());
+		ptrPARMENTER_DAT.set_pClMaxValZi(inst.pClMaxValZi());
+	}
+//----------------------------------------------------------
+	if(inst.pClMinValZi() != -1)
+	{
+		ptrPARMENTER_DAT.set_pClMinVal(inst.pClMinVal());
+		ptrPARMENTER_DAT.set_pClMinValZi(inst.pClMinValZi());
+	}
+//----------------------------------------------------------
+	if(inst.bShowZi() != -1)
+	{
+		ptrPARMENTER_DAT.set_bShow(inst.bShow());
+		ptrPARMENTER_DAT.set_bShowZi(inst.bShowZi());
+	}
+//----------------------------------------------------------
+	if(inst.bSaveZi() != -1)
+	{
+		ptrPARMENTER_DAT.set_bSave(inst.bSave());
+		ptrPARMENTER_DAT.set_bSaveZi(inst.bSaveZi());
+	}
+//----------------------------------------------------------
+	if(inst.sp2Zi() != -1)
+	{
+		ptrPARMENTER_DAT.set_sp2(inst.sp2());
+		ptrPARMENTER_DAT.set_sp2Zi(inst.sp2Zi());
+	}
+//----------------------------------------------------------
+	if(inst.tocZi() != -1)
+	{
+		ptrPARMENTER_DAT.set_toc(inst.toc());
+		ptrPARMENTER_DAT.set_tocZi(inst.tocZi());
+	}
+//----------------------------------------------------------
+	if(inst.tomZi() != -1)
+	{
+		ptrPARMENTER_DAT.set_tom(inst.tom());
+		ptrPARMENTER_DAT.set_tomZi(inst.tomZi());
+	}
+//----------------------------------------------------------
+	if(inst.mopZi() != -1)
+	{
+		ptrPARMENTER_DAT.set_mop(inst.mop());
+		ptrPARMENTER_DAT.set_mopZi(inst.mopZi());
+	}
+	return( ptrPARMENTER_DAT );
+}
+
+//			         
+//O P E R A T O R  = 
+//===================
+//                   
+const PARMENTER_DAT& PARMENTER_DAT::operator=(const PARMENTER_DAT &inst)
+{
+//----------------------------------------------------------
+	this->set_parmNo(inst.parmNo());
+//----------------------------------------------------------
+	this->set_parmName(inst.parmName());
+//----------------------------------------------------------
+	this->set_parmGrade(inst.parmGrade());
+//----------------------------------------------------------
+	this->set_pSetVal(inst.pSetVal());
+	this->set_pSetValZi(inst.pSetValZi());
+//----------------------------------------------------------
+	this->set_pMaxVal(inst.pMaxVal());
+	this->set_pMaxValZi(inst.pMaxValZi());
+//----------------------------------------------------------
+	this->set_pMinVal(inst.pMinVal());
+	this->set_pMinValZi(inst.pMinValZi());
+//----------------------------------------------------------
+	this->set_pAvgVal(inst.pAvgVal());
+	this->set_pAvgValZi(inst.pAvgValZi());
+//----------------------------------------------------------
+	this->set_pClMaxVal(inst.pClMaxVal());
+	this->set_pClMaxValZi(inst.pClMaxValZi());
+//----------------------------------------------------------
+	this->set_pClMinVal(inst.pClMinVal());
+	this->set_pClMinValZi(inst.pClMinValZi());
+//----------------------------------------------------------
+	this->set_bShow(inst.bShow());
+	this->set_bShowZi(inst.bShowZi());
+//----------------------------------------------------------
+	this->set_bSave(inst.bSave());
+	this->set_bSaveZi(inst.bSaveZi());
+//----------------------------------------------------------
+	this->set_sp2(inst.sp2());
+	this->set_sp2Zi(inst.sp2Zi());
+//----------------------------------------------------------
+	this->set_toc(inst.toc());
+	this->set_tocZi(inst.tocZi());
+//----------------------------------------------------------
+	this->set_tom(inst.tom());
+	this->set_tomZi(inst.tomZi());
+//----------------------------------------------------------
+	this->set_mop(inst.mop());
+	this->set_mopZi(inst.mopZi());
+	return(*this);
+}
+

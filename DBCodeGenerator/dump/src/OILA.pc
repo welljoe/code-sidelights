@@ -1,0 +1,1397 @@
+/* *******************************************************************/
+/* *   File               :    OILA.pc
+/* *   Short Description  :    ORACLE DATABASE ACCESS
+/* * 		                   ACCOUNT OILA TABLE
+/* *   Author             :    DB CODE Generator
+/* *   Created Date       :    13.06.2013
+/* *   Tech.Support       :    LiuWeiZhao. email:welljoe@hotmail.com 
+/* *******************************************************************/
+/* *   Copyright (c)  SGAI AI 2009   All Rights Reserved
+/* *******************************************************************/
+
+#include "LOG.h"
+#include "OILA.h"
+//
+// Declare ORACLE Host Variables
+//
+
+#define SQLCA_STORAGE_CLASS static
+#define ORACA_STORAGE_CLASS static
+EXEC SQL INCLUDE sqlca;
+EXEC SQL INCLUDE oraca;
+
+#define OPENED 1
+#define CLOSED 2
+EXEC SQL BEGIN DECLARE SECTION;
+/* ****************************************************************************** */
+/*                                                                                */
+/*                               define Oracle                                    */
+/*                               Host Variables                                   */
+/*                                                          .                     */
+/*                                                                                */
+/* ****************************************************************************** */
+
+static VARCHAR	dynstr[16000];
+static long		rowCnt;       
+static long		cuFl;         
+//Unit[-]:日期.Limit:[-,-]
+static VARCHAR  ora_oildate[33];
+//Unit[-]:班组.Limit:[-,-]
+static VARCHAR  ora_crewno[9];
+static short    ora_crewnoZi;
+//Unit[-]:班次.Limit:[-,-]
+static VARCHAR  ora_shiftno[9];
+static short    ora_shiftnoZi;
+//Unit[-]:实验编号.Limit:[-,-]
+static VARCHAR  ora_expno[17];
+//Unit[-]:实验时间.Limit:[-,-]
+static VARCHAR  ora_exptime[33];
+static short    ora_exptimeZi;
+//Unit[-]:取样时箱体液位.Limit:[-,-]
+static float    ora_boxlevel;
+static short    ora_boxlevelZi;
+//Unit[-]:系统是否循环.Limit:[-,-]
+static VARCHAR  ora_cycflag[9];
+static short    ora_cycflagZi;
+//Unit[-]:取样位置.Limit:[-,-]
+static VARCHAR  ora_samplepos[9];
+static short    ora_sampleposZi;
+//Unit[-]:浓度.Limit:[-,-]
+static float    ora_density;
+static short    ora_densityZi;
+//Unit[-]:PH值.Limit:[-,-]
+static float    ora_ph;
+static short    ora_phZi;
+//Unit[μs/cm]:电导率.Limit:[-,-]
+static float    ora_conductivity;
+static short    ora_conductivityZi;
+//Unit[mg KOH/g]:皂化值.Limit:[-,-]
+static float    ora_sapval;
+static short    ora_sapvalZi;
+//Unit[mg /l]:铁粉.Limit:[-,-]
+static float    ora_iron;
+static short    ora_ironZi;
+//Unit[-]:铁皂.Limit:[-,-]
+static float    ora_ironsoap;
+static short    ora_ironsoapZi;
+//Unit[%ESI]:稳定系数.Limit:[-,-]
+static float    ora_stabfactor;
+static short    ora_stabfactorZi;
+//Unit[ppm]:氯离子含量.Limit:[-,-]
+static float    ora_cl;
+static short    ora_clZi;
+//Unit[mg KOH/g]:游离酸.Limit:[-,-]
+static float    ora_freeacid;
+static short    ora_freeacidZi;
+//Unit[mg /Kg]:灰分.Limit:[-,-]
+static float    ora_ash;
+static short    ora_ashZi;
+//Unit[mg/Kg]:颗粒度.Limit:[-,-]
+static float    ora_particle;
+static short    ora_particleZi;
+//Unit[-]:ETI.Limit:[-,-]
+static float    ora_eti;
+static short    ora_etiZi;
+//Unit[-]:备注.Limit:[-,-]
+static VARCHAR  ora_ocomment[33];
+static short    ora_ocommentZi;
+//Unit[-]:脱盐水取样位置.Limit:[-,-]
+static VARCHAR  ora_wsamplepos[9];
+static short    ora_wsampleposZi;
+//Unit[-]:脱盐水PH值.Limit:[-,-]
+static float    ora_wph;
+static short    ora_wphZi;
+//Unit[-]:脱盐水电导率.Limit:[-,-]
+static float    ora_wconductivity;
+static short    ora_wconductivityZi;
+//Unit[-]:取样温度.Limit:[-,-]
+static float    ora_sampledegree;
+static short    ora_sampledegreeZi;
+//Unit[-]:创建时间.Limit:[-,-]
+static VARCHAR  ora_toc[15];
+static short    ora_tocZi;
+//Unit[-]:最后修改时间.Limit:[-,-]
+static VARCHAR  ora_tom[15];
+static short    ora_tomZi;
+//Unit[-]:创建或者修改者.Limit:[-,-]
+static VARCHAR  ora_mop[121];
+static short    ora_mopZi;
+// Host arguments for Primary key
+static VARCHAR  k_ora_oildate[33];   // Unit[-]:日期.Limit:[-,-]
+static VARCHAR  k_ora_expno[17];   // Unit[-]:实验编号.Limit:[-,-]
+
+EXEC SQL END DECLARE SECTION;  
+             
+// 				             
+//C O N S T R U C T O R S    
+//=======================    
+//                           
+OILA::OILA()
+{
+	initial();                                             
+}
+
+//					
+//C O P Y  -  C O N S T R U C T O R 
+//==================================
+OILA::OILA(const OILA &inst)
+{
+//----------------------------------------------------------
+	this->set_oildate(inst.oildate());
+//----------------------------------------------------------
+	this->set_crewno(inst.crewno());
+	this->set_crewnoZi(inst.crewnoZi());
+//----------------------------------------------------------
+	this->set_shiftno(inst.shiftno());
+	this->set_shiftnoZi(inst.shiftnoZi());
+//----------------------------------------------------------
+	this->set_expno(inst.expno());
+//----------------------------------------------------------
+	this->set_exptime(inst.exptime());
+	this->set_exptimeZi(inst.exptimeZi());
+//----------------------------------------------------------
+	this->set_boxlevel(inst.boxlevel());
+	this->set_boxlevelZi(inst.boxlevelZi());
+//----------------------------------------------------------
+	this->set_cycflag(inst.cycflag());
+	this->set_cycflagZi(inst.cycflagZi());
+//----------------------------------------------------------
+	this->set_samplepos(inst.samplepos());
+	this->set_sampleposZi(inst.sampleposZi());
+//----------------------------------------------------------
+	this->set_density(inst.density());
+	this->set_densityZi(inst.densityZi());
+//----------------------------------------------------------
+	this->set_ph(inst.ph());
+	this->set_phZi(inst.phZi());
+//----------------------------------------------------------
+	this->set_conductivity(inst.conductivity());
+	this->set_conductivityZi(inst.conductivityZi());
+//----------------------------------------------------------
+	this->set_sapval(inst.sapval());
+	this->set_sapvalZi(inst.sapvalZi());
+//----------------------------------------------------------
+	this->set_iron(inst.iron());
+	this->set_ironZi(inst.ironZi());
+//----------------------------------------------------------
+	this->set_ironsoap(inst.ironsoap());
+	this->set_ironsoapZi(inst.ironsoapZi());
+//----------------------------------------------------------
+	this->set_stabfactor(inst.stabfactor());
+	this->set_stabfactorZi(inst.stabfactorZi());
+//----------------------------------------------------------
+	this->set_cl(inst.cl());
+	this->set_clZi(inst.clZi());
+//----------------------------------------------------------
+	this->set_freeacid(inst.freeacid());
+	this->set_freeacidZi(inst.freeacidZi());
+//----------------------------------------------------------
+	this->set_ash(inst.ash());
+	this->set_ashZi(inst.ashZi());
+//----------------------------------------------------------
+	this->set_particle(inst.particle());
+	this->set_particleZi(inst.particleZi());
+//----------------------------------------------------------
+	this->set_eti(inst.eti());
+	this->set_etiZi(inst.etiZi());
+//----------------------------------------------------------
+	this->set_ocomment(inst.ocomment());
+	this->set_ocommentZi(inst.ocommentZi());
+//----------------------------------------------------------
+	this->set_wsamplepos(inst.wsamplepos());
+	this->set_wsampleposZi(inst.wsampleposZi());
+//----------------------------------------------------------
+	this->set_wph(inst.wph());
+	this->set_wphZi(inst.wphZi());
+//----------------------------------------------------------
+	this->set_wconductivity(inst.wconductivity());
+	this->set_wconductivityZi(inst.wconductivityZi());
+//----------------------------------------------------------
+	this->set_sampledegree(inst.sampledegree());
+	this->set_sampledegreeZi(inst.sampledegreeZi());
+//----------------------------------------------------------
+	this->set_toc(inst.toc());
+	this->set_tocZi(inst.tocZi());
+//----------------------------------------------------------
+	this->set_tom(inst.tom());
+	this->set_tomZi(inst.tomZi());
+//----------------------------------------------------------
+	this->set_mop(inst.mop());
+	this->set_mopZi(inst.mopZi());
+}
+
+//					
+//C O N S T R U C T O R -W I T H P A R A M E T E R S
+//===================================================
+//					
+OILA::OILA(char* arg1,char* arg2)
+{
+	initial();					               
+	setPrimKey (arg1,arg2);    
+	//read DB record                           
+	dbAccess = true;                           
+	dbMessage = readDB();                      
+	if ( dbMessage != NULL ) dbAccess = false; 
+}
+
+//D E S T R U C T O R S  
+//=======================
+//                       
+OILA::~OILA()
+{
+}
+
+//initialise all member variables
+void OILA::initial()
+{
+	set_oildate("");
+	set_crewno("");
+	set_crewnoZi(-1);
+	set_shiftno("");
+	set_shiftnoZi(-1);
+	set_expno("");
+	set_exptime("");
+	set_exptimeZi(-1);
+	set_boxlevel(0);
+	set_boxlevelZi(-1);
+	set_cycflag("");
+	set_cycflagZi(-1);
+	set_samplepos("");
+	set_sampleposZi(-1);
+	set_density(0);
+	set_densityZi(-1);
+	set_ph(0);
+	set_phZi(-1);
+	set_conductivity(0);
+	set_conductivityZi(-1);
+	set_sapval(0);
+	set_sapvalZi(-1);
+	set_iron(0);
+	set_ironZi(-1);
+	set_ironsoap(0);
+	set_ironsoapZi(-1);
+	set_stabfactor(0);
+	set_stabfactorZi(-1);
+	set_cl(0);
+	set_clZi(-1);
+	set_freeacid(0);
+	set_freeacidZi(-1);
+	set_ash(0);
+	set_ashZi(-1);
+	set_particle(0);
+	set_particleZi(-1);
+	set_eti(0);
+	set_etiZi(-1);
+	set_ocomment("");
+	set_ocommentZi(-1);
+	set_wsamplepos("");
+	set_wsampleposZi(-1);
+	set_wph(0);
+	set_wphZi(-1);
+	set_wconductivity(0);
+	set_wconductivityZi(-1);
+	set_sampledegree(0);
+	set_sampledegreeZi(-1);
+	set_toc("");
+	set_tocZi(-1);
+	set_tom("");
+	set_tomZi(-1);
+	set_mop("");
+	set_mopZi(-1);
+	//initialies Primary key members
+	set_k_oildate("");
+	set_k_expno("");
+// Initial Oracle Options
+	oraca.oradbgf  = 1; // gather debug informations       
+	oraca.oracchf  = 1; // gather cursor cache informations
+	oraca.orahchf  = 1; // check heap                      
+	oraca.orastxtf = 3; // always save last sql-statement  
+	                                                       
+	EXEC ORACLE OPTION (ORACA=YES);                        
+	EXEC ORACLE OPTION (HOLD_CURSOR=YES);                  
+	EXEC ORACLE OPTION (RELEASE_CURSOR=NO);                
+	EXEC ORACLE OPTION (MAXOPENCURSORS=50);                
+	pCatch = CatchDbaxError::instance();                   
+	                                                       
+}
+
+//read a single entry from DB.
+char* OILA::readDB()
+{
+	//
+	//copy the host variables (k_...) to Oracle Host Keys (k_ora_..)
+	//
+		copyKeyToHost();
+	//
+	// Do SELECT
+	//
+	EXEC SQL SELECT 
+		oildate,
+		crewno,
+		shiftno,
+		expno,
+		exptime,
+		boxlevel,
+		cycflag,
+		samplepos,
+		density,
+		ph,
+		conductivity,
+		sapval,
+		iron,
+		ironsoap,
+		stabfactor,
+		cl,
+		freeacid,
+		ash,
+		particle,
+		eti,
+		ocomment,
+		wsamplepos,
+		wph,
+		wconductivity,
+		sampledegree,
+		TO_CHAR(toc , 'YYYYMMDDHH24MISS'),
+		TO_CHAR(tom , 'YYYYMMDDHH24MISS'),
+		mop
+	INTO
+		:ora_oildate,
+		:ora_crewno:ora_crewnoZi,
+		:ora_shiftno:ora_shiftnoZi,
+		:ora_expno,
+		:ora_exptime:ora_exptimeZi,
+		:ora_boxlevel:ora_boxlevelZi,
+		:ora_cycflag:ora_cycflagZi,
+		:ora_samplepos:ora_sampleposZi,
+		:ora_density:ora_densityZi,
+		:ora_ph:ora_phZi,
+		:ora_conductivity:ora_conductivityZi,
+		:ora_sapval:ora_sapvalZi,
+		:ora_iron:ora_ironZi,
+		:ora_ironsoap:ora_ironsoapZi,
+		:ora_stabfactor:ora_stabfactorZi,
+		:ora_cl:ora_clZi,
+		:ora_freeacid:ora_freeacidZi,
+		:ora_ash:ora_ashZi,
+		:ora_particle:ora_particleZi,
+		:ora_eti:ora_etiZi,
+		:ora_ocomment:ora_ocommentZi,
+		:ora_wsamplepos:ora_wsampleposZi,
+		:ora_wph:ora_wphZi,
+		:ora_wconductivity:ora_wconductivityZi,
+		:ora_sampledegree:ora_sampledegreeZi,
+		:ora_toc:ora_tocZi,
+		:ora_tom:ora_tomZi,
+		:ora_mop:ora_mopZi
+	FROM OILA
+	WHERE
+				oildate         = :k_ora_oildate AND 
+				expno           = :k_ora_expno ;
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	//
+	// copy host variables into Class attributes
+	//
+	copyOracleToAttribute();
+	return ( NULL );
+}
+
+//updates a single entry from DB
+char* OILA::updateDB()
+{
+	//
+	//copy the host variables (k_...) to Oracle Host Keys (k_ora_..)
+	//
+		copyKeyToHost();
+	//copy the attributes ( ...) to Oracle Hosts( ora_..)
+	//
+		copyAttributeToOracle();
+	//
+	// Do UPDATE
+	//
+	EXEC SQL UPDATE OILA
+	SET 
+		oildate             =:ora_oildate,
+		crewno              =:ora_crewno:ora_crewnoZi,
+		shiftno             =:ora_shiftno:ora_shiftnoZi,
+		expno               =:ora_expno,
+		exptime             =:ora_exptime:ora_exptimeZi,
+		boxlevel            =:ora_boxlevel:ora_boxlevelZi,
+		cycflag             =:ora_cycflag:ora_cycflagZi,
+		samplepos           =:ora_samplepos:ora_sampleposZi,
+		density             =:ora_density:ora_densityZi,
+		ph                  =:ora_ph:ora_phZi,
+		conductivity        =:ora_conductivity:ora_conductivityZi,
+		sapval              =:ora_sapval:ora_sapvalZi,
+		iron                =:ora_iron:ora_ironZi,
+		ironsoap            =:ora_ironsoap:ora_ironsoapZi,
+		stabfactor          =:ora_stabfactor:ora_stabfactorZi,
+		cl                  =:ora_cl:ora_clZi,
+		freeacid            =:ora_freeacid:ora_freeacidZi,
+		ash                 =:ora_ash:ora_ashZi,
+		particle            =:ora_particle:ora_particleZi,
+		eti                 =:ora_eti:ora_etiZi,
+		ocomment            =:ora_ocomment:ora_ocommentZi,
+		wsamplepos          =:ora_wsamplepos:ora_wsampleposZi,
+		wph                 =:ora_wph:ora_wphZi,
+		wconductivity       =:ora_wconductivity:ora_wconductivityZi,
+		sampledegree        =:ora_sampledegree:ora_sampledegreeZi,
+		toc                 =TO_DATE( :ora_toc:ora_tocZi,'YYYYMMDDHH24MISS'),
+		tom                 =TO_DATE( :ora_tom:ora_tomZi,'YYYYMMDDHH24MISS'),
+		mop                 =:ora_mop:ora_mopZi
+	WHERE
+		oildate         = :k_ora_oildate AND 
+		expno           = :k_ora_expno ;
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//inserts a single entry from DB
+char* OILA::insertDB()
+{
+	//
+	//copy the attributes ( ...) to Oracle Hosts( ora_..) 
+	//
+		copyAttributeToOracle();
+	//
+	// Do INSERT
+	//
+	EXEC SQL INSERT INTO OILA
+	(
+		oildate,
+		crewno,
+		shiftno,
+		expno,
+		exptime,
+		boxlevel,
+		cycflag,
+		samplepos,
+		density,
+		ph,
+		conductivity,
+		sapval,
+		iron,
+		ironsoap,
+		stabfactor,
+		cl,
+		freeacid,
+		ash,
+		particle,
+		eti,
+		ocomment,
+		wsamplepos,
+		wph,
+		wconductivity,
+		sampledegree,
+		toc,
+		tom,
+		mop
+	)
+
+	VALUES
+	(
+		:ora_oildate,
+		:ora_crewno:ora_crewnoZi,
+		:ora_shiftno:ora_shiftnoZi,
+		:ora_expno,
+		:ora_exptime:ora_exptimeZi,
+		:ora_boxlevel:ora_boxlevelZi,
+		:ora_cycflag:ora_cycflagZi,
+		:ora_samplepos:ora_sampleposZi,
+		:ora_density:ora_densityZi,
+		:ora_ph:ora_phZi,
+		:ora_conductivity:ora_conductivityZi,
+		:ora_sapval:ora_sapvalZi,
+		:ora_iron:ora_ironZi,
+		:ora_ironsoap:ora_ironsoapZi,
+		:ora_stabfactor:ora_stabfactorZi,
+		:ora_cl:ora_clZi,
+		:ora_freeacid:ora_freeacidZi,
+		:ora_ash:ora_ashZi,
+		:ora_particle:ora_particleZi,
+		:ora_eti:ora_etiZi,
+		:ora_ocomment:ora_ocommentZi,
+		:ora_wsamplepos:ora_wsampleposZi,
+		:ora_wph:ora_wphZi,
+		:ora_wconductivity:ora_wconductivityZi,
+		:ora_sampledegree:ora_sampledegreeZi,
+		TO_DATE( :ora_toc:ora_tocZi,'YYYYMMDDHH24MISS'),
+		TO_DATE( :ora_tom:ora_tomZi,'YYYYMMDDHH24MISS'),
+		:ora_mop:ora_mopZi
+	);
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//this methode tries to update a DB record,when the update fails.
+char* OILA::storeDB()
+{
+	char* ret = NULL;
+	setKeysFromRecord();
+	ret=updateDB();
+	if(ret != NULL)
+	{
+		ret=insertDB();
+		if(ret != NULL)
+		{
+			dbAccess = false;
+			return(ret);
+		}
+	}
+	return(ret);
+}
+
+//deletes a single entry from DB
+char* OILA::deleteDB()
+{
+//
+//copy the host variables (k_...) to Oracle Host Keys (k_ora_..)
+//
+	copyKeyToHost();
+
+//
+// Do Delete 
+//
+	EXEC SQL DELETE FROM OILA
+	WHERE
+				oildate         = :k_ora_oildate AND 
+				expno           = :k_ora_expno ;
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+// Executes the SQL DELETE with a where clause
+char* OILA::deleteDB(const char* where,long* count)
+{
+	*(count) = -1L;
+// Create dynamic statement.
+//
+	strcpy((char*)dynstr.arr,"DELETE");
+	strcat((char*)dynstr.arr," FROM OILA");
+	if ( where != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, where );
+	}
+
+	dynstr.len = strlen( (char*) dynstr.arr);
+	EXEC SQL EXECUTE IMMEDIATE :dynstr;
+	oracleSqlCode = sqlca.sqlcode;
+		oracleRowsProcessed = sqlca.sqlerrd[2];
+	if (sqlca.sqlcode == 0 )
+		*(count) = sqlca.sqlerrd[2];
+	else 
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//openSetDB data with where condition and sort order.
+char* OILA::openSetDB(const char* where,char* order)
+{
+//
+// Create dynamic statement.
+//
+	strcpy((char*)dynstr.arr,"SELECT ");
+	strcat((char*)dynstr.arr,"oildate,");
+	strcat((char*)dynstr.arr,"crewno,");
+	strcat((char*)dynstr.arr,"shiftno,");
+	strcat((char*)dynstr.arr,"expno,");
+	strcat((char*)dynstr.arr,"exptime,");
+	strcat((char*)dynstr.arr,"boxlevel,");
+	strcat((char*)dynstr.arr,"cycflag,");
+	strcat((char*)dynstr.arr,"samplepos,");
+	strcat((char*)dynstr.arr,"density,");
+	strcat((char*)dynstr.arr,"ph,");
+	strcat((char*)dynstr.arr,"conductivity,");
+	strcat((char*)dynstr.arr,"sapval,");
+	strcat((char*)dynstr.arr,"iron,");
+	strcat((char*)dynstr.arr,"ironsoap,");
+	strcat((char*)dynstr.arr,"stabfactor,");
+	strcat((char*)dynstr.arr,"cl,");
+	strcat((char*)dynstr.arr,"freeacid,");
+	strcat((char*)dynstr.arr,"ash,");
+	strcat((char*)dynstr.arr,"particle,");
+	strcat((char*)dynstr.arr,"eti,");
+	strcat((char*)dynstr.arr,"ocomment,");
+	strcat((char*)dynstr.arr,"wsamplepos,");
+	strcat((char*)dynstr.arr,"wph,");
+	strcat((char*)dynstr.arr,"wconductivity,");
+	strcat((char*)dynstr.arr,"sampledegree,");
+	strcat((char*)dynstr.arr,"TO_CHAR(toc , 'YYYYMMDDHH24MISS'),");
+	strcat((char*)dynstr.arr,"TO_CHAR(tom , 'YYYYMMDDHH24MISS'),");
+	strcat((char*)dynstr.arr,"mop");
+
+	strcat((char*)dynstr.arr," FROM OILA ");
+	if ( where != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, where);
+	}
+	if ( order != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, order);
+	}
+
+	dynstr.len = strlen( (char*) dynstr.arr);
+	EXEC SQL PREPARE set_OILA FROM :dynstr;
+	if (sqlca.sqlcode == 0 )
+	{
+		EXEC SQL DECLARE cu_OILA CURSOR FOR set_OILA;
+		if (sqlca.sqlcode == 0 )
+			EXEC SQL OPEN cu_OILA;
+	}
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	cuFl = OPENED;
+	return ( NULL );
+}
+
+//Executes the SQL FETCH Statement .
+char* OILA::getSetDB()
+{
+	if ( cuFl != OPENED ) return ("No open Cursor Table:Me");
+	EXEC SQL FETCH cu_OILA INTO
+		:ora_oildate,
+		:ora_crewno:ora_crewnoZi,
+		:ora_shiftno:ora_shiftnoZi,
+		:ora_expno,
+		:ora_exptime:ora_exptimeZi,
+		:ora_boxlevel:ora_boxlevelZi,
+		:ora_cycflag:ora_cycflagZi,
+		:ora_samplepos:ora_sampleposZi,
+		:ora_density:ora_densityZi,
+		:ora_ph:ora_phZi,
+		:ora_conductivity:ora_conductivityZi,
+		:ora_sapval:ora_sapvalZi,
+		:ora_iron:ora_ironZi,
+		:ora_ironsoap:ora_ironsoapZi,
+		:ora_stabfactor:ora_stabfactorZi,
+		:ora_cl:ora_clZi,
+		:ora_freeacid:ora_freeacidZi,
+		:ora_ash:ora_ashZi,
+		:ora_particle:ora_particleZi,
+		:ora_eti:ora_etiZi,
+		:ora_ocomment:ora_ocommentZi,
+		:ora_wsamplepos:ora_wsampleposZi,
+		:ora_wph:ora_wphZi,
+		:ora_wconductivity:ora_wconductivityZi,
+		:ora_sampledegree:ora_sampledegreeZi,
+		:ora_toc:ora_tocZi,
+		:ora_tom:ora_tomZi,
+		:ora_mop:ora_mopZi;
+
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		pCatch->catchError(sqlca.sqlcode);
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		return (char*) sqlca.sqlerrm.sqlerrmc ;
+	}
+	//
+	// copy host variables into Class attributes
+	//
+	copyOracleToAttribute();
+	copyHostToKey();
+	return ( NULL );
+}
+
+//Close a Oracle Cursor
+char* OILA::closeSetDB()
+{
+	EXEC SQL CLOSE cu_OILA;
+	oracleSqlCode = sqlca.sqlcode;         
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		pCatch->catchError(sqlca.sqlcode);
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		return (char*) sqlca.sqlerrm.sqlerrmc ;
+	}
+	cuFl = CLOSED;
+	return ( NULL );
+}
+
+//Executes the SQL count(key) for a where clause
+char* OILA::countDB(const char* where,long* count)
+{
+	*(count) = -1L;
+//
+// Create dynamic statement. 
+//
+	strncpy((char*)dynstr.arr,"SELECT count(oildate)", sizeof(dynstr.arr));
+	strcat((char*)dynstr.arr," FROM OILA");
+	if ( where != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, where );
+	}
+	dynstr.len = strlen( (char*) dynstr.arr);
+	EXEC SQL PREPARE c_OILA FROM :dynstr;
+	
+	if (sqlca.sqlcode == 0 )
+	{
+		EXEC SQL DECLARE ct_OILA CURSOR FOR c_OILA;
+		if (sqlca.sqlcode == 0 )
+		{
+			EXEC SQL OPEN ct_OILA;
+			if (sqlca.sqlcode == 0 )			{
+				EXEC SQL FETCH ct_OILA INTO :rowCnt;
+				if (sqlca.sqlcode == 0 )
+				*(count) = rowCnt;
+			}
+			EXEC SQL CLOSE ct_OILA;
+		}
+	}
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//private methode copy Attribute to Oracle
+//copys Object attributes into Oracle Host variables.
+void OILA::copyAttributeToOracle()
+{
+	char* ptrStr;
+	ptrStr = this->oildate();
+	if( strlen(ptrStr)< sizeof(ora_oildate.arr))
+	{
+		strncpy((char*)ora_oildate.arr, ptrStr, sizeof(ora_oildate.arr));
+		ora_oildate.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_oildate.len = 0;
+	ptrStr = this->crewno();
+	if( strlen(ptrStr)< sizeof(ora_crewno.arr))
+	{
+		strncpy((char*)ora_crewno.arr, ptrStr, sizeof(ora_crewno.arr));
+		ora_crewno.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_crewno.len = 0;
+	ora_crewnoZi = this->crewnoZi();
+	ptrStr = this->shiftno();
+	if( strlen(ptrStr)< sizeof(ora_shiftno.arr))
+	{
+		strncpy((char*)ora_shiftno.arr, ptrStr, sizeof(ora_shiftno.arr));
+		ora_shiftno.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_shiftno.len = 0;
+	ora_shiftnoZi = this->shiftnoZi();
+	ptrStr = this->expno();
+	if( strlen(ptrStr)< sizeof(ora_expno.arr))
+	{
+		strncpy((char*)ora_expno.arr, ptrStr, sizeof(ora_expno.arr));
+		ora_expno.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_expno.len = 0;
+	ptrStr = this->exptime();
+	if( strlen(ptrStr)< sizeof(ora_exptime.arr))
+	{
+		strncpy((char*)ora_exptime.arr, ptrStr, sizeof(ora_exptime.arr));
+		ora_exptime.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_exptime.len = 0;
+	ora_exptimeZi = this->exptimeZi();
+	ora_boxlevel = this->boxlevel();
+	ora_boxlevelZi = this->boxlevelZi();
+	ptrStr = this->cycflag();
+	if( strlen(ptrStr)< sizeof(ora_cycflag.arr))
+	{
+		strncpy((char*)ora_cycflag.arr, ptrStr, sizeof(ora_cycflag.arr));
+		ora_cycflag.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_cycflag.len = 0;
+	ora_cycflagZi = this->cycflagZi();
+	ptrStr = this->samplepos();
+	if( strlen(ptrStr)< sizeof(ora_samplepos.arr))
+	{
+		strncpy((char*)ora_samplepos.arr, ptrStr, sizeof(ora_samplepos.arr));
+		ora_samplepos.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_samplepos.len = 0;
+	ora_sampleposZi = this->sampleposZi();
+	ora_density = this->density();
+	ora_densityZi = this->densityZi();
+	ora_ph = this->ph();
+	ora_phZi = this->phZi();
+	ora_conductivity = this->conductivity();
+	ora_conductivityZi = this->conductivityZi();
+	ora_sapval = this->sapval();
+	ora_sapvalZi = this->sapvalZi();
+	ora_iron = this->iron();
+	ora_ironZi = this->ironZi();
+	ora_ironsoap = this->ironsoap();
+	ora_ironsoapZi = this->ironsoapZi();
+	ora_stabfactor = this->stabfactor();
+	ora_stabfactorZi = this->stabfactorZi();
+	ora_cl = this->cl();
+	ora_clZi = this->clZi();
+	ora_freeacid = this->freeacid();
+	ora_freeacidZi = this->freeacidZi();
+	ora_ash = this->ash();
+	ora_ashZi = this->ashZi();
+	ora_particle = this->particle();
+	ora_particleZi = this->particleZi();
+	ora_eti = this->eti();
+	ora_etiZi = this->etiZi();
+	ptrStr = this->ocomment();
+	if( strlen(ptrStr)< sizeof(ora_ocomment.arr))
+	{
+		strncpy((char*)ora_ocomment.arr, ptrStr, sizeof(ora_ocomment.arr));
+		ora_ocomment.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_ocomment.len = 0;
+	ora_ocommentZi = this->ocommentZi();
+	ptrStr = this->wsamplepos();
+	if( strlen(ptrStr)< sizeof(ora_wsamplepos.arr))
+	{
+		strncpy((char*)ora_wsamplepos.arr, ptrStr, sizeof(ora_wsamplepos.arr));
+		ora_wsamplepos.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_wsamplepos.len = 0;
+	ora_wsampleposZi = this->wsampleposZi();
+	ora_wph = this->wph();
+	ora_wphZi = this->wphZi();
+	ora_wconductivity = this->wconductivity();
+	ora_wconductivityZi = this->wconductivityZi();
+	ora_sampledegree = this->sampledegree();
+	ora_sampledegreeZi = this->sampledegreeZi();
+	ptrStr = this->toc();
+	if( strlen(ptrStr)< sizeof(ora_toc.arr))
+	{
+		strncpy((char*)ora_toc.arr, ptrStr, sizeof(ora_toc.arr));
+		ora_toc.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_toc.len = 0;
+	ora_tocZi = this->tocZi();
+	ptrStr = this->tom();
+	if( strlen(ptrStr)< sizeof(ora_tom.arr))
+	{
+		strncpy((char*)ora_tom.arr, ptrStr, sizeof(ora_tom.arr));
+		ora_tom.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_tom.len = 0;
+	ora_tomZi = this->tomZi();
+	ptrStr = this->mop();
+	if( strlen(ptrStr)< sizeof(ora_mop.arr))
+	{
+		strncpy((char*)ora_mop.arr, ptrStr, sizeof(ora_mop.arr));
+		ora_mop.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_mop.len = 0;
+	ora_mopZi = this->mopZi();
+}
+
+//private methode copy Oracle to Attribute
+//copys Oracle Host variables into Object attributes.
+void OILA::copyOracleToAttribute()
+{
+	ora_oildate.arr[ora_oildate.len] = '\0';
+	this->set_oildate((char*) ora_oildate.arr);
+	ora_crewno.arr[ora_crewno.len] = '\0';
+	this->set_crewno((char*) ora_crewno.arr);
+	this->set_crewnoZi((short)ora_crewnoZi);
+	ora_shiftno.arr[ora_shiftno.len] = '\0';
+	this->set_shiftno((char*) ora_shiftno.arr);
+	this->set_shiftnoZi((short)ora_shiftnoZi);
+	ora_expno.arr[ora_expno.len] = '\0';
+	this->set_expno((char*) ora_expno.arr);
+	ora_exptime.arr[ora_exptime.len] = '\0';
+	this->set_exptime((char*) ora_exptime.arr);
+	this->set_exptimeZi((short)ora_exptimeZi);
+	this->set_boxlevel((float)ora_boxlevel);
+	this->set_boxlevelZi((short)ora_boxlevelZi);
+	ora_cycflag.arr[ora_cycflag.len] = '\0';
+	this->set_cycflag((char*) ora_cycflag.arr);
+	this->set_cycflagZi((short)ora_cycflagZi);
+	ora_samplepos.arr[ora_samplepos.len] = '\0';
+	this->set_samplepos((char*) ora_samplepos.arr);
+	this->set_sampleposZi((short)ora_sampleposZi);
+	this->set_density((float)ora_density);
+	this->set_densityZi((short)ora_densityZi);
+	this->set_ph((float)ora_ph);
+	this->set_phZi((short)ora_phZi);
+	this->set_conductivity((float)ora_conductivity);
+	this->set_conductivityZi((short)ora_conductivityZi);
+	this->set_sapval((float)ora_sapval);
+	this->set_sapvalZi((short)ora_sapvalZi);
+	this->set_iron((float)ora_iron);
+	this->set_ironZi((short)ora_ironZi);
+	this->set_ironsoap((float)ora_ironsoap);
+	this->set_ironsoapZi((short)ora_ironsoapZi);
+	this->set_stabfactor((float)ora_stabfactor);
+	this->set_stabfactorZi((short)ora_stabfactorZi);
+	this->set_cl((float)ora_cl);
+	this->set_clZi((short)ora_clZi);
+	this->set_freeacid((float)ora_freeacid);
+	this->set_freeacidZi((short)ora_freeacidZi);
+	this->set_ash((float)ora_ash);
+	this->set_ashZi((short)ora_ashZi);
+	this->set_particle((float)ora_particle);
+	this->set_particleZi((short)ora_particleZi);
+	this->set_eti((float)ora_eti);
+	this->set_etiZi((short)ora_etiZi);
+	ora_ocomment.arr[ora_ocomment.len] = '\0';
+	this->set_ocomment((char*) ora_ocomment.arr);
+	this->set_ocommentZi((short)ora_ocommentZi);
+	ora_wsamplepos.arr[ora_wsamplepos.len] = '\0';
+	this->set_wsamplepos((char*) ora_wsamplepos.arr);
+	this->set_wsampleposZi((short)ora_wsampleposZi);
+	this->set_wph((float)ora_wph);
+	this->set_wphZi((short)ora_wphZi);
+	this->set_wconductivity((float)ora_wconductivity);
+	this->set_wconductivityZi((short)ora_wconductivityZi);
+	this->set_sampledegree((float)ora_sampledegree);
+	this->set_sampledegreeZi((short)ora_sampledegreeZi);
+	ora_toc.arr[ora_toc.len] = '\0';
+	this->set_toc((char*) ora_toc.arr);
+	this->set_tocZi((short)ora_tocZi);
+	ora_tom.arr[ora_tom.len] = '\0';
+	this->set_tom((char*) ora_tom.arr);
+	this->set_tomZi((short)ora_tomZi);
+	ora_mop.arr[ora_mop.len] = '\0';
+	this->set_mop((char*) ora_mop.arr);
+	this->set_mopZi((short)ora_mopZi);
+}
+
+//private methode copy Key to host
+//copys Object attributes into Oralce Key variables.
+void OILA::copyKeyToHost()
+{
+	char* ptrStr;
+	ptrStr = this->k_oildate();
+	if( strlen(ptrStr)< sizeof(k_ora_oildate.arr))
+	{
+		strncpy((char*)k_ora_oildate.arr, ptrStr, sizeof(k_ora_oildate.arr));
+		k_ora_oildate.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		k_ora_oildate.len = 0;
+	ptrStr = this->k_expno();
+	if( strlen(ptrStr)< sizeof(k_ora_expno.arr))
+	{
+		strncpy((char*)k_ora_expno.arr, ptrStr, sizeof(k_ora_expno.arr));
+		k_ora_expno.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		k_ora_expno.len = 0;
+}
+
+//private methode copy Host to Key
+// copys Oracle Host Key variables into Object Key attributes.
+void OILA::copyHostToKey()
+{
+	ora_oildate.arr[ora_oildate.len] = '\0';
+	this->set_k_oildate((char*) ora_oildate.arr);
+	ora_expno.arr[ora_expno.len] = '\0';
+	this->set_k_expno((char*) ora_expno.arr);
+}
+
+//private methode log Oracle message information
+void OILA::logOraMessageInfo()
+{
+	LOG d("OILA::logOraMessageInfo()");
+	sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+	oraca.orastxt.orastxtc[oraca.orastxt.orastxtl] = '\0';
+	oraca.orasfnm.orasfnmc[oraca.orasfnm.orasfnml] = '\0';
+	
+	//* negating a error code submitted perhaps positively.
+	if (sqlca.sqlcode > 0) sqlca.sqlcode *= -1;
+	
+	//* Distribute fault text, SQL statement and file in the Debug System.
+	d << "ORA-Error: "<< sqlca.sqlerrm.sqlerrmc; d.Info();
+	d << "OracaText: "<< oraca.orastxt.orastxtc; d.Info();
+	d << "in line " << oraca.oraslnr << " in file " << oraca.orasfnm.orasfnmc; d.Info();
+}
+
+//this methode stores the unique key attributes
+void OILA::setPrimKey(char* arg1,char* arg2)
+{
+	strncpy( (char*)c_k_oildate, arg1, sizeof(c_k_oildate));
+	c_k_oildate[sizeof(c_k_oildate)-1] = '\0';
+	strncpy( (char*)c_k_expno, arg2, sizeof(c_k_expno));
+	c_k_expno[sizeof(c_k_expno)-1] = '\0';
+}
+
+//this methode stores the unique key attributes
+void OILA::initInsertKeys(char* arg1,char* arg2)
+{
+	setPrimKey(arg1,arg2);
+	strncpy( (char*)c_oildate, arg1, sizeof(c_oildate));
+	c_oildate[sizeof(c_oildate)-1] = '\0';
+	strncpy( (char*)c_expno, arg2, sizeof(c_expno));
+	c_expno[sizeof(c_expno)-1] = '\0';
+}
+
+//this methode set the unique key attributes from the DB Record Attributes
+void OILA::setKeysFromRecord()
+{
+	set_k_oildate( oildate() );
+	set_k_expno( expno() );
+}
+
+//			         
+//O P E R A T O R  + 
+//===================
+//                   
+OILA OILA::operator+(const OILA &inst) const
+{
+	OILA ptrOILA(*this);
+//----------------------------------------------------------
+	ptrOILA.set_oildate(inst.oildate());
+//----------------------------------------------------------
+	if(inst.crewnoZi() != -1)
+	{
+		ptrOILA.set_crewno(inst.crewno());
+		ptrOILA.set_crewnoZi(inst.crewnoZi());
+	}
+//----------------------------------------------------------
+	if(inst.shiftnoZi() != -1)
+	{
+		ptrOILA.set_shiftno(inst.shiftno());
+		ptrOILA.set_shiftnoZi(inst.shiftnoZi());
+	}
+//----------------------------------------------------------
+	ptrOILA.set_expno(inst.expno());
+//----------------------------------------------------------
+	if(inst.exptimeZi() != -1)
+	{
+		ptrOILA.set_exptime(inst.exptime());
+		ptrOILA.set_exptimeZi(inst.exptimeZi());
+	}
+//----------------------------------------------------------
+	if(inst.boxlevelZi() != -1)
+	{
+		ptrOILA.set_boxlevel(inst.boxlevel());
+		ptrOILA.set_boxlevelZi(inst.boxlevelZi());
+	}
+//----------------------------------------------------------
+	if(inst.cycflagZi() != -1)
+	{
+		ptrOILA.set_cycflag(inst.cycflag());
+		ptrOILA.set_cycflagZi(inst.cycflagZi());
+	}
+//----------------------------------------------------------
+	if(inst.sampleposZi() != -1)
+	{
+		ptrOILA.set_samplepos(inst.samplepos());
+		ptrOILA.set_sampleposZi(inst.sampleposZi());
+	}
+//----------------------------------------------------------
+	if(inst.densityZi() != -1)
+	{
+		ptrOILA.set_density(inst.density());
+		ptrOILA.set_densityZi(inst.densityZi());
+	}
+//----------------------------------------------------------
+	if(inst.phZi() != -1)
+	{
+		ptrOILA.set_ph(inst.ph());
+		ptrOILA.set_phZi(inst.phZi());
+	}
+//----------------------------------------------------------
+	if(inst.conductivityZi() != -1)
+	{
+		ptrOILA.set_conductivity(inst.conductivity());
+		ptrOILA.set_conductivityZi(inst.conductivityZi());
+	}
+//----------------------------------------------------------
+	if(inst.sapvalZi() != -1)
+	{
+		ptrOILA.set_sapval(inst.sapval());
+		ptrOILA.set_sapvalZi(inst.sapvalZi());
+	}
+//----------------------------------------------------------
+	if(inst.ironZi() != -1)
+	{
+		ptrOILA.set_iron(inst.iron());
+		ptrOILA.set_ironZi(inst.ironZi());
+	}
+//----------------------------------------------------------
+	if(inst.ironsoapZi() != -1)
+	{
+		ptrOILA.set_ironsoap(inst.ironsoap());
+		ptrOILA.set_ironsoapZi(inst.ironsoapZi());
+	}
+//----------------------------------------------------------
+	if(inst.stabfactorZi() != -1)
+	{
+		ptrOILA.set_stabfactor(inst.stabfactor());
+		ptrOILA.set_stabfactorZi(inst.stabfactorZi());
+	}
+//----------------------------------------------------------
+	if(inst.clZi() != -1)
+	{
+		ptrOILA.set_cl(inst.cl());
+		ptrOILA.set_clZi(inst.clZi());
+	}
+//----------------------------------------------------------
+	if(inst.freeacidZi() != -1)
+	{
+		ptrOILA.set_freeacid(inst.freeacid());
+		ptrOILA.set_freeacidZi(inst.freeacidZi());
+	}
+//----------------------------------------------------------
+	if(inst.ashZi() != -1)
+	{
+		ptrOILA.set_ash(inst.ash());
+		ptrOILA.set_ashZi(inst.ashZi());
+	}
+//----------------------------------------------------------
+	if(inst.particleZi() != -1)
+	{
+		ptrOILA.set_particle(inst.particle());
+		ptrOILA.set_particleZi(inst.particleZi());
+	}
+//----------------------------------------------------------
+	if(inst.etiZi() != -1)
+	{
+		ptrOILA.set_eti(inst.eti());
+		ptrOILA.set_etiZi(inst.etiZi());
+	}
+//----------------------------------------------------------
+	if(inst.ocommentZi() != -1)
+	{
+		ptrOILA.set_ocomment(inst.ocomment());
+		ptrOILA.set_ocommentZi(inst.ocommentZi());
+	}
+//----------------------------------------------------------
+	if(inst.wsampleposZi() != -1)
+	{
+		ptrOILA.set_wsamplepos(inst.wsamplepos());
+		ptrOILA.set_wsampleposZi(inst.wsampleposZi());
+	}
+//----------------------------------------------------------
+	if(inst.wphZi() != -1)
+	{
+		ptrOILA.set_wph(inst.wph());
+		ptrOILA.set_wphZi(inst.wphZi());
+	}
+//----------------------------------------------------------
+	if(inst.wconductivityZi() != -1)
+	{
+		ptrOILA.set_wconductivity(inst.wconductivity());
+		ptrOILA.set_wconductivityZi(inst.wconductivityZi());
+	}
+//----------------------------------------------------------
+	if(inst.sampledegreeZi() != -1)
+	{
+		ptrOILA.set_sampledegree(inst.sampledegree());
+		ptrOILA.set_sampledegreeZi(inst.sampledegreeZi());
+	}
+//----------------------------------------------------------
+	if(inst.tocZi() != -1)
+	{
+		ptrOILA.set_toc(inst.toc());
+		ptrOILA.set_tocZi(inst.tocZi());
+	}
+//----------------------------------------------------------
+	if(inst.tomZi() != -1)
+	{
+		ptrOILA.set_tom(inst.tom());
+		ptrOILA.set_tomZi(inst.tomZi());
+	}
+//----------------------------------------------------------
+	if(inst.mopZi() != -1)
+	{
+		ptrOILA.set_mop(inst.mop());
+		ptrOILA.set_mopZi(inst.mopZi());
+	}
+	return( ptrOILA );
+}
+
+//			         
+//O P E R A T O R  = 
+//===================
+//                   
+const OILA& OILA::operator=(const OILA &inst)
+{
+//----------------------------------------------------------
+	this->set_oildate(inst.oildate());
+//----------------------------------------------------------
+	this->set_crewno(inst.crewno());
+	this->set_crewnoZi(inst.crewnoZi());
+//----------------------------------------------------------
+	this->set_shiftno(inst.shiftno());
+	this->set_shiftnoZi(inst.shiftnoZi());
+//----------------------------------------------------------
+	this->set_expno(inst.expno());
+//----------------------------------------------------------
+	this->set_exptime(inst.exptime());
+	this->set_exptimeZi(inst.exptimeZi());
+//----------------------------------------------------------
+	this->set_boxlevel(inst.boxlevel());
+	this->set_boxlevelZi(inst.boxlevelZi());
+//----------------------------------------------------------
+	this->set_cycflag(inst.cycflag());
+	this->set_cycflagZi(inst.cycflagZi());
+//----------------------------------------------------------
+	this->set_samplepos(inst.samplepos());
+	this->set_sampleposZi(inst.sampleposZi());
+//----------------------------------------------------------
+	this->set_density(inst.density());
+	this->set_densityZi(inst.densityZi());
+//----------------------------------------------------------
+	this->set_ph(inst.ph());
+	this->set_phZi(inst.phZi());
+//----------------------------------------------------------
+	this->set_conductivity(inst.conductivity());
+	this->set_conductivityZi(inst.conductivityZi());
+//----------------------------------------------------------
+	this->set_sapval(inst.sapval());
+	this->set_sapvalZi(inst.sapvalZi());
+//----------------------------------------------------------
+	this->set_iron(inst.iron());
+	this->set_ironZi(inst.ironZi());
+//----------------------------------------------------------
+	this->set_ironsoap(inst.ironsoap());
+	this->set_ironsoapZi(inst.ironsoapZi());
+//----------------------------------------------------------
+	this->set_stabfactor(inst.stabfactor());
+	this->set_stabfactorZi(inst.stabfactorZi());
+//----------------------------------------------------------
+	this->set_cl(inst.cl());
+	this->set_clZi(inst.clZi());
+//----------------------------------------------------------
+	this->set_freeacid(inst.freeacid());
+	this->set_freeacidZi(inst.freeacidZi());
+//----------------------------------------------------------
+	this->set_ash(inst.ash());
+	this->set_ashZi(inst.ashZi());
+//----------------------------------------------------------
+	this->set_particle(inst.particle());
+	this->set_particleZi(inst.particleZi());
+//----------------------------------------------------------
+	this->set_eti(inst.eti());
+	this->set_etiZi(inst.etiZi());
+//----------------------------------------------------------
+	this->set_ocomment(inst.ocomment());
+	this->set_ocommentZi(inst.ocommentZi());
+//----------------------------------------------------------
+	this->set_wsamplepos(inst.wsamplepos());
+	this->set_wsampleposZi(inst.wsampleposZi());
+//----------------------------------------------------------
+	this->set_wph(inst.wph());
+	this->set_wphZi(inst.wphZi());
+//----------------------------------------------------------
+	this->set_wconductivity(inst.wconductivity());
+	this->set_wconductivityZi(inst.wconductivityZi());
+//----------------------------------------------------------
+	this->set_sampledegree(inst.sampledegree());
+	this->set_sampledegreeZi(inst.sampledegreeZi());
+//----------------------------------------------------------
+	this->set_toc(inst.toc());
+	this->set_tocZi(inst.tocZi());
+//----------------------------------------------------------
+	this->set_tom(inst.tom());
+	this->set_tomZi(inst.tomZi());
+//----------------------------------------------------------
+	this->set_mop(inst.mop());
+	this->set_mopZi(inst.mopZi());
+	return(*this);
+}
+

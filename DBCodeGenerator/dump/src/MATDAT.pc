@@ -1,0 +1,2247 @@
+/* *******************************************************************/
+/* *   File               :    MATDAT.pc
+/* *   Short Description  :    ORACLE DATABASE ACCESS
+/* * 		                   ACCOUNT MATDAT TABLE
+/* *   Author             :    DB CODE Generator
+/* *   Created Date       :    13.06.2013
+/* *   Tech.Support       :    LiuWeiZhao. email:welljoe@hotmail.com 
+/* *******************************************************************/
+/* *   Copyright (c)  SGAI AI 2009   All Rights Reserved
+/* *******************************************************************/
+
+#include "LOG.h"
+#include "MATDAT.h"
+//
+// Declare ORACLE Host Variables
+//
+
+#define SQLCA_STORAGE_CLASS static
+#define ORACA_STORAGE_CLASS static
+EXEC SQL INCLUDE sqlca;
+EXEC SQL INCLUDE oraca;
+
+#define OPENED 1
+#define CLOSED 2
+EXEC SQL BEGIN DECLARE SECTION;
+/* ****************************************************************************** */
+/*                                                                                */
+/*                               define Oracle                                    */
+/*                               Host Variables                                   */
+/*                                                          .                     */
+/*                                                                                */
+/* ****************************************************************************** */
+
+static VARCHAR	dynstr[16000];
+static long		rowCnt;       
+static long		cuFl;         
+//Unit[-]:Unit[[-]]:alloy name.Limit:[-,-]
+static VARCHAR  ora_alloycode[33];
+//Unit[-]:铝含量.Limit:[-,1]
+static float    ora_alper;
+static short    ora_alperZi;
+//Unit[-]:砷含量.Limit:[-,1]
+static float    ora_asper;
+static short    ora_asperZi;
+//Unit[-]:硼含量.Limit:[-,1]
+static float    ora_bper;
+static short    ora_bperZi;
+//Unit[-]:碳含量.Limit:[-,1]
+static float    ora_cper;
+static short    ora_cperZi;
+//Unit[-]:钙含量.Limit:[-,1]
+static float    ora_caper;
+static short    ora_caperZi;
+//Unit[-]:钴含量.Limit:[-,1]
+static float    ora_coper;
+static short    ora_coperZi;
+//Unit[-]:铬含量.Limit:[-,1]
+static float    ora_crper;
+static short    ora_crperZi;
+//Unit[-]:铜含量.Limit:[-,1]
+static float    ora_cuper;
+static short    ora_cuperZi;
+//Unit[-]:锰含量.Limit:[-,1]
+static float    ora_mnper;
+static short    ora_mnperZi;
+//Unit[-]:钼含量.Limit:[-,1]
+static float    ora_moper;
+static short    ora_moperZi;
+//Unit[-]:铌含量.Limit:[-,1]
+static float    ora_nbper;
+static short    ora_nbperZi;
+//Unit[-]:镍含量.Limit:[-,1]
+static float    ora_niper;
+static short    ora_niperZi;
+//Unit[-]:氮含量.Limit:[-,1]
+static float    ora_nper;
+static short    ora_nperZi;
+//Unit[-]:铅含量.Limit:[-,1]
+static float    ora_pbper;
+static short    ora_pbperZi;
+//Unit[-]:磷含量.Limit:[-,1]
+static float    ora_pper;
+static short    ora_pperZi;
+//Unit[-]:硫含量.Limit:[-,1]
+static float    ora_sper;
+static short    ora_sperZi;
+//Unit[-]:硅含量.Limit:[-,1]
+static float    ora_siper;
+static short    ora_siperZi;
+//Unit[-]:锡含量.Limit:[-,1]
+static float    ora_snper;
+static short    ora_snperZi;
+//Unit[-]:钛含量.Limit:[-,1]
+static float    ora_tiper;
+static short    ora_tiperZi;
+//Unit[-]:钒含量.Limit:[-,1]
+static float    ora_vper;
+static short    ora_vperZi;
+//Unit[-]:钨含量.Limit:[-,1]
+static float    ora_wper;
+static short    ora_wperZi;
+//Unit[-]:预留元素含量.Limit:[-,1]
+static float    ora_x1per;
+static short    ora_x1perZi;
+//Unit[-]:预留元素含量.Limit:[-,1]
+static float    ora_x2per;
+static short    ora_x2perZi;
+//Unit[-]:预留元素含量.Limit:[-,1]
+static float    ora_x3per;
+static short    ora_x3perZi;
+//Unit[-]:预留元素含量.Limit:[-,1]
+static float    ora_x4per;
+static short    ora_x4perZi;
+//Unit[-]:预留元素含量.Limit:[-,1]
+static float    ora_x5per;
+static short    ora_x5perZi;
+//Unit[Mpa]:第1机架初始材料强度(MSINITP_IND0).Limit:[-,-]
+static float    ora_msinitp_ind0;
+static short    ora_msinitp_ind0Zi;
+//Unit[Mpa]:第2机架初始材料强度(MSINITP_IND1).Limit:[-,-]
+static float    ora_msinitp_ind1;
+static short    ora_msinitp_ind1Zi;
+//Unit[Mpa]:第3机架初始材料强度(MSINITP_IND2).Limit:[-,-]
+static float    ora_msinitp_ind2;
+static short    ora_msinitp_ind2Zi;
+//Unit[Mpa]:第4机架初始材料强度(MSINITP_IND3).Limit:[-,-]
+static float    ora_msinitp_ind3;
+static short    ora_msinitp_ind3Zi;
+//Unit[Mpa]:第5机架初始材料强度(MSINITP_IND4).Limit:[-,-]
+static float    ora_msinitp_ind4;
+static short    ora_msinitp_ind4Zi;
+//Unit[Mpa]:第1机架自学习后的材料强度(MSP_IND0).Limit:[-,-]
+static float    ora_msp_ind0;
+static short    ora_msp_ind0Zi;
+//Unit[Mpa]:第2机架自学习后的材料强度(MSP_IND1).Limit:[-,-]
+static float    ora_msp_ind1;
+static short    ora_msp_ind1Zi;
+//Unit[Mpa]:第3机架自学习后的材料强度(MSP_IND2).Limit:[-,-]
+static float    ora_msp_ind2;
+static short    ora_msp_ind2Zi;
+//Unit[Mpa]:第4机架自学习后的材料强度(MSP_IND3).Limit:[-,-]
+static float    ora_msp_ind3;
+static short    ora_msp_ind3Zi;
+//Unit[Mpa]:第5机架自学习后的材料强度(MSP_IND4).Limit:[-,-]
+static float    ora_msp_ind4;
+static short    ora_msp_ind4Zi;
+//Unit[-]:第1机架假设压下量(EPSP_IND0).Limit:[-,1]
+static float    ora_epsp_ind0;
+static short    ora_epsp_ind0Zi;
+//Unit[-]:第2机架假设压下量(EPSP_IND1).Limit:[-,1]
+static float    ora_epsp_ind1;
+static short    ora_epsp_ind1Zi;
+//Unit[-]:第3机架假设压下量(EPSP_IND2).Limit:[-,1]
+static float    ora_epsp_ind2;
+static short    ora_epsp_ind2Zi;
+//Unit[-]:第4机架假设压下量(EPSP_IND3).Limit:[-,1]
+static float    ora_epsp_ind3;
+static short    ora_epsp_ind3Zi;
+//Unit[-]:第5机架假设压下量(EPSP_IND4).Limit:[-,1]
+static float    ora_epsp_ind4;
+static short    ora_epsp_ind4Zi;
+//Unit[Mpa]:指数方程初始材料强度(MSI).Limit:[-,-]
+static float    ora_msi;
+static short    ora_msiZi;
+//Unit[Mpa]:指数方程初始材料强度增量(MSE).Limit:[-,-]
+static float    ora_mse;
+static short    ora_mseZi;
+//Unit[Mpa]:指数方程自学习后的材料强度(MSIINIT).Limit:[-,-]
+static float    ora_msiinit;
+static short    ora_msiinitZi;
+//Unit[Mpa]:指数方程自学习后的材料强度增量(MSEINIT).Limit:[-,-]
+static float    ora_mseinit;
+static short    ora_mseinitZi;
+//Unit[-]:该材料自学习次数(COUNTER).Limit:[-,-]
+static float    ora_counter;
+static short    ora_counterZi;
+//Unit[-]:该材料最后一次自学习时间(GMT).Limit:[-,-]
+static VARCHAR  ora_gmt[15];
+static short    ora_gmtZi;
+//Unit[kg/m3]:材料密度(DENSITY).Limit:[-,-]
+static float    ora_density;
+static short    ora_densityZi;
+//Unit[N/m2]:材料弹性模量(EMOD).Limit:[-,-]
+static float    ora_emod;
+static short    ora_emodZi;
+//Unit[J/°Ckg]:材料热容量(CW).Limit:[-,-]
+static float    ora_cw;
+static short    ora_cwZi;
+//Unit[W/m degC]:材料热传导率(LAMBDA).Limit:[-,-]
+static float    ora_lambda;
+static short    ora_lambdaZi;
+//Unit[-]:temperature drop factor(MSTCOR).Limit:[-,-]
+static float    ora_mstcor;
+static short    ora_mstcorZi;
+//Unit[grdC]:temperature gradient(MSTGRADIENT).Limit:[-,-]
+static float    ora_mstgradient;
+static short    ora_mstgradientZi;
+//Unit[grdC]:temperature at inflection point(MSTINFLECTIONX).Limit:[-,-]
+static float    ora_mstinflectionx;
+static short    ora_mstinflectionxZi;
+//Unit[Mpa]:变形抗力的L参数.Limit:[-,1000]
+static float    ora_lpara;
+static short    ora_lparaZi;
+//Unit[-]:变形抗力的M参数.Limit:[-,1000]
+static float    ora_mpara;
+static short    ora_mparaZi;
+//Unit[-]:变形抗力的N参数.Limit:[-,1000]
+static float    ora_npara;
+static short    ora_nparaZi;
+//Unit[-]:创建时间.Limit:[-,-]
+static VARCHAR  ora_toc[15];
+static short    ora_tocZi;
+//Unit[-]:最后修改时间.Limit:[-,-]
+static VARCHAR  ora_tom[15];
+static short    ora_tomZi;
+//Unit[-]:创建或者修改者.Limit:[-,-]
+static VARCHAR  ora_mop[121];
+static short    ora_mopZi;
+// Host arguments for Primary key
+static VARCHAR  k_ora_alloycode[33];   // Unit[-]:Unit[[-]]:alloy name.Limit:[-,-]
+
+EXEC SQL END DECLARE SECTION; 
+             
+// 				             
+//C O N S T R U C T O R S    
+//=======================    
+//                           
+MATDAT::MATDAT()
+{
+	initial();                                             
+}
+
+//					
+//C O P Y  -  C O N S T R U C T O R 
+//==================================
+MATDAT::MATDAT(const MATDAT &inst)
+{
+//----------------------------------------------------------
+	this->set_alloycode(inst.alloycode());
+//----------------------------------------------------------
+	this->set_alper(inst.alper());
+	this->set_alperZi(inst.alperZi());
+//----------------------------------------------------------
+	this->set_asper(inst.asper());
+	this->set_asperZi(inst.asperZi());
+//----------------------------------------------------------
+	this->set_bper(inst.bper());
+	this->set_bperZi(inst.bperZi());
+//----------------------------------------------------------
+	this->set_cper(inst.cper());
+	this->set_cperZi(inst.cperZi());
+//----------------------------------------------------------
+	this->set_caper(inst.caper());
+	this->set_caperZi(inst.caperZi());
+//----------------------------------------------------------
+	this->set_coper(inst.coper());
+	this->set_coperZi(inst.coperZi());
+//----------------------------------------------------------
+	this->set_crper(inst.crper());
+	this->set_crperZi(inst.crperZi());
+//----------------------------------------------------------
+	this->set_cuper(inst.cuper());
+	this->set_cuperZi(inst.cuperZi());
+//----------------------------------------------------------
+	this->set_mnper(inst.mnper());
+	this->set_mnperZi(inst.mnperZi());
+//----------------------------------------------------------
+	this->set_moper(inst.moper());
+	this->set_moperZi(inst.moperZi());
+//----------------------------------------------------------
+	this->set_nbper(inst.nbper());
+	this->set_nbperZi(inst.nbperZi());
+//----------------------------------------------------------
+	this->set_niper(inst.niper());
+	this->set_niperZi(inst.niperZi());
+//----------------------------------------------------------
+	this->set_nper(inst.nper());
+	this->set_nperZi(inst.nperZi());
+//----------------------------------------------------------
+	this->set_pbper(inst.pbper());
+	this->set_pbperZi(inst.pbperZi());
+//----------------------------------------------------------
+	this->set_pper(inst.pper());
+	this->set_pperZi(inst.pperZi());
+//----------------------------------------------------------
+	this->set_sper(inst.sper());
+	this->set_sperZi(inst.sperZi());
+//----------------------------------------------------------
+	this->set_siper(inst.siper());
+	this->set_siperZi(inst.siperZi());
+//----------------------------------------------------------
+	this->set_snper(inst.snper());
+	this->set_snperZi(inst.snperZi());
+//----------------------------------------------------------
+	this->set_tiper(inst.tiper());
+	this->set_tiperZi(inst.tiperZi());
+//----------------------------------------------------------
+	this->set_vper(inst.vper());
+	this->set_vperZi(inst.vperZi());
+//----------------------------------------------------------
+	this->set_wper(inst.wper());
+	this->set_wperZi(inst.wperZi());
+//----------------------------------------------------------
+	this->set_x1per(inst.x1per());
+	this->set_x1perZi(inst.x1perZi());
+//----------------------------------------------------------
+	this->set_x2per(inst.x2per());
+	this->set_x2perZi(inst.x2perZi());
+//----------------------------------------------------------
+	this->set_x3per(inst.x3per());
+	this->set_x3perZi(inst.x3perZi());
+//----------------------------------------------------------
+	this->set_x4per(inst.x4per());
+	this->set_x4perZi(inst.x4perZi());
+//----------------------------------------------------------
+	this->set_x5per(inst.x5per());
+	this->set_x5perZi(inst.x5perZi());
+//----------------------------------------------------------
+	this->set_msinitp_ind0(inst.msinitp_ind0());
+	this->set_msinitp_ind0Zi(inst.msinitp_ind0Zi());
+//----------------------------------------------------------
+	this->set_msinitp_ind1(inst.msinitp_ind1());
+	this->set_msinitp_ind1Zi(inst.msinitp_ind1Zi());
+//----------------------------------------------------------
+	this->set_msinitp_ind2(inst.msinitp_ind2());
+	this->set_msinitp_ind2Zi(inst.msinitp_ind2Zi());
+//----------------------------------------------------------
+	this->set_msinitp_ind3(inst.msinitp_ind3());
+	this->set_msinitp_ind3Zi(inst.msinitp_ind3Zi());
+//----------------------------------------------------------
+	this->set_msinitp_ind4(inst.msinitp_ind4());
+	this->set_msinitp_ind4Zi(inst.msinitp_ind4Zi());
+//----------------------------------------------------------
+	this->set_msp_ind0(inst.msp_ind0());
+	this->set_msp_ind0Zi(inst.msp_ind0Zi());
+//----------------------------------------------------------
+	this->set_msp_ind1(inst.msp_ind1());
+	this->set_msp_ind1Zi(inst.msp_ind1Zi());
+//----------------------------------------------------------
+	this->set_msp_ind2(inst.msp_ind2());
+	this->set_msp_ind2Zi(inst.msp_ind2Zi());
+//----------------------------------------------------------
+	this->set_msp_ind3(inst.msp_ind3());
+	this->set_msp_ind3Zi(inst.msp_ind3Zi());
+//----------------------------------------------------------
+	this->set_msp_ind4(inst.msp_ind4());
+	this->set_msp_ind4Zi(inst.msp_ind4Zi());
+//----------------------------------------------------------
+	this->set_epsp_ind0(inst.epsp_ind0());
+	this->set_epsp_ind0Zi(inst.epsp_ind0Zi());
+//----------------------------------------------------------
+	this->set_epsp_ind1(inst.epsp_ind1());
+	this->set_epsp_ind1Zi(inst.epsp_ind1Zi());
+//----------------------------------------------------------
+	this->set_epsp_ind2(inst.epsp_ind2());
+	this->set_epsp_ind2Zi(inst.epsp_ind2Zi());
+//----------------------------------------------------------
+	this->set_epsp_ind3(inst.epsp_ind3());
+	this->set_epsp_ind3Zi(inst.epsp_ind3Zi());
+//----------------------------------------------------------
+	this->set_epsp_ind4(inst.epsp_ind4());
+	this->set_epsp_ind4Zi(inst.epsp_ind4Zi());
+//----------------------------------------------------------
+	this->set_msi(inst.msi());
+	this->set_msiZi(inst.msiZi());
+//----------------------------------------------------------
+	this->set_mse(inst.mse());
+	this->set_mseZi(inst.mseZi());
+//----------------------------------------------------------
+	this->set_msiinit(inst.msiinit());
+	this->set_msiinitZi(inst.msiinitZi());
+//----------------------------------------------------------
+	this->set_mseinit(inst.mseinit());
+	this->set_mseinitZi(inst.mseinitZi());
+//----------------------------------------------------------
+	this->set_counter(inst.counter());
+	this->set_counterZi(inst.counterZi());
+//----------------------------------------------------------
+	this->set_gmt(inst.gmt());
+	this->set_gmtZi(inst.gmtZi());
+//----------------------------------------------------------
+	this->set_density(inst.density());
+	this->set_densityZi(inst.densityZi());
+//----------------------------------------------------------
+	this->set_emod(inst.emod());
+	this->set_emodZi(inst.emodZi());
+//----------------------------------------------------------
+	this->set_cw(inst.cw());
+	this->set_cwZi(inst.cwZi());
+//----------------------------------------------------------
+	this->set_lambda(inst.lambda());
+	this->set_lambdaZi(inst.lambdaZi());
+//----------------------------------------------------------
+	this->set_mstcor(inst.mstcor());
+	this->set_mstcorZi(inst.mstcorZi());
+//----------------------------------------------------------
+	this->set_mstgradient(inst.mstgradient());
+	this->set_mstgradientZi(inst.mstgradientZi());
+//----------------------------------------------------------
+	this->set_mstinflectionx(inst.mstinflectionx());
+	this->set_mstinflectionxZi(inst.mstinflectionxZi());
+//----------------------------------------------------------
+	this->set_lpara(inst.lpara());
+	this->set_lparaZi(inst.lparaZi());
+//----------------------------------------------------------
+	this->set_mpara(inst.mpara());
+	this->set_mparaZi(inst.mparaZi());
+//----------------------------------------------------------
+	this->set_npara(inst.npara());
+	this->set_nparaZi(inst.nparaZi());
+//----------------------------------------------------------
+	this->set_toc(inst.toc());
+	this->set_tocZi(inst.tocZi());
+//----------------------------------------------------------
+	this->set_tom(inst.tom());
+	this->set_tomZi(inst.tomZi());
+//----------------------------------------------------------
+	this->set_mop(inst.mop());
+	this->set_mopZi(inst.mopZi());
+}
+
+//					
+//C O N S T R U C T O R -W I T H P A R A M E T E R S
+//===================================================
+//					
+MATDAT::MATDAT(char* arg1)
+{
+	initial();					               
+	setPrimKey (arg1);    
+	//read DB record                           
+	dbAccess = true;                           
+	dbMessage = readDB();                      
+	if ( dbMessage != NULL ) dbAccess = false; 
+}
+
+//D E S T R U C T O R S  
+//=======================
+//                       
+MATDAT::~MATDAT()
+{
+}
+
+//initialise all member variables
+void MATDAT::initial()
+{
+	set_alloycode("");
+	set_alper(0);
+	set_alperZi(-1);
+	set_asper(0);
+	set_asperZi(-1);
+	set_bper(0);
+	set_bperZi(-1);
+	set_cper(0);
+	set_cperZi(-1);
+	set_caper(0);
+	set_caperZi(-1);
+	set_coper(0);
+	set_coperZi(-1);
+	set_crper(0);
+	set_crperZi(-1);
+	set_cuper(0);
+	set_cuperZi(-1);
+	set_mnper(0);
+	set_mnperZi(-1);
+	set_moper(0);
+	set_moperZi(-1);
+	set_nbper(0);
+	set_nbperZi(-1);
+	set_niper(0);
+	set_niperZi(-1);
+	set_nper(0);
+	set_nperZi(-1);
+	set_pbper(0);
+	set_pbperZi(-1);
+	set_pper(0);
+	set_pperZi(-1);
+	set_sper(0);
+	set_sperZi(-1);
+	set_siper(0);
+	set_siperZi(-1);
+	set_snper(0);
+	set_snperZi(-1);
+	set_tiper(0);
+	set_tiperZi(-1);
+	set_vper(0);
+	set_vperZi(-1);
+	set_wper(0);
+	set_wperZi(-1);
+	set_x1per(0);
+	set_x1perZi(-1);
+	set_x2per(0);
+	set_x2perZi(-1);
+	set_x3per(0);
+	set_x3perZi(-1);
+	set_x4per(0);
+	set_x4perZi(-1);
+	set_x5per(0);
+	set_x5perZi(-1);
+	set_msinitp_ind0(0);
+	set_msinitp_ind0Zi(-1);
+	set_msinitp_ind1(0);
+	set_msinitp_ind1Zi(-1);
+	set_msinitp_ind2(0);
+	set_msinitp_ind2Zi(-1);
+	set_msinitp_ind3(0);
+	set_msinitp_ind3Zi(-1);
+	set_msinitp_ind4(0);
+	set_msinitp_ind4Zi(-1);
+	set_msp_ind0(0);
+	set_msp_ind0Zi(-1);
+	set_msp_ind1(0);
+	set_msp_ind1Zi(-1);
+	set_msp_ind2(0);
+	set_msp_ind2Zi(-1);
+	set_msp_ind3(0);
+	set_msp_ind3Zi(-1);
+	set_msp_ind4(0);
+	set_msp_ind4Zi(-1);
+	set_epsp_ind0(0);
+	set_epsp_ind0Zi(-1);
+	set_epsp_ind1(0);
+	set_epsp_ind1Zi(-1);
+	set_epsp_ind2(0);
+	set_epsp_ind2Zi(-1);
+	set_epsp_ind3(0);
+	set_epsp_ind3Zi(-1);
+	set_epsp_ind4(0);
+	set_epsp_ind4Zi(-1);
+	set_msi(0);
+	set_msiZi(-1);
+	set_mse(0);
+	set_mseZi(-1);
+	set_msiinit(0);
+	set_msiinitZi(-1);
+	set_mseinit(0);
+	set_mseinitZi(-1);
+	set_counter(0);
+	set_counterZi(-1);
+	set_gmt("");
+	set_gmtZi(-1);
+	set_density(0);
+	set_densityZi(-1);
+	set_emod(0);
+	set_emodZi(-1);
+	set_cw(0);
+	set_cwZi(-1);
+	set_lambda(0);
+	set_lambdaZi(-1);
+	set_mstcor(0);
+	set_mstcorZi(-1);
+	set_mstgradient(0);
+	set_mstgradientZi(-1);
+	set_mstinflectionx(0);
+	set_mstinflectionxZi(-1);
+	set_lpara(0);
+	set_lparaZi(-1);
+	set_mpara(0);
+	set_mparaZi(-1);
+	set_npara(0);
+	set_nparaZi(-1);
+	set_toc("");
+	set_tocZi(-1);
+	set_tom("");
+	set_tomZi(-1);
+	set_mop("");
+	set_mopZi(-1);
+	//initialies Primary key members
+	set_k_alloycode("");
+// Initial Oracle Options
+	oraca.oradbgf  = 1; // gather debug informations       
+	oraca.oracchf  = 1; // gather cursor cache informations
+	oraca.orahchf  = 1; // check heap                      
+	oraca.orastxtf = 3; // always save last sql-statement  
+	                                                       
+	EXEC ORACLE OPTION (ORACA=YES);                        
+	EXEC ORACLE OPTION (HOLD_CURSOR=YES);                  
+	EXEC ORACLE OPTION (RELEASE_CURSOR=NO);                
+	EXEC ORACLE OPTION (MAXOPENCURSORS=50);                
+	pCatch = CatchDbaxError::instance();                   
+	                                                       
+}
+
+//read a single entry from DB.
+char* MATDAT::readDB()
+{
+	//
+	//copy the host variables (k_...) to Oracle Host Keys (k_ora_..)
+	//
+		copyKeyToHost();
+	//
+	// Do SELECT
+	//
+	EXEC SQL SELECT 
+		alloycode,
+		alper,
+		asper,
+		bper,
+		cper,
+		caper,
+		coper,
+		crper,
+		cuper,
+		mnper,
+		moper,
+		nbper,
+		niper,
+		nper,
+		pbper,
+		pper,
+		sper,
+		siper,
+		snper,
+		tiper,
+		vper,
+		wper,
+		x1per,
+		x2per,
+		x3per,
+		x4per,
+		x5per,
+		msinitp_ind0,
+		msinitp_ind1,
+		msinitp_ind2,
+		msinitp_ind3,
+		msinitp_ind4,
+		msp_ind0,
+		msp_ind1,
+		msp_ind2,
+		msp_ind3,
+		msp_ind4,
+		epsp_ind0,
+		epsp_ind1,
+		epsp_ind2,
+		epsp_ind3,
+		epsp_ind4,
+		msi,
+		mse,
+		msiinit,
+		mseinit,
+		counter,
+		gmt,
+		density,
+		emod,
+		cw,
+		lambda,
+		mstcor,
+		mstgradient,
+		mstinflectionx,
+		lpara,
+		mpara,
+		npara,
+		toc,
+		tom,
+		mop
+	INTO
+		:ora_alloycode,
+		:ora_alper:ora_alperZi,
+		:ora_asper:ora_asperZi,
+		:ora_bper:ora_bperZi,
+		:ora_cper:ora_cperZi,
+		:ora_caper:ora_caperZi,
+		:ora_coper:ora_coperZi,
+		:ora_crper:ora_crperZi,
+		:ora_cuper:ora_cuperZi,
+		:ora_mnper:ora_mnperZi,
+		:ora_moper:ora_moperZi,
+		:ora_nbper:ora_nbperZi,
+		:ora_niper:ora_niperZi,
+		:ora_nper:ora_nperZi,
+		:ora_pbper:ora_pbperZi,
+		:ora_pper:ora_pperZi,
+		:ora_sper:ora_sperZi,
+		:ora_siper:ora_siperZi,
+		:ora_snper:ora_snperZi,
+		:ora_tiper:ora_tiperZi,
+		:ora_vper:ora_vperZi,
+		:ora_wper:ora_wperZi,
+		:ora_x1per:ora_x1perZi,
+		:ora_x2per:ora_x2perZi,
+		:ora_x3per:ora_x3perZi,
+		:ora_x4per:ora_x4perZi,
+		:ora_x5per:ora_x5perZi,
+		:ora_msinitp_ind0:ora_msinitp_ind0Zi,
+		:ora_msinitp_ind1:ora_msinitp_ind1Zi,
+		:ora_msinitp_ind2:ora_msinitp_ind2Zi,
+		:ora_msinitp_ind3:ora_msinitp_ind3Zi,
+		:ora_msinitp_ind4:ora_msinitp_ind4Zi,
+		:ora_msp_ind0:ora_msp_ind0Zi,
+		:ora_msp_ind1:ora_msp_ind1Zi,
+		:ora_msp_ind2:ora_msp_ind2Zi,
+		:ora_msp_ind3:ora_msp_ind3Zi,
+		:ora_msp_ind4:ora_msp_ind4Zi,
+		:ora_epsp_ind0:ora_epsp_ind0Zi,
+		:ora_epsp_ind1:ora_epsp_ind1Zi,
+		:ora_epsp_ind2:ora_epsp_ind2Zi,
+		:ora_epsp_ind3:ora_epsp_ind3Zi,
+		:ora_epsp_ind4:ora_epsp_ind4Zi,
+		:ora_msi:ora_msiZi,
+		:ora_mse:ora_mseZi,
+		:ora_msiinit:ora_msiinitZi,
+		:ora_mseinit:ora_mseinitZi,
+		:ora_counter:ora_counterZi,
+		:ora_gmt:ora_gmtZi,
+		:ora_density:ora_densityZi,
+		:ora_emod:ora_emodZi,
+		:ora_cw:ora_cwZi,
+		:ora_lambda:ora_lambdaZi,
+		:ora_mstcor:ora_mstcorZi,
+		:ora_mstgradient:ora_mstgradientZi,
+		:ora_mstinflectionx:ora_mstinflectionxZi,
+		:ora_lpara:ora_lparaZi,
+		:ora_mpara:ora_mparaZi,
+		:ora_npara:ora_nparaZi,
+		:ora_toc:ora_tocZi,
+		:ora_tom:ora_tomZi,
+		:ora_mop:ora_mopZi
+	FROM MATDAT
+	WHERE
+				alloycode       = :k_ora_alloycode ;
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	//
+	// copy host variables into Class attributes
+	//
+	copyOracleToAttribute();
+	return ( NULL );
+}
+
+//updates a single entry from DB
+char* MATDAT::updateDB()
+{
+	//
+	//copy the host variables (k_...) to Oracle Host Keys (k_ora_..)
+	//
+		copyKeyToHost();
+	//copy the attributes ( ...) to Oracle Hosts( ora_..)
+	//
+		copyAttributeToOracle();
+	//
+	// Do UPDATE
+	//
+	EXEC SQL UPDATE MATDAT
+	SET 
+		alloycode           =:ora_alloycode,
+		alper               =:ora_alper:ora_alperZi,
+		asper               =:ora_asper:ora_asperZi,
+		bper                =:ora_bper:ora_bperZi,
+		cper                =:ora_cper:ora_cperZi,
+		caper               =:ora_caper:ora_caperZi,
+		coper               =:ora_coper:ora_coperZi,
+		crper               =:ora_crper:ora_crperZi,
+		cuper               =:ora_cuper:ora_cuperZi,
+		mnper               =:ora_mnper:ora_mnperZi,
+		moper               =:ora_moper:ora_moperZi,
+		nbper               =:ora_nbper:ora_nbperZi,
+		niper               =:ora_niper:ora_niperZi,
+		nper                =:ora_nper:ora_nperZi,
+		pbper               =:ora_pbper:ora_pbperZi,
+		pper                =:ora_pper:ora_pperZi,
+		sper                =:ora_sper:ora_sperZi,
+		siper               =:ora_siper:ora_siperZi,
+		snper               =:ora_snper:ora_snperZi,
+		tiper               =:ora_tiper:ora_tiperZi,
+		vper                =:ora_vper:ora_vperZi,
+		wper                =:ora_wper:ora_wperZi,
+		x1per               =:ora_x1per:ora_x1perZi,
+		x2per               =:ora_x2per:ora_x2perZi,
+		x3per               =:ora_x3per:ora_x3perZi,
+		x4per               =:ora_x4per:ora_x4perZi,
+		x5per               =:ora_x5per:ora_x5perZi,
+		msinitp_ind0        =:ora_msinitp_ind0:ora_msinitp_ind0Zi,
+		msinitp_ind1        =:ora_msinitp_ind1:ora_msinitp_ind1Zi,
+		msinitp_ind2        =:ora_msinitp_ind2:ora_msinitp_ind2Zi,
+		msinitp_ind3        =:ora_msinitp_ind3:ora_msinitp_ind3Zi,
+		msinitp_ind4        =:ora_msinitp_ind4:ora_msinitp_ind4Zi,
+		msp_ind0            =:ora_msp_ind0:ora_msp_ind0Zi,
+		msp_ind1            =:ora_msp_ind1:ora_msp_ind1Zi,
+		msp_ind2            =:ora_msp_ind2:ora_msp_ind2Zi,
+		msp_ind3            =:ora_msp_ind3:ora_msp_ind3Zi,
+		msp_ind4            =:ora_msp_ind4:ora_msp_ind4Zi,
+		epsp_ind0           =:ora_epsp_ind0:ora_epsp_ind0Zi,
+		epsp_ind1           =:ora_epsp_ind1:ora_epsp_ind1Zi,
+		epsp_ind2           =:ora_epsp_ind2:ora_epsp_ind2Zi,
+		epsp_ind3           =:ora_epsp_ind3:ora_epsp_ind3Zi,
+		epsp_ind4           =:ora_epsp_ind4:ora_epsp_ind4Zi,
+		msi                 =:ora_msi:ora_msiZi,
+		mse                 =:ora_mse:ora_mseZi,
+		msiinit             =:ora_msiinit:ora_msiinitZi,
+		mseinit             =:ora_mseinit:ora_mseinitZi,
+		counter             =:ora_counter:ora_counterZi,
+		gmt                 =:ora_gmt:ora_gmtZi,
+		density             =:ora_density:ora_densityZi,
+		emod                =:ora_emod:ora_emodZi,
+		cw                  =:ora_cw:ora_cwZi,
+		lambda              =:ora_lambda:ora_lambdaZi,
+		mstcor              =:ora_mstcor:ora_mstcorZi,
+		mstgradient         =:ora_mstgradient:ora_mstgradientZi,
+		mstinflectionx      =:ora_mstinflectionx:ora_mstinflectionxZi,
+		lpara               =:ora_lpara:ora_lparaZi,
+		mpara               =:ora_mpara:ora_mparaZi,
+		npara               =:ora_npara:ora_nparaZi,
+		toc                 =:ora_toc:ora_tocZi,
+		tom                 =:ora_tom:ora_tomZi,
+		mop                 =:ora_mop:ora_mopZi
+	WHERE
+		alloycode       = :k_ora_alloycode ;
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//inserts a single entry from DB
+char* MATDAT::insertDB()
+{
+	//
+	//copy the attributes ( ...) to Oracle Hosts( ora_..) 
+	//
+		copyAttributeToOracle();
+	//
+	// Do INSERT
+	//
+	EXEC SQL INSERT INTO MATDAT
+	(
+		alloycode,
+		alper,
+		asper,
+		bper,
+		cper,
+		caper,
+		coper,
+		crper,
+		cuper,
+		mnper,
+		moper,
+		nbper,
+		niper,
+		nper,
+		pbper,
+		pper,
+		sper,
+		siper,
+		snper,
+		tiper,
+		vper,
+		wper,
+		x1per,
+		x2per,
+		x3per,
+		x4per,
+		x5per,
+		msinitp_ind0,
+		msinitp_ind1,
+		msinitp_ind2,
+		msinitp_ind3,
+		msinitp_ind4,
+		msp_ind0,
+		msp_ind1,
+		msp_ind2,
+		msp_ind3,
+		msp_ind4,
+		epsp_ind0,
+		epsp_ind1,
+		epsp_ind2,
+		epsp_ind3,
+		epsp_ind4,
+		msi,
+		mse,
+		msiinit,
+		mseinit,
+		counter,
+		gmt,
+		density,
+		emod,
+		cw,
+		lambda,
+		mstcor,
+		mstgradient,
+		mstinflectionx,
+		lpara,
+		mpara,
+		npara,
+		toc,
+		tom,
+		mop
+	)
+
+	VALUES
+	(
+		:ora_alloycode,
+		:ora_alper:ora_alperZi,
+		:ora_asper:ora_asperZi,
+		:ora_bper:ora_bperZi,
+		:ora_cper:ora_cperZi,
+		:ora_caper:ora_caperZi,
+		:ora_coper:ora_coperZi,
+		:ora_crper:ora_crperZi,
+		:ora_cuper:ora_cuperZi,
+		:ora_mnper:ora_mnperZi,
+		:ora_moper:ora_moperZi,
+		:ora_nbper:ora_nbperZi,
+		:ora_niper:ora_niperZi,
+		:ora_nper:ora_nperZi,
+		:ora_pbper:ora_pbperZi,
+		:ora_pper:ora_pperZi,
+		:ora_sper:ora_sperZi,
+		:ora_siper:ora_siperZi,
+		:ora_snper:ora_snperZi,
+		:ora_tiper:ora_tiperZi,
+		:ora_vper:ora_vperZi,
+		:ora_wper:ora_wperZi,
+		:ora_x1per:ora_x1perZi,
+		:ora_x2per:ora_x2perZi,
+		:ora_x3per:ora_x3perZi,
+		:ora_x4per:ora_x4perZi,
+		:ora_x5per:ora_x5perZi,
+		:ora_msinitp_ind0:ora_msinitp_ind0Zi,
+		:ora_msinitp_ind1:ora_msinitp_ind1Zi,
+		:ora_msinitp_ind2:ora_msinitp_ind2Zi,
+		:ora_msinitp_ind3:ora_msinitp_ind3Zi,
+		:ora_msinitp_ind4:ora_msinitp_ind4Zi,
+		:ora_msp_ind0:ora_msp_ind0Zi,
+		:ora_msp_ind1:ora_msp_ind1Zi,
+		:ora_msp_ind2:ora_msp_ind2Zi,
+		:ora_msp_ind3:ora_msp_ind3Zi,
+		:ora_msp_ind4:ora_msp_ind4Zi,
+		:ora_epsp_ind0:ora_epsp_ind0Zi,
+		:ora_epsp_ind1:ora_epsp_ind1Zi,
+		:ora_epsp_ind2:ora_epsp_ind2Zi,
+		:ora_epsp_ind3:ora_epsp_ind3Zi,
+		:ora_epsp_ind4:ora_epsp_ind4Zi,
+		:ora_msi:ora_msiZi,
+		:ora_mse:ora_mseZi,
+		:ora_msiinit:ora_msiinitZi,
+		:ora_mseinit:ora_mseinitZi,
+		:ora_counter:ora_counterZi,
+		:ora_gmt:ora_gmtZi,
+		:ora_density:ora_densityZi,
+		:ora_emod:ora_emodZi,
+		:ora_cw:ora_cwZi,
+		:ora_lambda:ora_lambdaZi,
+		:ora_mstcor:ora_mstcorZi,
+		:ora_mstgradient:ora_mstgradientZi,
+		:ora_mstinflectionx:ora_mstinflectionxZi,
+		:ora_lpara:ora_lparaZi,
+		:ora_mpara:ora_mparaZi,
+		:ora_npara:ora_nparaZi,
+		:ora_toc:ora_tocZi,
+		:ora_tom:ora_tomZi,
+		:ora_mop:ora_mopZi
+	);
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//this methode tries to update a DB record,when the update fails.
+char* MATDAT::storeDB()
+{
+	char* ret = NULL;
+	setKeysFromRecord();
+	ret=updateDB();
+	if(ret != NULL)
+	{
+		ret=insertDB();
+		if(ret != NULL)
+		{
+			dbAccess = false;
+			return(ret);
+		}
+	}
+	return(ret);
+}
+
+//deletes a single entry from DB
+char* MATDAT::deleteDB()
+{
+//
+//copy the host variables (k_...) to Oracle Host Keys (k_ora_..)
+//
+	copyKeyToHost();
+
+//
+// Do Delete 
+//
+	EXEC SQL DELETE FROM MATDAT
+	WHERE
+				alloycode       = :k_ora_alloycode ;
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+// Executes the SQL DELETE with a where clause
+char* MATDAT::deleteDB(const char* where,long* count)
+{
+	*(count) = -1L;
+// Create dynamic statement.
+//
+	strcpy((char*)dynstr.arr,"DELETE");
+	strcat((char*)dynstr.arr," FROM MATDAT");
+	if ( where != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, where );
+	}
+
+	dynstr.len = strlen( (char*) dynstr.arr);
+	EXEC SQL EXECUTE IMMEDIATE :dynstr;
+	oracleSqlCode = sqlca.sqlcode;
+		oracleRowsProcessed = sqlca.sqlerrd[2];
+	if (sqlca.sqlcode == 0 )
+		*(count) = sqlca.sqlerrd[2];
+	else 
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//openSetDB data with where condition and sort order.
+char* MATDAT::openSetDB(const char* where,char* order)
+{
+//
+// Create dynamic statement.
+//
+	strcpy((char*)dynstr.arr,"SELECT ");
+	strcat((char*)dynstr.arr,"alloycode,");
+	strcat((char*)dynstr.arr,"alper,");
+	strcat((char*)dynstr.arr,"asper,");
+	strcat((char*)dynstr.arr,"bper,");
+	strcat((char*)dynstr.arr,"cper,");
+	strcat((char*)dynstr.arr,"caper,");
+	strcat((char*)dynstr.arr,"coper,");
+	strcat((char*)dynstr.arr,"crper,");
+	strcat((char*)dynstr.arr,"cuper,");
+	strcat((char*)dynstr.arr,"mnper,");
+	strcat((char*)dynstr.arr,"moper,");
+	strcat((char*)dynstr.arr,"nbper,");
+	strcat((char*)dynstr.arr,"niper,");
+	strcat((char*)dynstr.arr,"nper,");
+	strcat((char*)dynstr.arr,"pbper,");
+	strcat((char*)dynstr.arr,"pper,");
+	strcat((char*)dynstr.arr,"sper,");
+	strcat((char*)dynstr.arr,"siper,");
+	strcat((char*)dynstr.arr,"snper,");
+	strcat((char*)dynstr.arr,"tiper,");
+	strcat((char*)dynstr.arr,"vper,");
+	strcat((char*)dynstr.arr,"wper,");
+	strcat((char*)dynstr.arr,"x1per,");
+	strcat((char*)dynstr.arr,"x2per,");
+	strcat((char*)dynstr.arr,"x3per,");
+	strcat((char*)dynstr.arr,"x4per,");
+	strcat((char*)dynstr.arr,"x5per,");
+	strcat((char*)dynstr.arr,"msinitp_ind0,");
+	strcat((char*)dynstr.arr,"msinitp_ind1,");
+	strcat((char*)dynstr.arr,"msinitp_ind2,");
+	strcat((char*)dynstr.arr,"msinitp_ind3,");
+	strcat((char*)dynstr.arr,"msinitp_ind4,");
+	strcat((char*)dynstr.arr,"msp_ind0,");
+	strcat((char*)dynstr.arr,"msp_ind1,");
+	strcat((char*)dynstr.arr,"msp_ind2,");
+	strcat((char*)dynstr.arr,"msp_ind3,");
+	strcat((char*)dynstr.arr,"msp_ind4,");
+	strcat((char*)dynstr.arr,"epsp_ind0,");
+	strcat((char*)dynstr.arr,"epsp_ind1,");
+	strcat((char*)dynstr.arr,"epsp_ind2,");
+	strcat((char*)dynstr.arr,"epsp_ind3,");
+	strcat((char*)dynstr.arr,"epsp_ind4,");
+	strcat((char*)dynstr.arr,"msi,");
+	strcat((char*)dynstr.arr,"mse,");
+	strcat((char*)dynstr.arr,"msiinit,");
+	strcat((char*)dynstr.arr,"mseinit,");
+	strcat((char*)dynstr.arr,"counter,");
+	strcat((char*)dynstr.arr,"gmt,");
+	strcat((char*)dynstr.arr,"density,");
+	strcat((char*)dynstr.arr,"emod,");
+	strcat((char*)dynstr.arr,"cw,");
+	strcat((char*)dynstr.arr,"lambda,");
+	strcat((char*)dynstr.arr,"mstcor,");
+	strcat((char*)dynstr.arr,"mstgradient,");
+	strcat((char*)dynstr.arr,"mstinflectionx,");
+	strcat((char*)dynstr.arr,"lpara,");
+	strcat((char*)dynstr.arr,"mpara,");
+	strcat((char*)dynstr.arr,"npara,");
+	strcat((char*)dynstr.arr,"toc,");
+	strcat((char*)dynstr.arr,"tom,");
+	strcat((char*)dynstr.arr,"mop");
+
+	strcat((char*)dynstr.arr," FROM MATDAT ");
+	if ( where != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, where);
+	}
+	if ( order != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, order);
+	}
+
+	dynstr.len = strlen( (char*) dynstr.arr);
+	EXEC SQL PREPARE set_MATDAT FROM :dynstr;
+	if (sqlca.sqlcode == 0 )
+	{
+		EXEC SQL DECLARE cu_MATDAT CURSOR FOR set_MATDAT;
+		if (sqlca.sqlcode == 0 )
+			EXEC SQL OPEN cu_MATDAT;
+	}
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	cuFl = OPENED;
+	return ( NULL );
+}
+
+//Executes the SQL FETCH Statement .
+char* MATDAT::getSetDB()
+{
+	if ( cuFl != OPENED ) return ("No open Cursor Table:Me");
+	EXEC SQL FETCH cu_MATDAT INTO
+		:ora_alloycode,
+		:ora_alper:ora_alperZi,
+		:ora_asper:ora_asperZi,
+		:ora_bper:ora_bperZi,
+		:ora_cper:ora_cperZi,
+		:ora_caper:ora_caperZi,
+		:ora_coper:ora_coperZi,
+		:ora_crper:ora_crperZi,
+		:ora_cuper:ora_cuperZi,
+		:ora_mnper:ora_mnperZi,
+		:ora_moper:ora_moperZi,
+		:ora_nbper:ora_nbperZi,
+		:ora_niper:ora_niperZi,
+		:ora_nper:ora_nperZi,
+		:ora_pbper:ora_pbperZi,
+		:ora_pper:ora_pperZi,
+		:ora_sper:ora_sperZi,
+		:ora_siper:ora_siperZi,
+		:ora_snper:ora_snperZi,
+		:ora_tiper:ora_tiperZi,
+		:ora_vper:ora_vperZi,
+		:ora_wper:ora_wperZi,
+		:ora_x1per:ora_x1perZi,
+		:ora_x2per:ora_x2perZi,
+		:ora_x3per:ora_x3perZi,
+		:ora_x4per:ora_x4perZi,
+		:ora_x5per:ora_x5perZi,
+		:ora_msinitp_ind0:ora_msinitp_ind0Zi,
+		:ora_msinitp_ind1:ora_msinitp_ind1Zi,
+		:ora_msinitp_ind2:ora_msinitp_ind2Zi,
+		:ora_msinitp_ind3:ora_msinitp_ind3Zi,
+		:ora_msinitp_ind4:ora_msinitp_ind4Zi,
+		:ora_msp_ind0:ora_msp_ind0Zi,
+		:ora_msp_ind1:ora_msp_ind1Zi,
+		:ora_msp_ind2:ora_msp_ind2Zi,
+		:ora_msp_ind3:ora_msp_ind3Zi,
+		:ora_msp_ind4:ora_msp_ind4Zi,
+		:ora_epsp_ind0:ora_epsp_ind0Zi,
+		:ora_epsp_ind1:ora_epsp_ind1Zi,
+		:ora_epsp_ind2:ora_epsp_ind2Zi,
+		:ora_epsp_ind3:ora_epsp_ind3Zi,
+		:ora_epsp_ind4:ora_epsp_ind4Zi,
+		:ora_msi:ora_msiZi,
+		:ora_mse:ora_mseZi,
+		:ora_msiinit:ora_msiinitZi,
+		:ora_mseinit:ora_mseinitZi,
+		:ora_counter:ora_counterZi,
+		:ora_gmt:ora_gmtZi,
+		:ora_density:ora_densityZi,
+		:ora_emod:ora_emodZi,
+		:ora_cw:ora_cwZi,
+		:ora_lambda:ora_lambdaZi,
+		:ora_mstcor:ora_mstcorZi,
+		:ora_mstgradient:ora_mstgradientZi,
+		:ora_mstinflectionx:ora_mstinflectionxZi,
+		:ora_lpara:ora_lparaZi,
+		:ora_mpara:ora_mparaZi,
+		:ora_npara:ora_nparaZi,
+		:ora_toc:ora_tocZi,
+		:ora_tom:ora_tomZi,
+		:ora_mop:ora_mopZi;
+
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		pCatch->catchError(sqlca.sqlcode);
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		return (char*) sqlca.sqlerrm.sqlerrmc ;
+	}
+	//
+	// copy host variables into Class attributes
+	//
+	copyOracleToAttribute();
+	copyHostToKey();
+	return ( NULL );
+}
+
+//Close a Oracle Cursor
+char* MATDAT::closeSetDB()
+{
+	EXEC SQL CLOSE cu_MATDAT;
+	oracleSqlCode = sqlca.sqlcode;         
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		pCatch->catchError(sqlca.sqlcode);
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		return (char*) sqlca.sqlerrm.sqlerrmc ;
+	}
+	cuFl = CLOSED;
+	return ( NULL );
+}
+
+//Executes the SQL count(key) for a where clause
+char* MATDAT::countDB(const char* where,long* count)
+{
+	*(count) = -1L;
+//
+// Create dynamic statement. 
+//
+	strncpy((char*)dynstr.arr,"SELECT count(alloycode)", sizeof(dynstr.arr));
+	strcat((char*)dynstr.arr," FROM MATDAT");
+	if ( where != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, where );
+	}
+	dynstr.len = strlen( (char*) dynstr.arr);
+	EXEC SQL PREPARE c_MATDAT FROM :dynstr;
+	
+	if (sqlca.sqlcode == 0 )
+	{
+		EXEC SQL DECLARE ct_MATDAT CURSOR FOR c_MATDAT;
+		if (sqlca.sqlcode == 0 )
+		{
+			EXEC SQL OPEN ct_MATDAT;
+			if (sqlca.sqlcode == 0 )			{
+				EXEC SQL FETCH ct_MATDAT INTO :rowCnt;
+				if (sqlca.sqlcode == 0 )
+				*(count) = rowCnt;
+			}
+			EXEC SQL CLOSE ct_MATDAT;
+		}
+	}
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//private methode copy Attribute to Oracle
+//copys Object attributes into Oracle Host variables.
+void MATDAT::copyAttributeToOracle()
+{
+	char* ptrStr;
+	ptrStr = this->alloycode();
+	if( strlen(ptrStr)< sizeof(ora_alloycode.arr))
+	{
+		strncpy((char*)ora_alloycode.arr, ptrStr, sizeof(ora_alloycode.arr));
+		ora_alloycode.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_alloycode.len = 0;
+	ora_alper = this->alper();
+	ora_alperZi = this->alperZi();
+	ora_asper = this->asper();
+	ora_asperZi = this->asperZi();
+	ora_bper = this->bper();
+	ora_bperZi = this->bperZi();
+	ora_cper = this->cper();
+	ora_cperZi = this->cperZi();
+	ora_caper = this->caper();
+	ora_caperZi = this->caperZi();
+	ora_coper = this->coper();
+	ora_coperZi = this->coperZi();
+	ora_crper = this->crper();
+	ora_crperZi = this->crperZi();
+	ora_cuper = this->cuper();
+	ora_cuperZi = this->cuperZi();
+	ora_mnper = this->mnper();
+	ora_mnperZi = this->mnperZi();
+	ora_moper = this->moper();
+	ora_moperZi = this->moperZi();
+	ora_nbper = this->nbper();
+	ora_nbperZi = this->nbperZi();
+	ora_niper = this->niper();
+	ora_niperZi = this->niperZi();
+	ora_nper = this->nper();
+	ora_nperZi = this->nperZi();
+	ora_pbper = this->pbper();
+	ora_pbperZi = this->pbperZi();
+	ora_pper = this->pper();
+	ora_pperZi = this->pperZi();
+	ora_sper = this->sper();
+	ora_sperZi = this->sperZi();
+	ora_siper = this->siper();
+	ora_siperZi = this->siperZi();
+	ora_snper = this->snper();
+	ora_snperZi = this->snperZi();
+	ora_tiper = this->tiper();
+	ora_tiperZi = this->tiperZi();
+	ora_vper = this->vper();
+	ora_vperZi = this->vperZi();
+	ora_wper = this->wper();
+	ora_wperZi = this->wperZi();
+	ora_x1per = this->x1per();
+	ora_x1perZi = this->x1perZi();
+	ora_x2per = this->x2per();
+	ora_x2perZi = this->x2perZi();
+	ora_x3per = this->x3per();
+	ora_x3perZi = this->x3perZi();
+	ora_x4per = this->x4per();
+	ora_x4perZi = this->x4perZi();
+	ora_x5per = this->x5per();
+	ora_x5perZi = this->x5perZi();
+	ora_msinitp_ind0 = this->msinitp_ind0();
+	ora_msinitp_ind0Zi = this->msinitp_ind0Zi();
+	ora_msinitp_ind1 = this->msinitp_ind1();
+	ora_msinitp_ind1Zi = this->msinitp_ind1Zi();
+	ora_msinitp_ind2 = this->msinitp_ind2();
+	ora_msinitp_ind2Zi = this->msinitp_ind2Zi();
+	ora_msinitp_ind3 = this->msinitp_ind3();
+	ora_msinitp_ind3Zi = this->msinitp_ind3Zi();
+	ora_msinitp_ind4 = this->msinitp_ind4();
+	ora_msinitp_ind4Zi = this->msinitp_ind4Zi();
+	ora_msp_ind0 = this->msp_ind0();
+	ora_msp_ind0Zi = this->msp_ind0Zi();
+	ora_msp_ind1 = this->msp_ind1();
+	ora_msp_ind1Zi = this->msp_ind1Zi();
+	ora_msp_ind2 = this->msp_ind2();
+	ora_msp_ind2Zi = this->msp_ind2Zi();
+	ora_msp_ind3 = this->msp_ind3();
+	ora_msp_ind3Zi = this->msp_ind3Zi();
+	ora_msp_ind4 = this->msp_ind4();
+	ora_msp_ind4Zi = this->msp_ind4Zi();
+	ora_epsp_ind0 = this->epsp_ind0();
+	ora_epsp_ind0Zi = this->epsp_ind0Zi();
+	ora_epsp_ind1 = this->epsp_ind1();
+	ora_epsp_ind1Zi = this->epsp_ind1Zi();
+	ora_epsp_ind2 = this->epsp_ind2();
+	ora_epsp_ind2Zi = this->epsp_ind2Zi();
+	ora_epsp_ind3 = this->epsp_ind3();
+	ora_epsp_ind3Zi = this->epsp_ind3Zi();
+	ora_epsp_ind4 = this->epsp_ind4();
+	ora_epsp_ind4Zi = this->epsp_ind4Zi();
+	ora_msi = this->msi();
+	ora_msiZi = this->msiZi();
+	ora_mse = this->mse();
+	ora_mseZi = this->mseZi();
+	ora_msiinit = this->msiinit();
+	ora_msiinitZi = this->msiinitZi();
+	ora_mseinit = this->mseinit();
+	ora_mseinitZi = this->mseinitZi();
+	ora_counter = this->counter();
+	ora_counterZi = this->counterZi();
+	ptrStr = this->gmt();
+	if( strlen(ptrStr)< sizeof(ora_gmt.arr))
+	{
+		strncpy((char*)ora_gmt.arr, ptrStr, sizeof(ora_gmt.arr));
+		ora_gmt.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_gmt.len = 0;
+	ora_gmtZi = this->gmtZi();
+	ora_density = this->density();
+	ora_densityZi = this->densityZi();
+	ora_emod = this->emod();
+	ora_emodZi = this->emodZi();
+	ora_cw = this->cw();
+	ora_cwZi = this->cwZi();
+	ora_lambda = this->lambda();
+	ora_lambdaZi = this->lambdaZi();
+	ora_mstcor = this->mstcor();
+	ora_mstcorZi = this->mstcorZi();
+	ora_mstgradient = this->mstgradient();
+	ora_mstgradientZi = this->mstgradientZi();
+	ora_mstinflectionx = this->mstinflectionx();
+	ora_mstinflectionxZi = this->mstinflectionxZi();
+	ora_lpara = this->lpara();
+	ora_lparaZi = this->lparaZi();
+	ora_mpara = this->mpara();
+	ora_mparaZi = this->mparaZi();
+	ora_npara = this->npara();
+	ora_nparaZi = this->nparaZi();
+	ptrStr = this->toc();
+	if( strlen(ptrStr)< sizeof(ora_toc.arr))
+	{
+		strncpy((char*)ora_toc.arr, ptrStr, sizeof(ora_toc.arr));
+		ora_toc.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_toc.len = 0;
+	ora_tocZi = this->tocZi();
+	ptrStr = this->tom();
+	if( strlen(ptrStr)< sizeof(ora_tom.arr))
+	{
+		strncpy((char*)ora_tom.arr, ptrStr, sizeof(ora_tom.arr));
+		ora_tom.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_tom.len = 0;
+	ora_tomZi = this->tomZi();
+	ptrStr = this->mop();
+	if( strlen(ptrStr)< sizeof(ora_mop.arr))
+	{
+		strncpy((char*)ora_mop.arr, ptrStr, sizeof(ora_mop.arr));
+		ora_mop.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_mop.len = 0;
+	ora_mopZi = this->mopZi();
+}
+
+//private methode copy Oracle to Attribute
+//copys Oracle Host variables into Object attributes.
+void MATDAT::copyOracleToAttribute()
+{
+	ora_alloycode.arr[ora_alloycode.len] = '\0';
+	this->set_alloycode((char*) ora_alloycode.arr);
+	this->set_alper((float)ora_alper);
+	this->set_alperZi((short)ora_alperZi);
+	this->set_asper((float)ora_asper);
+	this->set_asperZi((short)ora_asperZi);
+	this->set_bper((float)ora_bper);
+	this->set_bperZi((short)ora_bperZi);
+	this->set_cper((float)ora_cper);
+	this->set_cperZi((short)ora_cperZi);
+	this->set_caper((float)ora_caper);
+	this->set_caperZi((short)ora_caperZi);
+	this->set_coper((float)ora_coper);
+	this->set_coperZi((short)ora_coperZi);
+	this->set_crper((float)ora_crper);
+	this->set_crperZi((short)ora_crperZi);
+	this->set_cuper((float)ora_cuper);
+	this->set_cuperZi((short)ora_cuperZi);
+	this->set_mnper((float)ora_mnper);
+	this->set_mnperZi((short)ora_mnperZi);
+	this->set_moper((float)ora_moper);
+	this->set_moperZi((short)ora_moperZi);
+	this->set_nbper((float)ora_nbper);
+	this->set_nbperZi((short)ora_nbperZi);
+	this->set_niper((float)ora_niper);
+	this->set_niperZi((short)ora_niperZi);
+	this->set_nper((float)ora_nper);
+	this->set_nperZi((short)ora_nperZi);
+	this->set_pbper((float)ora_pbper);
+	this->set_pbperZi((short)ora_pbperZi);
+	this->set_pper((float)ora_pper);
+	this->set_pperZi((short)ora_pperZi);
+	this->set_sper((float)ora_sper);
+	this->set_sperZi((short)ora_sperZi);
+	this->set_siper((float)ora_siper);
+	this->set_siperZi((short)ora_siperZi);
+	this->set_snper((float)ora_snper);
+	this->set_snperZi((short)ora_snperZi);
+	this->set_tiper((float)ora_tiper);
+	this->set_tiperZi((short)ora_tiperZi);
+	this->set_vper((float)ora_vper);
+	this->set_vperZi((short)ora_vperZi);
+	this->set_wper((float)ora_wper);
+	this->set_wperZi((short)ora_wperZi);
+	this->set_x1per((float)ora_x1per);
+	this->set_x1perZi((short)ora_x1perZi);
+	this->set_x2per((float)ora_x2per);
+	this->set_x2perZi((short)ora_x2perZi);
+	this->set_x3per((float)ora_x3per);
+	this->set_x3perZi((short)ora_x3perZi);
+	this->set_x4per((float)ora_x4per);
+	this->set_x4perZi((short)ora_x4perZi);
+	this->set_x5per((float)ora_x5per);
+	this->set_x5perZi((short)ora_x5perZi);
+	this->set_msinitp_ind0((float)ora_msinitp_ind0);
+	this->set_msinitp_ind0Zi((short)ora_msinitp_ind0Zi);
+	this->set_msinitp_ind1((float)ora_msinitp_ind1);
+	this->set_msinitp_ind1Zi((short)ora_msinitp_ind1Zi);
+	this->set_msinitp_ind2((float)ora_msinitp_ind2);
+	this->set_msinitp_ind2Zi((short)ora_msinitp_ind2Zi);
+	this->set_msinitp_ind3((float)ora_msinitp_ind3);
+	this->set_msinitp_ind3Zi((short)ora_msinitp_ind3Zi);
+	this->set_msinitp_ind4((float)ora_msinitp_ind4);
+	this->set_msinitp_ind4Zi((short)ora_msinitp_ind4Zi);
+	this->set_msp_ind0((float)ora_msp_ind0);
+	this->set_msp_ind0Zi((short)ora_msp_ind0Zi);
+	this->set_msp_ind1((float)ora_msp_ind1);
+	this->set_msp_ind1Zi((short)ora_msp_ind1Zi);
+	this->set_msp_ind2((float)ora_msp_ind2);
+	this->set_msp_ind2Zi((short)ora_msp_ind2Zi);
+	this->set_msp_ind3((float)ora_msp_ind3);
+	this->set_msp_ind3Zi((short)ora_msp_ind3Zi);
+	this->set_msp_ind4((float)ora_msp_ind4);
+	this->set_msp_ind4Zi((short)ora_msp_ind4Zi);
+	this->set_epsp_ind0((float)ora_epsp_ind0);
+	this->set_epsp_ind0Zi((short)ora_epsp_ind0Zi);
+	this->set_epsp_ind1((float)ora_epsp_ind1);
+	this->set_epsp_ind1Zi((short)ora_epsp_ind1Zi);
+	this->set_epsp_ind2((float)ora_epsp_ind2);
+	this->set_epsp_ind2Zi((short)ora_epsp_ind2Zi);
+	this->set_epsp_ind3((float)ora_epsp_ind3);
+	this->set_epsp_ind3Zi((short)ora_epsp_ind3Zi);
+	this->set_epsp_ind4((float)ora_epsp_ind4);
+	this->set_epsp_ind4Zi((short)ora_epsp_ind4Zi);
+	this->set_msi((float)ora_msi);
+	this->set_msiZi((short)ora_msiZi);
+	this->set_mse((float)ora_mse);
+	this->set_mseZi((short)ora_mseZi);
+	this->set_msiinit((float)ora_msiinit);
+	this->set_msiinitZi((short)ora_msiinitZi);
+	this->set_mseinit((float)ora_mseinit);
+	this->set_mseinitZi((short)ora_mseinitZi);
+	this->set_counter((float)ora_counter);
+	this->set_counterZi((short)ora_counterZi);
+	ora_gmt.arr[ora_gmt.len] = '\0';
+	this->set_gmt((char*) ora_gmt.arr);
+	this->set_gmtZi((short)ora_gmtZi);
+	this->set_density((float)ora_density);
+	this->set_densityZi((short)ora_densityZi);
+	this->set_emod((float)ora_emod);
+	this->set_emodZi((short)ora_emodZi);
+	this->set_cw((float)ora_cw);
+	this->set_cwZi((short)ora_cwZi);
+	this->set_lambda((float)ora_lambda);
+	this->set_lambdaZi((short)ora_lambdaZi);
+	this->set_mstcor((float)ora_mstcor);
+	this->set_mstcorZi((short)ora_mstcorZi);
+	this->set_mstgradient((float)ora_mstgradient);
+	this->set_mstgradientZi((short)ora_mstgradientZi);
+	this->set_mstinflectionx((float)ora_mstinflectionx);
+	this->set_mstinflectionxZi((short)ora_mstinflectionxZi);
+	this->set_lpara((float)ora_lpara);
+	this->set_lparaZi((short)ora_lparaZi);
+	this->set_mpara((float)ora_mpara);
+	this->set_mparaZi((short)ora_mparaZi);
+	this->set_npara((float)ora_npara);
+	this->set_nparaZi((short)ora_nparaZi);
+	ora_toc.arr[ora_toc.len] = '\0';
+	this->set_toc((char*) ora_toc.arr);
+	this->set_tocZi((short)ora_tocZi);
+	ora_tom.arr[ora_tom.len] = '\0';
+	this->set_tom((char*) ora_tom.arr);
+	this->set_tomZi((short)ora_tomZi);
+	ora_mop.arr[ora_mop.len] = '\0';
+	this->set_mop((char*) ora_mop.arr);
+	this->set_mopZi((short)ora_mopZi);
+}
+
+//private methode copy Key to host
+//copys Object attributes into Oralce Key variables.
+void MATDAT::copyKeyToHost()
+{
+	char* ptrStr;
+	ptrStr = this->k_alloycode();
+	if( strlen(ptrStr)< sizeof(k_ora_alloycode.arr))
+	{
+		strncpy((char*)k_ora_alloycode.arr, ptrStr, sizeof(k_ora_alloycode.arr));
+		k_ora_alloycode.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		k_ora_alloycode.len = 0;
+}
+
+//private methode copy Host to Key
+// copys Oracle Host Key variables into Object Key attributes.
+void MATDAT::copyHostToKey()
+{
+	ora_alloycode.arr[ora_alloycode.len] = '\0';
+	this->set_k_alloycode((char*) ora_alloycode.arr);
+}
+
+//private methode log Oracle message information
+void MATDAT::logOraMessageInfo()
+{
+	LOG d("MATDAT::logOraMessageInfo()");
+	sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+	oraca.orastxt.orastxtc[oraca.orastxt.orastxtl] = '\0';
+	oraca.orasfnm.orasfnmc[oraca.orasfnm.orasfnml] = '\0';
+	
+	//* negating a error code submitted perhaps positively.
+	if (sqlca.sqlcode > 0) sqlca.sqlcode *= -1;
+	
+	//* Distribute fault text, SQL statement and file in the Debug System.
+	d << "ORA-Error: "<< sqlca.sqlerrm.sqlerrmc; d.Info();
+	d << "OracaText: "<< oraca.orastxt.orastxtc; d.Info();
+	d << "in line " << oraca.oraslnr << " in file " << oraca.orasfnm.orasfnmc; d.Info();
+}
+
+//this methode stores the unique key attributes
+void MATDAT::setPrimKey(char* arg1)
+{
+	strncpy( (char*)c_k_alloycode, arg1, sizeof(c_k_alloycode));
+	c_k_alloycode[sizeof(c_k_alloycode)-1] = '\0';
+}
+
+//this methode stores the unique key attributes
+void MATDAT::initInsertKeys(char* arg1)
+{
+	setPrimKey(arg1);
+	strncpy( (char*)c_alloycode, arg1, sizeof(c_alloycode));
+	c_alloycode[sizeof(c_alloycode)-1] = '\0';
+}
+
+//this methode set the unique key attributes from the DB Record Attributes
+void MATDAT::setKeysFromRecord()
+{
+	set_k_alloycode( alloycode() );
+}
+
+//			         
+//O P E R A T O R  + 
+//===================
+//                   
+MATDAT MATDAT::operator+(const MATDAT &inst) const
+{
+	MATDAT ptrMATDAT(*this);
+//----------------------------------------------------------
+	ptrMATDAT.set_alloycode(inst.alloycode());
+//----------------------------------------------------------
+	if(inst.alperZi() != -1)
+	{
+		ptrMATDAT.set_alper(inst.alper());
+		ptrMATDAT.set_alperZi(inst.alperZi());
+	}
+//----------------------------------------------------------
+	if(inst.asperZi() != -1)
+	{
+		ptrMATDAT.set_asper(inst.asper());
+		ptrMATDAT.set_asperZi(inst.asperZi());
+	}
+//----------------------------------------------------------
+	if(inst.bperZi() != -1)
+	{
+		ptrMATDAT.set_bper(inst.bper());
+		ptrMATDAT.set_bperZi(inst.bperZi());
+	}
+//----------------------------------------------------------
+	if(inst.cperZi() != -1)
+	{
+		ptrMATDAT.set_cper(inst.cper());
+		ptrMATDAT.set_cperZi(inst.cperZi());
+	}
+//----------------------------------------------------------
+	if(inst.caperZi() != -1)
+	{
+		ptrMATDAT.set_caper(inst.caper());
+		ptrMATDAT.set_caperZi(inst.caperZi());
+	}
+//----------------------------------------------------------
+	if(inst.coperZi() != -1)
+	{
+		ptrMATDAT.set_coper(inst.coper());
+		ptrMATDAT.set_coperZi(inst.coperZi());
+	}
+//----------------------------------------------------------
+	if(inst.crperZi() != -1)
+	{
+		ptrMATDAT.set_crper(inst.crper());
+		ptrMATDAT.set_crperZi(inst.crperZi());
+	}
+//----------------------------------------------------------
+	if(inst.cuperZi() != -1)
+	{
+		ptrMATDAT.set_cuper(inst.cuper());
+		ptrMATDAT.set_cuperZi(inst.cuperZi());
+	}
+//----------------------------------------------------------
+	if(inst.mnperZi() != -1)
+	{
+		ptrMATDAT.set_mnper(inst.mnper());
+		ptrMATDAT.set_mnperZi(inst.mnperZi());
+	}
+//----------------------------------------------------------
+	if(inst.moperZi() != -1)
+	{
+		ptrMATDAT.set_moper(inst.moper());
+		ptrMATDAT.set_moperZi(inst.moperZi());
+	}
+//----------------------------------------------------------
+	if(inst.nbperZi() != -1)
+	{
+		ptrMATDAT.set_nbper(inst.nbper());
+		ptrMATDAT.set_nbperZi(inst.nbperZi());
+	}
+//----------------------------------------------------------
+	if(inst.niperZi() != -1)
+	{
+		ptrMATDAT.set_niper(inst.niper());
+		ptrMATDAT.set_niperZi(inst.niperZi());
+	}
+//----------------------------------------------------------
+	if(inst.nperZi() != -1)
+	{
+		ptrMATDAT.set_nper(inst.nper());
+		ptrMATDAT.set_nperZi(inst.nperZi());
+	}
+//----------------------------------------------------------
+	if(inst.pbperZi() != -1)
+	{
+		ptrMATDAT.set_pbper(inst.pbper());
+		ptrMATDAT.set_pbperZi(inst.pbperZi());
+	}
+//----------------------------------------------------------
+	if(inst.pperZi() != -1)
+	{
+		ptrMATDAT.set_pper(inst.pper());
+		ptrMATDAT.set_pperZi(inst.pperZi());
+	}
+//----------------------------------------------------------
+	if(inst.sperZi() != -1)
+	{
+		ptrMATDAT.set_sper(inst.sper());
+		ptrMATDAT.set_sperZi(inst.sperZi());
+	}
+//----------------------------------------------------------
+	if(inst.siperZi() != -1)
+	{
+		ptrMATDAT.set_siper(inst.siper());
+		ptrMATDAT.set_siperZi(inst.siperZi());
+	}
+//----------------------------------------------------------
+	if(inst.snperZi() != -1)
+	{
+		ptrMATDAT.set_snper(inst.snper());
+		ptrMATDAT.set_snperZi(inst.snperZi());
+	}
+//----------------------------------------------------------
+	if(inst.tiperZi() != -1)
+	{
+		ptrMATDAT.set_tiper(inst.tiper());
+		ptrMATDAT.set_tiperZi(inst.tiperZi());
+	}
+//----------------------------------------------------------
+	if(inst.vperZi() != -1)
+	{
+		ptrMATDAT.set_vper(inst.vper());
+		ptrMATDAT.set_vperZi(inst.vperZi());
+	}
+//----------------------------------------------------------
+	if(inst.wperZi() != -1)
+	{
+		ptrMATDAT.set_wper(inst.wper());
+		ptrMATDAT.set_wperZi(inst.wperZi());
+	}
+//----------------------------------------------------------
+	if(inst.x1perZi() != -1)
+	{
+		ptrMATDAT.set_x1per(inst.x1per());
+		ptrMATDAT.set_x1perZi(inst.x1perZi());
+	}
+//----------------------------------------------------------
+	if(inst.x2perZi() != -1)
+	{
+		ptrMATDAT.set_x2per(inst.x2per());
+		ptrMATDAT.set_x2perZi(inst.x2perZi());
+	}
+//----------------------------------------------------------
+	if(inst.x3perZi() != -1)
+	{
+		ptrMATDAT.set_x3per(inst.x3per());
+		ptrMATDAT.set_x3perZi(inst.x3perZi());
+	}
+//----------------------------------------------------------
+	if(inst.x4perZi() != -1)
+	{
+		ptrMATDAT.set_x4per(inst.x4per());
+		ptrMATDAT.set_x4perZi(inst.x4perZi());
+	}
+//----------------------------------------------------------
+	if(inst.x5perZi() != -1)
+	{
+		ptrMATDAT.set_x5per(inst.x5per());
+		ptrMATDAT.set_x5perZi(inst.x5perZi());
+	}
+//----------------------------------------------------------
+	if(inst.msinitp_ind0Zi() != -1)
+	{
+		ptrMATDAT.set_msinitp_ind0(inst.msinitp_ind0());
+		ptrMATDAT.set_msinitp_ind0Zi(inst.msinitp_ind0Zi());
+	}
+//----------------------------------------------------------
+	if(inst.msinitp_ind1Zi() != -1)
+	{
+		ptrMATDAT.set_msinitp_ind1(inst.msinitp_ind1());
+		ptrMATDAT.set_msinitp_ind1Zi(inst.msinitp_ind1Zi());
+	}
+//----------------------------------------------------------
+	if(inst.msinitp_ind2Zi() != -1)
+	{
+		ptrMATDAT.set_msinitp_ind2(inst.msinitp_ind2());
+		ptrMATDAT.set_msinitp_ind2Zi(inst.msinitp_ind2Zi());
+	}
+//----------------------------------------------------------
+	if(inst.msinitp_ind3Zi() != -1)
+	{
+		ptrMATDAT.set_msinitp_ind3(inst.msinitp_ind3());
+		ptrMATDAT.set_msinitp_ind3Zi(inst.msinitp_ind3Zi());
+	}
+//----------------------------------------------------------
+	if(inst.msinitp_ind4Zi() != -1)
+	{
+		ptrMATDAT.set_msinitp_ind4(inst.msinitp_ind4());
+		ptrMATDAT.set_msinitp_ind4Zi(inst.msinitp_ind4Zi());
+	}
+//----------------------------------------------------------
+	if(inst.msp_ind0Zi() != -1)
+	{
+		ptrMATDAT.set_msp_ind0(inst.msp_ind0());
+		ptrMATDAT.set_msp_ind0Zi(inst.msp_ind0Zi());
+	}
+//----------------------------------------------------------
+	if(inst.msp_ind1Zi() != -1)
+	{
+		ptrMATDAT.set_msp_ind1(inst.msp_ind1());
+		ptrMATDAT.set_msp_ind1Zi(inst.msp_ind1Zi());
+	}
+//----------------------------------------------------------
+	if(inst.msp_ind2Zi() != -1)
+	{
+		ptrMATDAT.set_msp_ind2(inst.msp_ind2());
+		ptrMATDAT.set_msp_ind2Zi(inst.msp_ind2Zi());
+	}
+//----------------------------------------------------------
+	if(inst.msp_ind3Zi() != -1)
+	{
+		ptrMATDAT.set_msp_ind3(inst.msp_ind3());
+		ptrMATDAT.set_msp_ind3Zi(inst.msp_ind3Zi());
+	}
+//----------------------------------------------------------
+	if(inst.msp_ind4Zi() != -1)
+	{
+		ptrMATDAT.set_msp_ind4(inst.msp_ind4());
+		ptrMATDAT.set_msp_ind4Zi(inst.msp_ind4Zi());
+	}
+//----------------------------------------------------------
+	if(inst.epsp_ind0Zi() != -1)
+	{
+		ptrMATDAT.set_epsp_ind0(inst.epsp_ind0());
+		ptrMATDAT.set_epsp_ind0Zi(inst.epsp_ind0Zi());
+	}
+//----------------------------------------------------------
+	if(inst.epsp_ind1Zi() != -1)
+	{
+		ptrMATDAT.set_epsp_ind1(inst.epsp_ind1());
+		ptrMATDAT.set_epsp_ind1Zi(inst.epsp_ind1Zi());
+	}
+//----------------------------------------------------------
+	if(inst.epsp_ind2Zi() != -1)
+	{
+		ptrMATDAT.set_epsp_ind2(inst.epsp_ind2());
+		ptrMATDAT.set_epsp_ind2Zi(inst.epsp_ind2Zi());
+	}
+//----------------------------------------------------------
+	if(inst.epsp_ind3Zi() != -1)
+	{
+		ptrMATDAT.set_epsp_ind3(inst.epsp_ind3());
+		ptrMATDAT.set_epsp_ind3Zi(inst.epsp_ind3Zi());
+	}
+//----------------------------------------------------------
+	if(inst.epsp_ind4Zi() != -1)
+	{
+		ptrMATDAT.set_epsp_ind4(inst.epsp_ind4());
+		ptrMATDAT.set_epsp_ind4Zi(inst.epsp_ind4Zi());
+	}
+//----------------------------------------------------------
+	if(inst.msiZi() != -1)
+	{
+		ptrMATDAT.set_msi(inst.msi());
+		ptrMATDAT.set_msiZi(inst.msiZi());
+	}
+//----------------------------------------------------------
+	if(inst.mseZi() != -1)
+	{
+		ptrMATDAT.set_mse(inst.mse());
+		ptrMATDAT.set_mseZi(inst.mseZi());
+	}
+//----------------------------------------------------------
+	if(inst.msiinitZi() != -1)
+	{
+		ptrMATDAT.set_msiinit(inst.msiinit());
+		ptrMATDAT.set_msiinitZi(inst.msiinitZi());
+	}
+//----------------------------------------------------------
+	if(inst.mseinitZi() != -1)
+	{
+		ptrMATDAT.set_mseinit(inst.mseinit());
+		ptrMATDAT.set_mseinitZi(inst.mseinitZi());
+	}
+//----------------------------------------------------------
+	if(inst.counterZi() != -1)
+	{
+		ptrMATDAT.set_counter(inst.counter());
+		ptrMATDAT.set_counterZi(inst.counterZi());
+	}
+//----------------------------------------------------------
+	if(inst.gmtZi() != -1)
+	{
+		ptrMATDAT.set_gmt(inst.gmt());
+		ptrMATDAT.set_gmtZi(inst.gmtZi());
+	}
+//----------------------------------------------------------
+	if(inst.densityZi() != -1)
+	{
+		ptrMATDAT.set_density(inst.density());
+		ptrMATDAT.set_densityZi(inst.densityZi());
+	}
+//----------------------------------------------------------
+	if(inst.emodZi() != -1)
+	{
+		ptrMATDAT.set_emod(inst.emod());
+		ptrMATDAT.set_emodZi(inst.emodZi());
+	}
+//----------------------------------------------------------
+	if(inst.cwZi() != -1)
+	{
+		ptrMATDAT.set_cw(inst.cw());
+		ptrMATDAT.set_cwZi(inst.cwZi());
+	}
+//----------------------------------------------------------
+	if(inst.lambdaZi() != -1)
+	{
+		ptrMATDAT.set_lambda(inst.lambda());
+		ptrMATDAT.set_lambdaZi(inst.lambdaZi());
+	}
+//----------------------------------------------------------
+	if(inst.mstcorZi() != -1)
+	{
+		ptrMATDAT.set_mstcor(inst.mstcor());
+		ptrMATDAT.set_mstcorZi(inst.mstcorZi());
+	}
+//----------------------------------------------------------
+	if(inst.mstgradientZi() != -1)
+	{
+		ptrMATDAT.set_mstgradient(inst.mstgradient());
+		ptrMATDAT.set_mstgradientZi(inst.mstgradientZi());
+	}
+//----------------------------------------------------------
+	if(inst.mstinflectionxZi() != -1)
+	{
+		ptrMATDAT.set_mstinflectionx(inst.mstinflectionx());
+		ptrMATDAT.set_mstinflectionxZi(inst.mstinflectionxZi());
+	}
+//----------------------------------------------------------
+	if(inst.lparaZi() != -1)
+	{
+		ptrMATDAT.set_lpara(inst.lpara());
+		ptrMATDAT.set_lparaZi(inst.lparaZi());
+	}
+//----------------------------------------------------------
+	if(inst.mparaZi() != -1)
+	{
+		ptrMATDAT.set_mpara(inst.mpara());
+		ptrMATDAT.set_mparaZi(inst.mparaZi());
+	}
+//----------------------------------------------------------
+	if(inst.nparaZi() != -1)
+	{
+		ptrMATDAT.set_npara(inst.npara());
+		ptrMATDAT.set_nparaZi(inst.nparaZi());
+	}
+//----------------------------------------------------------
+	if(inst.tocZi() != -1)
+	{
+		ptrMATDAT.set_toc(inst.toc());
+		ptrMATDAT.set_tocZi(inst.tocZi());
+	}
+//----------------------------------------------------------
+	if(inst.tomZi() != -1)
+	{
+		ptrMATDAT.set_tom(inst.tom());
+		ptrMATDAT.set_tomZi(inst.tomZi());
+	}
+//----------------------------------------------------------
+	if(inst.mopZi() != -1)
+	{
+		ptrMATDAT.set_mop(inst.mop());
+		ptrMATDAT.set_mopZi(inst.mopZi());
+	}
+	return( ptrMATDAT );
+}
+
+//			         
+//O P E R A T O R  = 
+//===================
+//                   
+const MATDAT& MATDAT::operator=(const MATDAT &inst)
+{
+//----------------------------------------------------------
+	this->set_alloycode(inst.alloycode());
+//----------------------------------------------------------
+	this->set_alper(inst.alper());
+	this->set_alperZi(inst.alperZi());
+//----------------------------------------------------------
+	this->set_asper(inst.asper());
+	this->set_asperZi(inst.asperZi());
+//----------------------------------------------------------
+	this->set_bper(inst.bper());
+	this->set_bperZi(inst.bperZi());
+//----------------------------------------------------------
+	this->set_cper(inst.cper());
+	this->set_cperZi(inst.cperZi());
+//----------------------------------------------------------
+	this->set_caper(inst.caper());
+	this->set_caperZi(inst.caperZi());
+//----------------------------------------------------------
+	this->set_coper(inst.coper());
+	this->set_coperZi(inst.coperZi());
+//----------------------------------------------------------
+	this->set_crper(inst.crper());
+	this->set_crperZi(inst.crperZi());
+//----------------------------------------------------------
+	this->set_cuper(inst.cuper());
+	this->set_cuperZi(inst.cuperZi());
+//----------------------------------------------------------
+	this->set_mnper(inst.mnper());
+	this->set_mnperZi(inst.mnperZi());
+//----------------------------------------------------------
+	this->set_moper(inst.moper());
+	this->set_moperZi(inst.moperZi());
+//----------------------------------------------------------
+	this->set_nbper(inst.nbper());
+	this->set_nbperZi(inst.nbperZi());
+//----------------------------------------------------------
+	this->set_niper(inst.niper());
+	this->set_niperZi(inst.niperZi());
+//----------------------------------------------------------
+	this->set_nper(inst.nper());
+	this->set_nperZi(inst.nperZi());
+//----------------------------------------------------------
+	this->set_pbper(inst.pbper());
+	this->set_pbperZi(inst.pbperZi());
+//----------------------------------------------------------
+	this->set_pper(inst.pper());
+	this->set_pperZi(inst.pperZi());
+//----------------------------------------------------------
+	this->set_sper(inst.sper());
+	this->set_sperZi(inst.sperZi());
+//----------------------------------------------------------
+	this->set_siper(inst.siper());
+	this->set_siperZi(inst.siperZi());
+//----------------------------------------------------------
+	this->set_snper(inst.snper());
+	this->set_snperZi(inst.snperZi());
+//----------------------------------------------------------
+	this->set_tiper(inst.tiper());
+	this->set_tiperZi(inst.tiperZi());
+//----------------------------------------------------------
+	this->set_vper(inst.vper());
+	this->set_vperZi(inst.vperZi());
+//----------------------------------------------------------
+	this->set_wper(inst.wper());
+	this->set_wperZi(inst.wperZi());
+//----------------------------------------------------------
+	this->set_x1per(inst.x1per());
+	this->set_x1perZi(inst.x1perZi());
+//----------------------------------------------------------
+	this->set_x2per(inst.x2per());
+	this->set_x2perZi(inst.x2perZi());
+//----------------------------------------------------------
+	this->set_x3per(inst.x3per());
+	this->set_x3perZi(inst.x3perZi());
+//----------------------------------------------------------
+	this->set_x4per(inst.x4per());
+	this->set_x4perZi(inst.x4perZi());
+//----------------------------------------------------------
+	this->set_x5per(inst.x5per());
+	this->set_x5perZi(inst.x5perZi());
+//----------------------------------------------------------
+	this->set_msinitp_ind0(inst.msinitp_ind0());
+	this->set_msinitp_ind0Zi(inst.msinitp_ind0Zi());
+//----------------------------------------------------------
+	this->set_msinitp_ind1(inst.msinitp_ind1());
+	this->set_msinitp_ind1Zi(inst.msinitp_ind1Zi());
+//----------------------------------------------------------
+	this->set_msinitp_ind2(inst.msinitp_ind2());
+	this->set_msinitp_ind2Zi(inst.msinitp_ind2Zi());
+//----------------------------------------------------------
+	this->set_msinitp_ind3(inst.msinitp_ind3());
+	this->set_msinitp_ind3Zi(inst.msinitp_ind3Zi());
+//----------------------------------------------------------
+	this->set_msinitp_ind4(inst.msinitp_ind4());
+	this->set_msinitp_ind4Zi(inst.msinitp_ind4Zi());
+//----------------------------------------------------------
+	this->set_msp_ind0(inst.msp_ind0());
+	this->set_msp_ind0Zi(inst.msp_ind0Zi());
+//----------------------------------------------------------
+	this->set_msp_ind1(inst.msp_ind1());
+	this->set_msp_ind1Zi(inst.msp_ind1Zi());
+//----------------------------------------------------------
+	this->set_msp_ind2(inst.msp_ind2());
+	this->set_msp_ind2Zi(inst.msp_ind2Zi());
+//----------------------------------------------------------
+	this->set_msp_ind3(inst.msp_ind3());
+	this->set_msp_ind3Zi(inst.msp_ind3Zi());
+//----------------------------------------------------------
+	this->set_msp_ind4(inst.msp_ind4());
+	this->set_msp_ind4Zi(inst.msp_ind4Zi());
+//----------------------------------------------------------
+	this->set_epsp_ind0(inst.epsp_ind0());
+	this->set_epsp_ind0Zi(inst.epsp_ind0Zi());
+//----------------------------------------------------------
+	this->set_epsp_ind1(inst.epsp_ind1());
+	this->set_epsp_ind1Zi(inst.epsp_ind1Zi());
+//----------------------------------------------------------
+	this->set_epsp_ind2(inst.epsp_ind2());
+	this->set_epsp_ind2Zi(inst.epsp_ind2Zi());
+//----------------------------------------------------------
+	this->set_epsp_ind3(inst.epsp_ind3());
+	this->set_epsp_ind3Zi(inst.epsp_ind3Zi());
+//----------------------------------------------------------
+	this->set_epsp_ind4(inst.epsp_ind4());
+	this->set_epsp_ind4Zi(inst.epsp_ind4Zi());
+//----------------------------------------------------------
+	this->set_msi(inst.msi());
+	this->set_msiZi(inst.msiZi());
+//----------------------------------------------------------
+	this->set_mse(inst.mse());
+	this->set_mseZi(inst.mseZi());
+//----------------------------------------------------------
+	this->set_msiinit(inst.msiinit());
+	this->set_msiinitZi(inst.msiinitZi());
+//----------------------------------------------------------
+	this->set_mseinit(inst.mseinit());
+	this->set_mseinitZi(inst.mseinitZi());
+//----------------------------------------------------------
+	this->set_counter(inst.counter());
+	this->set_counterZi(inst.counterZi());
+//----------------------------------------------------------
+	this->set_gmt(inst.gmt());
+	this->set_gmtZi(inst.gmtZi());
+//----------------------------------------------------------
+	this->set_density(inst.density());
+	this->set_densityZi(inst.densityZi());
+//----------------------------------------------------------
+	this->set_emod(inst.emod());
+	this->set_emodZi(inst.emodZi());
+//----------------------------------------------------------
+	this->set_cw(inst.cw());
+	this->set_cwZi(inst.cwZi());
+//----------------------------------------------------------
+	this->set_lambda(inst.lambda());
+	this->set_lambdaZi(inst.lambdaZi());
+//----------------------------------------------------------
+	this->set_mstcor(inst.mstcor());
+	this->set_mstcorZi(inst.mstcorZi());
+//----------------------------------------------------------
+	this->set_mstgradient(inst.mstgradient());
+	this->set_mstgradientZi(inst.mstgradientZi());
+//----------------------------------------------------------
+	this->set_mstinflectionx(inst.mstinflectionx());
+	this->set_mstinflectionxZi(inst.mstinflectionxZi());
+//----------------------------------------------------------
+	this->set_lpara(inst.lpara());
+	this->set_lparaZi(inst.lparaZi());
+//----------------------------------------------------------
+	this->set_mpara(inst.mpara());
+	this->set_mparaZi(inst.mparaZi());
+//----------------------------------------------------------
+	this->set_npara(inst.npara());
+	this->set_nparaZi(inst.nparaZi());
+//----------------------------------------------------------
+	this->set_toc(inst.toc());
+	this->set_tocZi(inst.tocZi());
+//----------------------------------------------------------
+	this->set_tom(inst.tom());
+	this->set_tomZi(inst.tomZi());
+//----------------------------------------------------------
+	this->set_mop(inst.mop());
+	this->set_mopZi(inst.mopZi());
+	return(*this);
+}
+

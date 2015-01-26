@@ -1,0 +1,997 @@
+/* *******************************************************************/
+/* *   File               :    ACCOUNTROLL.pc
+/* *   Short Description  :    ORACLE DATABASE ACCESS
+/* * 		                   ACCOUNT ROLL TABLE
+/* *   Author             :    DB CODE Generator
+/* *   Created Date       :    13.06.2013
+/* *   Tech.Support       :    LiuWeiZhao. email:welljoe@hotmail.com 
+/* *******************************************************************/
+/* *   Copyright (c)  SGAI AI 2009   All Rights Reserved
+/* *******************************************************************/
+
+#include "LOG.h"
+#include "ACCOUNTROLL.h"
+//
+// Declare ORACLE Host Variables
+//
+
+#define SQLCA_STORAGE_CLASS static
+#define ORACA_STORAGE_CLASS static
+EXEC SQL INCLUDE sqlca;
+EXEC SQL INCLUDE oraca;
+
+#define OPENED 1
+#define CLOSED 2
+EXEC SQL BEGIN DECLARE SECTION;
+/* ****************************************************************************** */
+/*                                                                                */
+/*                               define Oracle                                    */
+/*                               Host Variables                                   */
+/*                                                          .                     */
+/*                                                                                */
+/* ****************************************************************************** */
+
+static VARCHAR	dynstr[16000];
+static long		rowCnt;       
+static long		cuFl;         
+//Unit[-]:日期.Limit:[-,-]
+static VARCHAR  ora_tdate[33];
+static short    ora_tdateZi;
+//Unit[-]:班组.Limit:[-,-]
+static VARCHAR  ora_crewno[9];
+static short    ora_crewnoZi;
+//Unit[-]:班次.Limit:[-,-]
+static short    ora_shiftno;
+static short    ora_shiftnoZi;
+//Unit[-]:机架号.Limit:[-,-]
+static short    ora_standno;
+//Unit[-]:记录号.Limit:[-,-]
+static long     ora_recid;
+static short    ora_recidZi;
+//Unit[-]:上工作辊ID.Limit:[-,-]
+static VARCHAR  ora_rollidup[33];
+//Unit[-]:下工作辊ID.Limit:[-,-]
+static VARCHAR  ora_rolliddw[33];
+//Unit[-]:上工作辊轧制重量.Limit:[-,-]
+static long     ora_rollweightup;
+static short    ora_rollweightupZi;
+//Unit[-]:上工作辊轧制重量.Limit:[-,-]
+static long     ora_rollweightdw;
+static short    ora_rollweightdwZi;
+//Unit[-]:换辊原因.Limit:[-,-]
+static short    ora_rollchgreason;
+static short    ora_rollchgreasonZi;
+//Unit[-]:辊面检查结果.Limit:[-,-]
+static short    ora_rollcheck;
+static short    ora_rollcheckZi;
+//Unit[-]:记录人.Limit:[-,-]
+static VARCHAR  ora_recman[33];
+static short    ora_recmanZi;
+//Unit[-]:创建时间.Limit:[-,-]
+static VARCHAR  ora_toc[15];
+static short    ora_tocZi;
+//Unit[-]:最后修改时间.Limit:[-,-]
+static VARCHAR  ora_tom[15];
+static short    ora_tomZi;
+//Unit[-]:创建或者修改者.Limit:[-,-]
+static VARCHAR  ora_mop[121];
+static short    ora_mopZi;
+// Host arguments for Primary key
+static short    k_ora_standno;   // Unit[-]:机架号.Limit:[-,-]
+static VARCHAR  k_ora_rollidup[33];   // Unit[-]:上工作辊ID.Limit:[-,-]
+static VARCHAR  k_ora_rolliddw[33];   // Unit[-]:下工作辊ID.Limit:[-,-]
+
+EXEC SQL END DECLARE SECTION;         
+             
+// 				             
+//C O N S T R U C T O R S    
+//=======================    
+//                           
+ACCOUNTROLL::ACCOUNTROLL()
+{
+	initial();                                             
+}
+
+//					
+//C O P Y  -  C O N S T R U C T O R 
+//==================================
+ACCOUNTROLL::ACCOUNTROLL(const ACCOUNTROLL &inst)
+{
+//----------------------------------------------------------
+	this->set_tdate(inst.tdate());
+	this->set_tdateZi(inst.tdateZi());
+//----------------------------------------------------------
+	this->set_crewno(inst.crewno());
+	this->set_crewnoZi(inst.crewnoZi());
+//----------------------------------------------------------
+	this->set_shiftno(inst.shiftno());
+	this->set_shiftnoZi(inst.shiftnoZi());
+//----------------------------------------------------------
+	this->set_standno(inst.standno());
+//----------------------------------------------------------
+	this->set_recid(inst.recid());
+	this->set_recidZi(inst.recidZi());
+//----------------------------------------------------------
+	this->set_rollidup(inst.rollidup());
+//----------------------------------------------------------
+	this->set_rolliddw(inst.rolliddw());
+//----------------------------------------------------------
+	this->set_rollweightup(inst.rollweightup());
+	this->set_rollweightupZi(inst.rollweightupZi());
+//----------------------------------------------------------
+	this->set_rollweightdw(inst.rollweightdw());
+	this->set_rollweightdwZi(inst.rollweightdwZi());
+//----------------------------------------------------------
+	this->set_rollchgreason(inst.rollchgreason());
+	this->set_rollchgreasonZi(inst.rollchgreasonZi());
+//----------------------------------------------------------
+	this->set_rollcheck(inst.rollcheck());
+	this->set_rollcheckZi(inst.rollcheckZi());
+//----------------------------------------------------------
+	this->set_recman(inst.recman());
+	this->set_recmanZi(inst.recmanZi());
+//----------------------------------------------------------
+	this->set_toc(inst.toc());
+	this->set_tocZi(inst.tocZi());
+//----------------------------------------------------------
+	this->set_tom(inst.tom());
+	this->set_tomZi(inst.tomZi());
+//----------------------------------------------------------
+	this->set_mop(inst.mop());
+	this->set_mopZi(inst.mopZi());
+}
+
+//					
+//C O N S T R U C T O R -W I T H P A R A M E T E R S
+//===================================================
+//					
+ACCOUNTROLL::ACCOUNTROLL(short arg1,char* arg2,char* arg3)
+{
+	initial();					               
+	setPrimKey (arg1,arg2,arg3);    
+	//read DB record                           
+	dbAccess = true;                           
+	dbMessage = readDB();                      
+	if ( dbMessage != NULL ) dbAccess = false; 
+}
+
+//D E S T R U C T O R S  
+//=======================
+//                       
+ACCOUNTROLL::~ACCOUNTROLL()
+{
+}
+
+//initialise all member variables
+void ACCOUNTROLL::initial()
+{
+	set_tdate("");
+	set_tdateZi(-1);
+	set_crewno("");
+	set_crewnoZi(-1);
+	set_shiftno(0);
+	set_shiftnoZi(-1);
+	set_standno(0);
+	set_recid(0);
+	set_recidZi(-1);
+	set_rollidup("");
+	set_rolliddw("");
+	set_rollweightup(0);
+	set_rollweightupZi(-1);
+	set_rollweightdw(0);
+	set_rollweightdwZi(-1);
+	set_rollchgreason(0);
+	set_rollchgreasonZi(-1);
+	set_rollcheck(0);
+	set_rollcheckZi(-1);
+	set_recman("");
+	set_recmanZi(-1);
+	set_toc("");
+	set_tocZi(-1);
+	set_tom("");
+	set_tomZi(-1);
+	set_mop("");
+	set_mopZi(-1);
+	//initialies Primary key members
+	set_k_standno(0);
+	set_k_rollidup("");
+	set_k_rolliddw("");
+// Initial Oracle Options
+	oraca.oradbgf  = 1; // gather debug informations       
+	oraca.oracchf  = 1; // gather cursor cache informations
+	oraca.orahchf  = 1; // check heap                      
+	oraca.orastxtf = 3; // always save last sql-statement  
+	                                                       
+	EXEC ORACLE OPTION (ORACA=YES);                        
+	EXEC ORACLE OPTION (HOLD_CURSOR=YES);                  
+	EXEC ORACLE OPTION (RELEASE_CURSOR=NO);                
+	EXEC ORACLE OPTION (MAXOPENCURSORS=50);                
+	pCatch = CatchDbaxError::instance();                   
+	                                                       
+}
+
+//read a single entry from DB.
+char* ACCOUNTROLL::readDB()
+{
+	//
+	//copy the host variables (k_...) to Oracle Host Keys (k_ora_..)
+	//
+		copyKeyToHost();
+	//
+	// Do SELECT
+	//
+	EXEC SQL SELECT 
+		tdate,
+		crewno,
+		shiftno,
+		standno,
+		recid,
+		rollidup,
+		rolliddw,
+		rollweightup,
+		rollweightdw,
+		rollchgreason,
+		rollcheck,
+		recman,
+		TO_CHAR(toc , 'YYYYMMDDHH24MISS'),
+		TO_CHAR(tom , 'YYYYMMDDHH24MISS'),
+		mop
+	INTO
+		:ora_tdate:ora_tdateZi,
+		:ora_crewno:ora_crewnoZi,
+		:ora_shiftno:ora_shiftnoZi,
+		:ora_standno,
+		:ora_recid:ora_recidZi,
+		:ora_rollidup,
+		:ora_rolliddw,
+		:ora_rollweightup:ora_rollweightupZi,
+		:ora_rollweightdw:ora_rollweightdwZi,
+		:ora_rollchgreason:ora_rollchgreasonZi,
+		:ora_rollcheck:ora_rollcheckZi,
+		:ora_recman:ora_recmanZi,
+		:ora_toc:ora_tocZi,
+		:ora_tom:ora_tomZi,
+		:ora_mop:ora_mopZi
+	FROM ACCOUNTROLL
+	WHERE
+				standno         = :k_ora_standno AND 
+				rollidup        = :k_ora_rollidup AND 
+				rolliddw        = :k_ora_rolliddw ;
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	//
+	// copy host variables into Class attributes
+	//
+	copyOracleToAttribute();
+	return ( NULL );
+}
+
+//updates a single entry from DB
+char* ACCOUNTROLL::updateDB()
+{
+	//
+	//copy the host variables (k_...) to Oracle Host Keys (k_ora_..)
+	//
+		copyKeyToHost();
+	//copy the attributes ( ...) to Oracle Hosts( ora_..)
+	//
+		copyAttributeToOracle();
+	//
+	// Do UPDATE
+	//
+	EXEC SQL UPDATE ACCOUNTROLL
+	SET 
+		tdate               =:ora_tdate:ora_tdateZi,
+		crewno              =:ora_crewno:ora_crewnoZi,
+		shiftno             =:ora_shiftno:ora_shiftnoZi,
+		standno             =:ora_standno,
+		recid               =:ora_recid:ora_recidZi,
+		rollidup            =:ora_rollidup,
+		rolliddw            =:ora_rolliddw,
+		rollweightup        =:ora_rollweightup:ora_rollweightupZi,
+		rollweightdw        =:ora_rollweightdw:ora_rollweightdwZi,
+		rollchgreason       =:ora_rollchgreason:ora_rollchgreasonZi,
+		rollcheck           =:ora_rollcheck:ora_rollcheckZi,
+		recman              =:ora_recman:ora_recmanZi,
+		toc                 =TO_DATE( :ora_toc:ora_tocZi,'YYYYMMDDHH24MISS'),
+		tom                 =TO_DATE( :ora_tom:ora_tomZi,'YYYYMMDDHH24MISS'),
+		mop                 =:ora_mop:ora_mopZi
+	WHERE
+		standno         = :k_ora_standno AND 
+		rollidup        = :k_ora_rollidup AND 
+		rolliddw        = :k_ora_rolliddw ;
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//inserts a single entry from DB
+char* ACCOUNTROLL::insertDB()
+{
+	//
+	//copy the attributes ( ...) to Oracle Hosts( ora_..) 
+	//
+		copyAttributeToOracle();
+	//
+	// Do INSERT
+	//
+	EXEC SQL INSERT INTO ACCOUNTROLL
+	(
+		tdate,
+		crewno,
+		shiftno,
+		standno,
+		recid,
+		rollidup,
+		rolliddw,
+		rollweightup,
+		rollweightdw,
+		rollchgreason,
+		rollcheck,
+		recman,
+		toc,
+		tom,
+		mop
+	)
+
+	VALUES
+	(
+		:ora_tdate:ora_tdateZi,
+		:ora_crewno:ora_crewnoZi,
+		:ora_shiftno:ora_shiftnoZi,
+		:ora_standno,
+		:ora_recid:ora_recidZi,
+		:ora_rollidup,
+		:ora_rolliddw,
+		:ora_rollweightup:ora_rollweightupZi,
+		:ora_rollweightdw:ora_rollweightdwZi,
+		:ora_rollchgreason:ora_rollchgreasonZi,
+		:ora_rollcheck:ora_rollcheckZi,
+		:ora_recman:ora_recmanZi,
+		TO_DATE( :ora_toc:ora_tocZi,'YYYYMMDDHH24MISS'),
+		TO_DATE( :ora_tom:ora_tomZi,'YYYYMMDDHH24MISS'),
+		:ora_mop:ora_mopZi
+	);
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//this methode tries to update a DB record,when the update fails.
+char* ACCOUNTROLL::storeDB()
+{
+	char* ret = NULL;
+	setKeysFromRecord();
+	ret=updateDB();
+	if(ret != NULL)
+	{
+		ret=insertDB();
+		if(ret != NULL)
+		{
+			dbAccess = false;
+			return(ret);
+		}
+	}
+	return(ret);
+}
+
+//deletes a single entry from DB
+char* ACCOUNTROLL::deleteDB()
+{
+//
+//copy the host variables (k_...) to Oracle Host Keys (k_ora_..)
+//
+	copyKeyToHost();
+
+//
+// Do Delete 
+//
+	EXEC SQL DELETE FROM ACCOUNTROLL
+	WHERE
+				standno         = :k_ora_standno AND 
+				rollidup        = :k_ora_rollidup AND 
+				rolliddw        = :k_ora_rolliddw ;
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+// Executes the SQL DELETE with a where clause
+char* ACCOUNTROLL::deleteDB(const char* where,long* count)
+{
+	*(count) = -1L;
+// Create dynamic statement.
+//
+	strcpy((char*)dynstr.arr,"DELETE");
+	strcat((char*)dynstr.arr," FROM ACCOUNTROLL");
+	if ( where != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, where );
+	}
+
+	dynstr.len = strlen( (char*) dynstr.arr);
+	EXEC SQL EXECUTE IMMEDIATE :dynstr;
+	oracleSqlCode = sqlca.sqlcode;
+		oracleRowsProcessed = sqlca.sqlerrd[2];
+	if (sqlca.sqlcode == 0 )
+		*(count) = sqlca.sqlerrd[2];
+	else 
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//openSetDB data with where condition and sort order.
+char* ACCOUNTROLL::openSetDB(const char* where,char* order)
+{
+//
+// Create dynamic statement.
+//
+	strcpy((char*)dynstr.arr,"SELECT ");
+	strcat((char*)dynstr.arr,"tdate,");
+	strcat((char*)dynstr.arr,"crewno,");
+	strcat((char*)dynstr.arr,"shiftno,");
+	strcat((char*)dynstr.arr,"standno,");
+	strcat((char*)dynstr.arr,"recid,");
+	strcat((char*)dynstr.arr,"rollidup,");
+	strcat((char*)dynstr.arr,"rolliddw,");
+	strcat((char*)dynstr.arr,"rollweightup,");
+	strcat((char*)dynstr.arr,"rollweightdw,");
+	strcat((char*)dynstr.arr,"rollchgreason,");
+	strcat((char*)dynstr.arr,"rollcheck,");
+	strcat((char*)dynstr.arr,"recman,");
+	strcat((char*)dynstr.arr,"TO_CHAR(toc , 'YYYYMMDDHH24MISS'),");
+	strcat((char*)dynstr.arr,"TO_CHAR(tom , 'YYYYMMDDHH24MISS'),");
+	strcat((char*)dynstr.arr,"mop");
+
+	strcat((char*)dynstr.arr," FROM ACCOUNTROLL ");
+	if ( where != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, where);
+	}
+	if ( order != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, order);
+	}
+
+	dynstr.len = strlen( (char*) dynstr.arr);
+	EXEC SQL PREPARE set_ACCOUNTROLL FROM :dynstr;
+	if (sqlca.sqlcode == 0 )
+	{
+		EXEC SQL DECLARE cu_ACCOUNTROLL CURSOR FOR set_ACCOUNTROLL;
+		if (sqlca.sqlcode == 0 )
+			EXEC SQL OPEN cu_ACCOUNTROLL;
+	}
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	cuFl = OPENED;
+	return ( NULL );
+}
+
+//Executes the SQL FETCH Statement .
+char* ACCOUNTROLL::getSetDB()
+{
+	if ( cuFl != OPENED ) return ("No open Cursor Table:Me");
+	EXEC SQL FETCH cu_ACCOUNTROLL INTO
+		:ora_tdate:ora_tdateZi,
+		:ora_crewno:ora_crewnoZi,
+		:ora_shiftno:ora_shiftnoZi,
+		:ora_standno,
+		:ora_recid:ora_recidZi,
+		:ora_rollidup,
+		:ora_rolliddw,
+		:ora_rollweightup:ora_rollweightupZi,
+		:ora_rollweightdw:ora_rollweightdwZi,
+		:ora_rollchgreason:ora_rollchgreasonZi,
+		:ora_rollcheck:ora_rollcheckZi,
+		:ora_recman:ora_recmanZi,
+		:ora_toc:ora_tocZi,
+		:ora_tom:ora_tomZi,
+		:ora_mop:ora_mopZi;
+
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		pCatch->catchError(sqlca.sqlcode);
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		return (char*) sqlca.sqlerrm.sqlerrmc ;
+	}
+	//
+	// copy host variables into Class attributes
+	//
+	copyOracleToAttribute();
+	copyHostToKey();
+	return ( NULL );
+}
+
+//Close a Oracle Cursor
+char* ACCOUNTROLL::closeSetDB()
+{
+	EXEC SQL CLOSE cu_ACCOUNTROLL;
+	oracleSqlCode = sqlca.sqlcode;         
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		pCatch->catchError(sqlca.sqlcode);
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		return (char*) sqlca.sqlerrm.sqlerrmc ;
+	}
+	cuFl = CLOSED;
+	return ( NULL );
+}
+
+//Executes the SQL count(key) for a where clause
+char* ACCOUNTROLL::countDB(const char* where,long* count)
+{
+	*(count) = -1L;
+//
+// Create dynamic statement. 
+//
+	strncpy((char*)dynstr.arr,"SELECT count(standno)", sizeof(dynstr.arr));
+	strcat((char*)dynstr.arr," FROM ACCOUNTROLL");
+	if ( where != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, where );
+	}
+	dynstr.len = strlen( (char*) dynstr.arr);
+	EXEC SQL PREPARE c_ACCOUNTROLL FROM :dynstr;
+	
+	if (sqlca.sqlcode == 0 )
+	{
+		EXEC SQL DECLARE ct_ACCOUNTROLL CURSOR FOR c_ACCOUNTROLL;
+		if (sqlca.sqlcode == 0 )
+		{
+			EXEC SQL OPEN ct_ACCOUNTROLL;
+			if (sqlca.sqlcode == 0 )			{
+				EXEC SQL FETCH ct_ACCOUNTROLL INTO :rowCnt;
+				if (sqlca.sqlcode == 0 )
+				*(count) = rowCnt;
+			}
+			EXEC SQL CLOSE ct_ACCOUNTROLL;
+		}
+	}
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//private methode copy Attribute to Oracle
+//copys Object attributes into Oracle Host variables.
+void ACCOUNTROLL::copyAttributeToOracle()
+{
+	char* ptrStr;
+	ptrStr = this->tdate();
+	if( strlen(ptrStr)< sizeof(ora_tdate.arr))
+	{
+		strncpy((char*)ora_tdate.arr, ptrStr, sizeof(ora_tdate.arr));
+		ora_tdate.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_tdate.len = 0;
+	ora_tdateZi = this->tdateZi();
+	ptrStr = this->crewno();
+	if( strlen(ptrStr)< sizeof(ora_crewno.arr))
+	{
+		strncpy((char*)ora_crewno.arr, ptrStr, sizeof(ora_crewno.arr));
+		ora_crewno.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_crewno.len = 0;
+	ora_crewnoZi = this->crewnoZi();
+	ora_shiftno = this->shiftno();
+	ora_shiftnoZi = this->shiftnoZi();
+	ora_standno = this->standno();
+	ora_recid = this->recid();
+	ora_recidZi = this->recidZi();
+	ptrStr = this->rollidup();
+	if( strlen(ptrStr)< sizeof(ora_rollidup.arr))
+	{
+		strncpy((char*)ora_rollidup.arr, ptrStr, sizeof(ora_rollidup.arr));
+		ora_rollidup.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_rollidup.len = 0;
+	ptrStr = this->rolliddw();
+	if( strlen(ptrStr)< sizeof(ora_rolliddw.arr))
+	{
+		strncpy((char*)ora_rolliddw.arr, ptrStr, sizeof(ora_rolliddw.arr));
+		ora_rolliddw.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_rolliddw.len = 0;
+	ora_rollweightup = this->rollweightup();
+	ora_rollweightupZi = this->rollweightupZi();
+	ora_rollweightdw = this->rollweightdw();
+	ora_rollweightdwZi = this->rollweightdwZi();
+	ora_rollchgreason = this->rollchgreason();
+	ora_rollchgreasonZi = this->rollchgreasonZi();
+	ora_rollcheck = this->rollcheck();
+	ora_rollcheckZi = this->rollcheckZi();
+	ptrStr = this->recman();
+	if( strlen(ptrStr)< sizeof(ora_recman.arr))
+	{
+		strncpy((char*)ora_recman.arr, ptrStr, sizeof(ora_recman.arr));
+		ora_recman.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_recman.len = 0;
+	ora_recmanZi = this->recmanZi();
+	ptrStr = this->toc();
+	if( strlen(ptrStr)< sizeof(ora_toc.arr))
+	{
+		strncpy((char*)ora_toc.arr, ptrStr, sizeof(ora_toc.arr));
+		ora_toc.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_toc.len = 0;
+	ora_tocZi = this->tocZi();
+	ptrStr = this->tom();
+	if( strlen(ptrStr)< sizeof(ora_tom.arr))
+	{
+		strncpy((char*)ora_tom.arr, ptrStr, sizeof(ora_tom.arr));
+		ora_tom.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_tom.len = 0;
+	ora_tomZi = this->tomZi();
+	ptrStr = this->mop();
+	if( strlen(ptrStr)< sizeof(ora_mop.arr))
+	{
+		strncpy((char*)ora_mop.arr, ptrStr, sizeof(ora_mop.arr));
+		ora_mop.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_mop.len = 0;
+	ora_mopZi = this->mopZi();
+}
+
+//private methode copy Oracle to Attribute
+//copys Oracle Host variables into Object attributes.
+void ACCOUNTROLL::copyOracleToAttribute()
+{
+	ora_tdate.arr[ora_tdate.len] = '\0';
+	this->set_tdate((char*) ora_tdate.arr);
+	this->set_tdateZi((short)ora_tdateZi);
+	ora_crewno.arr[ora_crewno.len] = '\0';
+	this->set_crewno((char*) ora_crewno.arr);
+	this->set_crewnoZi((short)ora_crewnoZi);
+	this->set_shiftno((short)ora_shiftno);
+	this->set_shiftnoZi((short)ora_shiftnoZi);
+	this->set_standno((short)ora_standno);
+	this->set_recid((long)ora_recid);
+	this->set_recidZi((short)ora_recidZi);
+	ora_rollidup.arr[ora_rollidup.len] = '\0';
+	this->set_rollidup((char*) ora_rollidup.arr);
+	ora_rolliddw.arr[ora_rolliddw.len] = '\0';
+	this->set_rolliddw((char*) ora_rolliddw.arr);
+	this->set_rollweightup((long)ora_rollweightup);
+	this->set_rollweightupZi((short)ora_rollweightupZi);
+	this->set_rollweightdw((long)ora_rollweightdw);
+	this->set_rollweightdwZi((short)ora_rollweightdwZi);
+	this->set_rollchgreason((short)ora_rollchgreason);
+	this->set_rollchgreasonZi((short)ora_rollchgreasonZi);
+	this->set_rollcheck((short)ora_rollcheck);
+	this->set_rollcheckZi((short)ora_rollcheckZi);
+	ora_recman.arr[ora_recman.len] = '\0';
+	this->set_recman((char*) ora_recman.arr);
+	this->set_recmanZi((short)ora_recmanZi);
+	ora_toc.arr[ora_toc.len] = '\0';
+	this->set_toc((char*) ora_toc.arr);
+	this->set_tocZi((short)ora_tocZi);
+	ora_tom.arr[ora_tom.len] = '\0';
+	this->set_tom((char*) ora_tom.arr);
+	this->set_tomZi((short)ora_tomZi);
+	ora_mop.arr[ora_mop.len] = '\0';
+	this->set_mop((char*) ora_mop.arr);
+	this->set_mopZi((short)ora_mopZi);
+}
+
+//private methode copy Key to host
+//copys Object attributes into Oralce Key variables.
+void ACCOUNTROLL::copyKeyToHost()
+{
+	char* ptrStr;
+	k_ora_standno = this->k_standno();
+	ptrStr = this->k_rollidup();
+	if( strlen(ptrStr)< sizeof(k_ora_rollidup.arr))
+	{
+		strncpy((char*)k_ora_rollidup.arr, ptrStr, sizeof(k_ora_rollidup.arr));
+		k_ora_rollidup.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		k_ora_rollidup.len = 0;
+	ptrStr = this->k_rolliddw();
+	if( strlen(ptrStr)< sizeof(k_ora_rolliddw.arr))
+	{
+		strncpy((char*)k_ora_rolliddw.arr, ptrStr, sizeof(k_ora_rolliddw.arr));
+		k_ora_rolliddw.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		k_ora_rolliddw.len = 0;
+}
+
+//private methode copy Host to Key
+// copys Oracle Host Key variables into Object Key attributes.
+void ACCOUNTROLL::copyHostToKey()
+{
+	this->set_k_standno((short)ora_standno);
+	ora_rollidup.arr[ora_rollidup.len] = '\0';
+	this->set_k_rollidup((char*) ora_rollidup.arr);
+	ora_rolliddw.arr[ora_rolliddw.len] = '\0';
+	this->set_k_rolliddw((char*) ora_rolliddw.arr);
+}
+
+//private methode log Oracle message information
+void ACCOUNTROLL::logOraMessageInfo()
+{
+	LOG d("ACCOUNTROLL::logOraMessageInfo()");
+	sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+	oraca.orastxt.orastxtc[oraca.orastxt.orastxtl] = '\0';
+	oraca.orasfnm.orasfnmc[oraca.orasfnm.orasfnml] = '\0';
+	
+	//* negating a error code submitted perhaps positively.
+	if (sqlca.sqlcode > 0) sqlca.sqlcode *= -1;
+	
+	//* Distribute fault text, SQL statement and file in the Debug System.
+	d << "ORA-Error: "<< sqlca.sqlerrm.sqlerrmc; d.Info();
+	d << "OracaText: "<< oraca.orastxt.orastxtc; d.Info();
+	d << "in line " << oraca.oraslnr << " in file " << oraca.orasfnm.orasfnmc; d.Info();
+}
+
+//this methode stores the unique key attributes
+void ACCOUNTROLL::setPrimKey(short arg1,char* arg2,char* arg3)
+{
+	s_k_standno = arg1;
+	strncpy( (char*)c_k_rollidup, arg2, sizeof(c_k_rollidup));
+	c_k_rollidup[sizeof(c_k_rollidup)-1] = '\0';
+	strncpy( (char*)c_k_rolliddw, arg3, sizeof(c_k_rolliddw));
+	c_k_rolliddw[sizeof(c_k_rolliddw)-1] = '\0';
+}
+
+//this methode stores the unique key attributes
+void ACCOUNTROLL::initInsertKeys(short arg1,char* arg2,char* arg3)
+{
+	setPrimKey(arg1,arg2,arg3);
+	s_standno = arg1;
+	strncpy( (char*)c_rollidup, arg2, sizeof(c_rollidup));
+	c_rollidup[sizeof(c_rollidup)-1] = '\0';
+	strncpy( (char*)c_rolliddw, arg3, sizeof(c_rolliddw));
+	c_rolliddw[sizeof(c_rolliddw)-1] = '\0';
+}
+
+//this methode set the unique key attributes from the DB Record Attributes
+void ACCOUNTROLL::setKeysFromRecord()
+{
+	set_k_standno( standno() );
+	set_k_rollidup( rollidup() );
+	set_k_rolliddw( rolliddw() );
+}
+
+//			         
+//O P E R A T O R  + 
+//===================
+//                   
+ACCOUNTROLL ACCOUNTROLL::operator+(const ACCOUNTROLL &inst) const
+{
+	ACCOUNTROLL ptrACCOUNTROLL(*this);
+//----------------------------------------------------------
+	if(inst.tdateZi() != -1)
+	{
+		ptrACCOUNTROLL.set_tdate(inst.tdate());
+		ptrACCOUNTROLL.set_tdateZi(inst.tdateZi());
+	}
+//----------------------------------------------------------
+	if(inst.crewnoZi() != -1)
+	{
+		ptrACCOUNTROLL.set_crewno(inst.crewno());
+		ptrACCOUNTROLL.set_crewnoZi(inst.crewnoZi());
+	}
+//----------------------------------------------------------
+	if(inst.shiftnoZi() != -1)
+	{
+		ptrACCOUNTROLL.set_shiftno(inst.shiftno());
+		ptrACCOUNTROLL.set_shiftnoZi(inst.shiftnoZi());
+	}
+//----------------------------------------------------------
+	ptrACCOUNTROLL.set_standno(inst.standno());
+//----------------------------------------------------------
+	if(inst.recidZi() != -1)
+	{
+		ptrACCOUNTROLL.set_recid(inst.recid());
+		ptrACCOUNTROLL.set_recidZi(inst.recidZi());
+	}
+//----------------------------------------------------------
+	ptrACCOUNTROLL.set_rollidup(inst.rollidup());
+//----------------------------------------------------------
+	ptrACCOUNTROLL.set_rolliddw(inst.rolliddw());
+//----------------------------------------------------------
+	if(inst.rollweightupZi() != -1)
+	{
+		ptrACCOUNTROLL.set_rollweightup(inst.rollweightup());
+		ptrACCOUNTROLL.set_rollweightupZi(inst.rollweightupZi());
+	}
+//----------------------------------------------------------
+	if(inst.rollweightdwZi() != -1)
+	{
+		ptrACCOUNTROLL.set_rollweightdw(inst.rollweightdw());
+		ptrACCOUNTROLL.set_rollweightdwZi(inst.rollweightdwZi());
+	}
+//----------------------------------------------------------
+	if(inst.rollchgreasonZi() != -1)
+	{
+		ptrACCOUNTROLL.set_rollchgreason(inst.rollchgreason());
+		ptrACCOUNTROLL.set_rollchgreasonZi(inst.rollchgreasonZi());
+	}
+//----------------------------------------------------------
+	if(inst.rollcheckZi() != -1)
+	{
+		ptrACCOUNTROLL.set_rollcheck(inst.rollcheck());
+		ptrACCOUNTROLL.set_rollcheckZi(inst.rollcheckZi());
+	}
+//----------------------------------------------------------
+	if(inst.recmanZi() != -1)
+	{
+		ptrACCOUNTROLL.set_recman(inst.recman());
+		ptrACCOUNTROLL.set_recmanZi(inst.recmanZi());
+	}
+//----------------------------------------------------------
+	if(inst.tocZi() != -1)
+	{
+		ptrACCOUNTROLL.set_toc(inst.toc());
+		ptrACCOUNTROLL.set_tocZi(inst.tocZi());
+	}
+//----------------------------------------------------------
+	if(inst.tomZi() != -1)
+	{
+		ptrACCOUNTROLL.set_tom(inst.tom());
+		ptrACCOUNTROLL.set_tomZi(inst.tomZi());
+	}
+//----------------------------------------------------------
+	if(inst.mopZi() != -1)
+	{
+		ptrACCOUNTROLL.set_mop(inst.mop());
+		ptrACCOUNTROLL.set_mopZi(inst.mopZi());
+	}
+	return( ptrACCOUNTROLL );
+}
+
+//			         
+//O P E R A T O R  = 
+//===================
+//                   
+const ACCOUNTROLL& ACCOUNTROLL::operator=(const ACCOUNTROLL &inst)
+{
+//----------------------------------------------------------
+	this->set_tdate(inst.tdate());
+	this->set_tdateZi(inst.tdateZi());
+//----------------------------------------------------------
+	this->set_crewno(inst.crewno());
+	this->set_crewnoZi(inst.crewnoZi());
+//----------------------------------------------------------
+	this->set_shiftno(inst.shiftno());
+	this->set_shiftnoZi(inst.shiftnoZi());
+//----------------------------------------------------------
+	this->set_standno(inst.standno());
+//----------------------------------------------------------
+	this->set_recid(inst.recid());
+	this->set_recidZi(inst.recidZi());
+//----------------------------------------------------------
+	this->set_rollidup(inst.rollidup());
+//----------------------------------------------------------
+	this->set_rolliddw(inst.rolliddw());
+//----------------------------------------------------------
+	this->set_rollweightup(inst.rollweightup());
+	this->set_rollweightupZi(inst.rollweightupZi());
+//----------------------------------------------------------
+	this->set_rollweightdw(inst.rollweightdw());
+	this->set_rollweightdwZi(inst.rollweightdwZi());
+//----------------------------------------------------------
+	this->set_rollchgreason(inst.rollchgreason());
+	this->set_rollchgreasonZi(inst.rollchgreasonZi());
+//----------------------------------------------------------
+	this->set_rollcheck(inst.rollcheck());
+	this->set_rollcheckZi(inst.rollcheckZi());
+//----------------------------------------------------------
+	this->set_recman(inst.recman());
+	this->set_recmanZi(inst.recmanZi());
+//----------------------------------------------------------
+	this->set_toc(inst.toc());
+	this->set_tocZi(inst.tocZi());
+//----------------------------------------------------------
+	this->set_tom(inst.tom());
+	this->set_tomZi(inst.tomZi());
+//----------------------------------------------------------
+	this->set_mop(inst.mop());
+	this->set_mopZi(inst.mopZi());
+	return(*this);
+}
+

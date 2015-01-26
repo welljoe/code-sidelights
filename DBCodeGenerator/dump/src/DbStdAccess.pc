@@ -1,0 +1,115 @@
+/* ***************************************************************************/
+/* *   File               :    DbStdAccess.pc
+/* *   Short Description  :    Database Standard Access Class
+/* *   Author             :    DBCODE Generator.
+/* *   Created Date       :    13.06.2013
+/* *   Tech.Support       :    LiuWeiZhao. email:welljoe@hotmail.com 
+/* ***************************************************************************
+/* *   Copyright (c)  SGAI AI 2009   All Rights Reserved                     *
+/* **************************************************************************/
+#include  <stdio.h>
+#include  <string.h>
+#include  <stdlib.h>
+#include "DbStdAccess.h"
+
+#define SQLCA_STORAGE_CLASS static
+EXEC SQL INCLUDE sqlca;
+
+//
+// Declare ORACLE Host variables
+//
+EXEC SQL BEGIN DECLARE SECTION;
+	static char       ora_UsrPwd[100];
+	static VARCHAR    ora_dateTime[15];
+	static short      ora_dateTimeZi;
+EXEC SQL END DECLARE SECTION;
+
+//
+//constructor
+
+DbStdAccess::DbStdAccess()
+{
+	pCatch = CatchDbaxError::instance();
+}
+
+//connect to DataBase
+char* DbStdAccess::dbLogin( char* usrPwd )
+{
+	strcpy ( ora_UsrPwd , usrPwd );
+	EXEC SQL CONNECT :ora_UsrPwd;
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		pCatch->catchError(sqlca.sqlcode);
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		return (char*) sqlca.sqlerrm.sqlerrmc ;
+	}
+	return ( NULL );
+}
+
+//disconnect to DataBase and commit transaction 
+char* DbStdAccess::dbLogout()
+{
+	EXEC SQL COMMIT WORK RELEASE;
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		pCatch->catchError(sqlca.sqlcode);
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		return (char*) sqlca.sqlerrm.sqlerrmc ;
+	}
+	return ( NULL );
+}
+
+//commit transaction 
+char* DbStdAccess::dbCommit()
+{
+	EXEC SQL COMMIT WORK;
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		pCatch->catchError(sqlca.sqlcode);
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		return (char*) sqlca.sqlerrm.sqlerrmc ;
+	}
+	return ( NULL );
+}
+
+//rollback transaction 
+char* DbStdAccess::dbRollback()
+{
+	EXEC SQL ROLLBACK WORK;
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		pCatch->catchError(sqlca.sqlcode);
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		return (char*) sqlca.sqlerrm.sqlerrmc ;
+	}
+	return ( NULL );
+}
+
+//returns ORACLE Date & Time format: DDMMYYYYHH24MISS 
+char* DbStdAccess::getOracleDateTime(char* oraDateTime)
+{
+	EXEC SQL SELECT TO_CHAR( sysdate , 'YYYYMMDDHH24MISS')
+		INTO :ora_dateTime:ora_dateTimeZi
+		FROM DUAL;
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 || ora_dateTimeZi == -1 )
+	{
+		pCatch->catchError(sqlca.sqlcode);
+		strcpy ( oraDateTime , "" );
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		return (char*) sqlca.sqlerrm.sqlerrmc ;
+	}
+	ora_dateTime.arr[ora_dateTime.len] = '\0';
+	strcpy ( oraDateTime , (char*) ora_dateTime.arr );
+	return ( NULL );
+}
+

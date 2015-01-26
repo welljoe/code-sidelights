@@ -1,0 +1,1953 @@
+/* *******************************************************************/
+/* *   File               :    OFFCHECKA.pc
+/* *   Short Description  :    ORACLE DATABASE ACCESS
+/* * 		                   ACCOUNT OFFCHECKBA TABLE
+/* *   Author             :    DB CODE Generator
+/* *   Created Date       :    13.06.2013
+/* *   Tech.Support       :    LiuWeiZhao. email:welljoe@hotmail.com 
+/* *******************************************************************/
+/* *   Copyright (c)  SGAI AI 2009   All Rights Reserved
+/* *******************************************************************/
+
+#include "LOG.h"
+#include "OFFCHECKA.h"
+//
+// Declare ORACLE Host Variables
+//
+
+#define SQLCA_STORAGE_CLASS static
+#define ORACA_STORAGE_CLASS static
+EXEC SQL INCLUDE sqlca;
+EXEC SQL INCLUDE oraca;
+
+#define OPENED 1
+#define CLOSED 2
+EXEC SQL BEGIN DECLARE SECTION;
+/* ****************************************************************************** */
+/*                                                                                */
+/*                               define Oracle                                    */
+/*                               Host Variables                                   */
+/*                                                          .                     */
+/*                                                                                */
+/* ****************************************************************************** */
+
+static VARCHAR	dynstr[16000];
+static long		rowCnt;       
+static long		cuFl;         
+//Unit[-]:日期.Limit:[-,-]
+static VARCHAR  ora_coildate[33];
+//Unit[-]:冷轧卷号.Limit:[-,-]
+static VARCHAR  ora_coilno[23];
+static short    ora_coilnoZi;
+//Unit[-]:钢种.Limit:[-,-]
+static VARCHAR  ora_alloycode[33];
+static short    ora_alloycodeZi;
+//Unit[-]:班组.Limit:[-,-]
+static VARCHAR  ora_crewno[17];
+static short    ora_crewnoZi;
+//Unit[-]:班次.Limit:[-,-]
+static VARCHAR  ora_shiftno[17];
+static short    ora_shiftnoZi;
+//Unit[-]:缺陷名称1.Limit:[-,-]
+static VARCHAR  ora_defectname1[33];
+static short    ora_defectname1Zi;
+//Unit[-]:上/下表面1.Limit:[-,-]
+static VARCHAR  ora_updownsurface1[17];
+static short    ora_updownsurface1Zi;
+//Unit[mm]:距WS/DS侧距离1.Limit:[-,-]
+static VARCHAR  ora_side_distance1[33];
+static short    ora_side_distance1Zi;
+//Unit[m]:距带头/带尾距离1.Limit:[-,-]
+static VARCHAR  ora_distance1[33];
+static short    ora_distance1Zi;
+//Unit[-]:备注1.Limit:[-,-]
+static VARCHAR  ora_instruction1[33];
+static short    ora_instruction1Zi;
+//Unit[mm]:周期长度1.Limit:[-,-]
+static VARCHAR  ora_circle1[33];
+static short    ora_circle1Zi;
+//Unit[-]:一检判定结果(合格/封闭/废品).Limit:[-,-]
+static VARCHAR  ora_checkresult1[33];
+static short    ora_checkresult1Zi;
+//Unit[-]:记录人.Limit:[-,-]
+static VARCHAR  ora_codeman1[33];
+static short    ora_codeman1Zi;
+//Unit[-]:缺陷名称2.Limit:[-,-]
+static VARCHAR  ora_defectname2[33];
+static short    ora_defectname2Zi;
+//Unit[-]:上/下表面2.Limit:[-,-]
+static VARCHAR  ora_updownsurface2[17];
+static short    ora_updownsurface2Zi;
+//Unit[mm]:距WS/DS侧距离2.Limit:[-,-]
+static VARCHAR  ora_side_distance2[33];
+static short    ora_side_distance2Zi;
+//Unit[m]:距带头/带尾距离2.Limit:[-,-]
+static VARCHAR  ora_distance2[33];
+static short    ora_distance2Zi;
+//Unit[-]:备注2.Limit:[-,-]
+static VARCHAR  ora_instruction2[33];
+static short    ora_instruction2Zi;
+//Unit[mm]:周期长度2.Limit:[-,-]
+static VARCHAR  ora_circle2[33];
+static short    ora_circle2Zi;
+//Unit[-]:缺陷名称3.Limit:[-,-]
+static VARCHAR  ora_defectname3[33];
+static short    ora_defectname3Zi;
+//Unit[-]:上/下表面3.Limit:[-,-]
+static VARCHAR  ora_updownsurface3[17];
+static short    ora_updownsurface3Zi;
+//Unit[mm]:距WS/DS侧距离3.Limit:[-,-]
+static VARCHAR  ora_side_distance3[33];
+static short    ora_side_distance3Zi;
+//Unit[m]:距带头/带尾距离3.Limit:[-,-]
+static VARCHAR  ora_distance3[33];
+static short    ora_distance3Zi;
+//Unit[-]:备注3.Limit:[-,-]
+static VARCHAR  ora_instruction3[33];
+static short    ora_instruction3Zi;
+//Unit[mm]:周期长度3.Limit:[-,-]
+static VARCHAR  ora_circle3[33];
+static short    ora_circle3Zi;
+//Unit[-]:缺陷名称4.Limit:[-,-]
+static VARCHAR  ora_defectname4[33];
+static short    ora_defectname4Zi;
+//Unit[-]:上/下表面4.Limit:[-,-]
+static VARCHAR  ora_updownsurface4[17];
+static short    ora_updownsurface4Zi;
+//Unit[mm]:距WS/DS侧距离4.Limit:[-,-]
+static VARCHAR  ora_side_distance4[33];
+static short    ora_side_distance4Zi;
+//Unit[m]:距带头/带尾距离4.Limit:[-,-]
+static VARCHAR  ora_distance4[33];
+static short    ora_distance4Zi;
+//Unit[-]:备注4.Limit:[-,-]
+static VARCHAR  ora_instruction4[33];
+static short    ora_instruction4Zi;
+//Unit[mm]:周期长度4.Limit:[-,-]
+static VARCHAR  ora_circle4[33];
+static short    ora_circle4Zi;
+//Unit[-]:缺陷名称5.Limit:[-,-]
+static VARCHAR  ora_defectname5[33];
+static short    ora_defectname5Zi;
+//Unit[-]:上/下表面5.Limit:[-,-]
+static VARCHAR  ora_updownsurface5[17];
+static short    ora_updownsurface5Zi;
+//Unit[mm]:距WS/DS侧距离5.Limit:[-,-]
+static VARCHAR  ora_side_distance5[33];
+static short    ora_side_distance5Zi;
+//Unit[m]:距带头/带尾距离5.Limit:[-,-]
+static VARCHAR  ora_distance5[33];
+static short    ora_distance5Zi;
+//Unit[-]:备注5.Limit:[-,-]
+static VARCHAR  ora_instruction5[33];
+static short    ora_instruction5Zi;
+//Unit[mm]:周期长度5.Limit:[-,-]
+static VARCHAR  ora_circle5[33];
+static short    ora_circle5Zi;
+//Unit[-]:创建时间.Limit:[-,-]
+static VARCHAR  ora_toc[15];
+static short    ora_tocZi;
+//Unit[-]:最后修改时间.Limit:[-,-]
+static VARCHAR  ora_tom[15];
+static short    ora_tomZi;
+//Unit[-]:创建或者修改者.Limit:[-,-]
+static VARCHAR  ora_mop[121];
+static short    ora_mopZi;
+// Host arguments for Primary key
+
+EXEC SQL END DECLARE SECTION;          
+             
+// 				             
+//C O N S T R U C T O R S    
+//=======================    
+//                           
+OFFCHECKA::OFFCHECKA()
+{
+	initial();                                             
+}
+
+//					
+//C O P Y  -  C O N S T R U C T O R 
+//==================================
+OFFCHECKA::OFFCHECKA(const OFFCHECKA &inst)
+{
+//----------------------------------------------------------
+	this->set_coildate(inst.coildate());
+//----------------------------------------------------------
+	this->set_coilno(inst.coilno());
+	this->set_coilnoZi(inst.coilnoZi());
+//----------------------------------------------------------
+	this->set_alloycode(inst.alloycode());
+	this->set_alloycodeZi(inst.alloycodeZi());
+//----------------------------------------------------------
+	this->set_crewno(inst.crewno());
+	this->set_crewnoZi(inst.crewnoZi());
+//----------------------------------------------------------
+	this->set_shiftno(inst.shiftno());
+	this->set_shiftnoZi(inst.shiftnoZi());
+//----------------------------------------------------------
+	this->set_defectname1(inst.defectname1());
+	this->set_defectname1Zi(inst.defectname1Zi());
+//----------------------------------------------------------
+	this->set_updownsurface1(inst.updownsurface1());
+	this->set_updownsurface1Zi(inst.updownsurface1Zi());
+//----------------------------------------------------------
+	this->set_side_distance1(inst.side_distance1());
+	this->set_side_distance1Zi(inst.side_distance1Zi());
+//----------------------------------------------------------
+	this->set_distance1(inst.distance1());
+	this->set_distance1Zi(inst.distance1Zi());
+//----------------------------------------------------------
+	this->set_instruction1(inst.instruction1());
+	this->set_instruction1Zi(inst.instruction1Zi());
+//----------------------------------------------------------
+	this->set_circle1(inst.circle1());
+	this->set_circle1Zi(inst.circle1Zi());
+//----------------------------------------------------------
+	this->set_checkresult1(inst.checkresult1());
+	this->set_checkresult1Zi(inst.checkresult1Zi());
+//----------------------------------------------------------
+	this->set_codeman1(inst.codeman1());
+	this->set_codeman1Zi(inst.codeman1Zi());
+//----------------------------------------------------------
+	this->set_defectname2(inst.defectname2());
+	this->set_defectname2Zi(inst.defectname2Zi());
+//----------------------------------------------------------
+	this->set_updownsurface2(inst.updownsurface2());
+	this->set_updownsurface2Zi(inst.updownsurface2Zi());
+//----------------------------------------------------------
+	this->set_side_distance2(inst.side_distance2());
+	this->set_side_distance2Zi(inst.side_distance2Zi());
+//----------------------------------------------------------
+	this->set_distance2(inst.distance2());
+	this->set_distance2Zi(inst.distance2Zi());
+//----------------------------------------------------------
+	this->set_instruction2(inst.instruction2());
+	this->set_instruction2Zi(inst.instruction2Zi());
+//----------------------------------------------------------
+	this->set_circle2(inst.circle2());
+	this->set_circle2Zi(inst.circle2Zi());
+//----------------------------------------------------------
+	this->set_defectname3(inst.defectname3());
+	this->set_defectname3Zi(inst.defectname3Zi());
+//----------------------------------------------------------
+	this->set_updownsurface3(inst.updownsurface3());
+	this->set_updownsurface3Zi(inst.updownsurface3Zi());
+//----------------------------------------------------------
+	this->set_side_distance3(inst.side_distance3());
+	this->set_side_distance3Zi(inst.side_distance3Zi());
+//----------------------------------------------------------
+	this->set_distance3(inst.distance3());
+	this->set_distance3Zi(inst.distance3Zi());
+//----------------------------------------------------------
+	this->set_instruction3(inst.instruction3());
+	this->set_instruction3Zi(inst.instruction3Zi());
+//----------------------------------------------------------
+	this->set_circle3(inst.circle3());
+	this->set_circle3Zi(inst.circle3Zi());
+//----------------------------------------------------------
+	this->set_defectname4(inst.defectname4());
+	this->set_defectname4Zi(inst.defectname4Zi());
+//----------------------------------------------------------
+	this->set_updownsurface4(inst.updownsurface4());
+	this->set_updownsurface4Zi(inst.updownsurface4Zi());
+//----------------------------------------------------------
+	this->set_side_distance4(inst.side_distance4());
+	this->set_side_distance4Zi(inst.side_distance4Zi());
+//----------------------------------------------------------
+	this->set_distance4(inst.distance4());
+	this->set_distance4Zi(inst.distance4Zi());
+//----------------------------------------------------------
+	this->set_instruction4(inst.instruction4());
+	this->set_instruction4Zi(inst.instruction4Zi());
+//----------------------------------------------------------
+	this->set_circle4(inst.circle4());
+	this->set_circle4Zi(inst.circle4Zi());
+//----------------------------------------------------------
+	this->set_defectname5(inst.defectname5());
+	this->set_defectname5Zi(inst.defectname5Zi());
+//----------------------------------------------------------
+	this->set_updownsurface5(inst.updownsurface5());
+	this->set_updownsurface5Zi(inst.updownsurface5Zi());
+//----------------------------------------------------------
+	this->set_side_distance5(inst.side_distance5());
+	this->set_side_distance5Zi(inst.side_distance5Zi());
+//----------------------------------------------------------
+	this->set_distance5(inst.distance5());
+	this->set_distance5Zi(inst.distance5Zi());
+//----------------------------------------------------------
+	this->set_instruction5(inst.instruction5());
+	this->set_instruction5Zi(inst.instruction5Zi());
+//----------------------------------------------------------
+	this->set_circle5(inst.circle5());
+	this->set_circle5Zi(inst.circle5Zi());
+//----------------------------------------------------------
+	this->set_toc(inst.toc());
+	this->set_tocZi(inst.tocZi());
+//----------------------------------------------------------
+	this->set_tom(inst.tom());
+	this->set_tomZi(inst.tomZi());
+//----------------------------------------------------------
+	this->set_mop(inst.mop());
+	this->set_mopZi(inst.mopZi());
+}
+
+//					
+//C O N S T R U C T O R -W I T H P A R A M E T E R S
+//===================================================
+//					
+OFFCHECKA::OFFCHECKA()
+{
+	initial();					               
+	setPrimKey ();    
+	//read DB record                           
+	dbAccess = true;                           
+	dbMessage = readDB();                      
+	if ( dbMessage != NULL ) dbAccess = false; 
+}
+
+//D E S T R U C T O R S  
+//=======================
+//                       
+OFFCHECKA::~OFFCHECKA()
+{
+}
+
+//initialise all member variables
+void OFFCHECKA::initial()
+{
+	set_coildate("");
+	set_coilno("");
+	set_coilnoZi(-1);
+	set_alloycode("");
+	set_alloycodeZi(-1);
+	set_crewno("");
+	set_crewnoZi(-1);
+	set_shiftno("");
+	set_shiftnoZi(-1);
+	set_defectname1("");
+	set_defectname1Zi(-1);
+	set_updownsurface1("");
+	set_updownsurface1Zi(-1);
+	set_side_distance1("");
+	set_side_distance1Zi(-1);
+	set_distance1("");
+	set_distance1Zi(-1);
+	set_instruction1("");
+	set_instruction1Zi(-1);
+	set_circle1("");
+	set_circle1Zi(-1);
+	set_checkresult1("");
+	set_checkresult1Zi(-1);
+	set_codeman1("");
+	set_codeman1Zi(-1);
+	set_defectname2("");
+	set_defectname2Zi(-1);
+	set_updownsurface2("");
+	set_updownsurface2Zi(-1);
+	set_side_distance2("");
+	set_side_distance2Zi(-1);
+	set_distance2("");
+	set_distance2Zi(-1);
+	set_instruction2("");
+	set_instruction2Zi(-1);
+	set_circle2("");
+	set_circle2Zi(-1);
+	set_defectname3("");
+	set_defectname3Zi(-1);
+	set_updownsurface3("");
+	set_updownsurface3Zi(-1);
+	set_side_distance3("");
+	set_side_distance3Zi(-1);
+	set_distance3("");
+	set_distance3Zi(-1);
+	set_instruction3("");
+	set_instruction3Zi(-1);
+	set_circle3("");
+	set_circle3Zi(-1);
+	set_defectname4("");
+	set_defectname4Zi(-1);
+	set_updownsurface4("");
+	set_updownsurface4Zi(-1);
+	set_side_distance4("");
+	set_side_distance4Zi(-1);
+	set_distance4("");
+	set_distance4Zi(-1);
+	set_instruction4("");
+	set_instruction4Zi(-1);
+	set_circle4("");
+	set_circle4Zi(-1);
+	set_defectname5("");
+	set_defectname5Zi(-1);
+	set_updownsurface5("");
+	set_updownsurface5Zi(-1);
+	set_side_distance5("");
+	set_side_distance5Zi(-1);
+	set_distance5("");
+	set_distance5Zi(-1);
+	set_instruction5("");
+	set_instruction5Zi(-1);
+	set_circle5("");
+	set_circle5Zi(-1);
+	set_toc("");
+	set_tocZi(-1);
+	set_tom("");
+	set_tomZi(-1);
+	set_mop("");
+	set_mopZi(-1);
+	//initialies Primary key members
+// Initial Oracle Options
+	oraca.oradbgf  = 1; // gather debug informations       
+	oraca.oracchf  = 1; // gather cursor cache informations
+	oraca.orahchf  = 1; // check heap                      
+	oraca.orastxtf = 3; // always save last sql-statement  
+	                                                       
+	EXEC ORACLE OPTION (ORACA=YES);                        
+	EXEC ORACLE OPTION (HOLD_CURSOR=YES);                  
+	EXEC ORACLE OPTION (RELEASE_CURSOR=NO);                
+	EXEC ORACLE OPTION (MAXOPENCURSORS=50);                
+	pCatch = CatchDbaxError::instance();                   
+	                                                       
+}
+
+//read a single entry from DB.
+char* OFFCHECKA::readDB()
+{
+	//
+	//copy the host variables (k_...) to Oracle Host Keys (k_ora_..)
+	//
+		copyKeyToHost();
+	//
+	// Do SELECT
+	//
+	EXEC SQL SELECT 
+		coildate,
+		coilno,
+		alloycode,
+		crewno,
+		shiftno,
+		defectname1,
+		updownsurface1,
+		side_distance1,
+		distance1,
+		instruction1,
+		circle1,
+		checkresult1,
+		codeman1,
+		defectname2,
+		updownsurface2,
+		side_distance2,
+		distance2,
+		instruction2,
+		circle2,
+		defectname3,
+		updownsurface3,
+		side_distance3,
+		distance3,
+		instruction3,
+		circle3,
+		defectname4,
+		updownsurface4,
+		side_distance4,
+		distance4,
+		instruction4,
+		circle4,
+		defectname5,
+		updownsurface5,
+		side_distance5,
+		distance5,
+		instruction5,
+		circle5,
+		toc,
+		tom,
+		mop
+	INTO
+		:ora_coildate,
+		:ora_coilno:ora_coilnoZi,
+		:ora_alloycode:ora_alloycodeZi,
+		:ora_crewno:ora_crewnoZi,
+		:ora_shiftno:ora_shiftnoZi,
+		:ora_defectname1:ora_defectname1Zi,
+		:ora_updownsurface1:ora_updownsurface1Zi,
+		:ora_side_distance1:ora_side_distance1Zi,
+		:ora_distance1:ora_distance1Zi,
+		:ora_instruction1:ora_instruction1Zi,
+		:ora_circle1:ora_circle1Zi,
+		:ora_checkresult1:ora_checkresult1Zi,
+		:ora_codeman1:ora_codeman1Zi,
+		:ora_defectname2:ora_defectname2Zi,
+		:ora_updownsurface2:ora_updownsurface2Zi,
+		:ora_side_distance2:ora_side_distance2Zi,
+		:ora_distance2:ora_distance2Zi,
+		:ora_instruction2:ora_instruction2Zi,
+		:ora_circle2:ora_circle2Zi,
+		:ora_defectname3:ora_defectname3Zi,
+		:ora_updownsurface3:ora_updownsurface3Zi,
+		:ora_side_distance3:ora_side_distance3Zi,
+		:ora_distance3:ora_distance3Zi,
+		:ora_instruction3:ora_instruction3Zi,
+		:ora_circle3:ora_circle3Zi,
+		:ora_defectname4:ora_defectname4Zi,
+		:ora_updownsurface4:ora_updownsurface4Zi,
+		:ora_side_distance4:ora_side_distance4Zi,
+		:ora_distance4:ora_distance4Zi,
+		:ora_instruction4:ora_instruction4Zi,
+		:ora_circle4:ora_circle4Zi,
+		:ora_defectname5:ora_defectname5Zi,
+		:ora_updownsurface5:ora_updownsurface5Zi,
+		:ora_side_distance5:ora_side_distance5Zi,
+		:ora_distance5:ora_distance5Zi,
+		:ora_instruction5:ora_instruction5Zi,
+		:ora_circle5:ora_circle5Zi,
+		:ora_toc:ora_tocZi,
+		:ora_tom:ora_tomZi,
+		:ora_mop:ora_mopZi
+	FROM OFFCHECKA
+	W;
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	//
+	// copy host variables into Class attributes
+	//
+	copyOracleToAttribute();
+	return ( NULL );
+}
+
+//updates a single entry from DB
+char* OFFCHECKA::updateDB()
+{
+	//
+	//copy the host variables (k_...) to Oracle Host Keys (k_ora_..)
+	//
+		copyKeyToHost();
+	//copy the attributes ( ...) to Oracle Hosts( ora_..)
+	//
+		copyAttributeToOracle();
+	//
+	// Do UPDATE
+	//
+	EXEC SQL UPDATE OFFCHECKA
+	SET 
+		coildate            =:ora_coildate,
+		coilno              =:ora_coilno:ora_coilnoZi,
+		alloycode           =:ora_alloycode:ora_alloycodeZi,
+		crewno              =:ora_crewno:ora_crewnoZi,
+		shiftno             =:ora_shiftno:ora_shiftnoZi,
+		defectname1         =:ora_defectname1:ora_defectname1Zi,
+		updownsurface1      =:ora_updownsurface1:ora_updownsurface1Zi,
+		side_distance1      =:ora_side_distance1:ora_side_distance1Zi,
+		distance1           =:ora_distance1:ora_distance1Zi,
+		instruction1        =:ora_instruction1:ora_instruction1Zi,
+		circle1             =:ora_circle1:ora_circle1Zi,
+		checkresult1        =:ora_checkresult1:ora_checkresult1Zi,
+		codeman1            =:ora_codeman1:ora_codeman1Zi,
+		defectname2         =:ora_defectname2:ora_defectname2Zi,
+		updownsurface2      =:ora_updownsurface2:ora_updownsurface2Zi,
+		side_distance2      =:ora_side_distance2:ora_side_distance2Zi,
+		distance2           =:ora_distance2:ora_distance2Zi,
+		instruction2        =:ora_instruction2:ora_instruction2Zi,
+		circle2             =:ora_circle2:ora_circle2Zi,
+		defectname3         =:ora_defectname3:ora_defectname3Zi,
+		updownsurface3      =:ora_updownsurface3:ora_updownsurface3Zi,
+		side_distance3      =:ora_side_distance3:ora_side_distance3Zi,
+		distance3           =:ora_distance3:ora_distance3Zi,
+		instruction3        =:ora_instruction3:ora_instruction3Zi,
+		circle3             =:ora_circle3:ora_circle3Zi,
+		defectname4         =:ora_defectname4:ora_defectname4Zi,
+		updownsurface4      =:ora_updownsurface4:ora_updownsurface4Zi,
+		side_distance4      =:ora_side_distance4:ora_side_distance4Zi,
+		distance4           =:ora_distance4:ora_distance4Zi,
+		instruction4        =:ora_instruction4:ora_instruction4Zi,
+		circle4             =:ora_circle4:ora_circle4Zi,
+		defectname5         =:ora_defectname5:ora_defectname5Zi,
+		updownsurface5      =:ora_updownsurface5:ora_updownsurface5Zi,
+		side_distance5      =:ora_side_distance5:ora_side_distance5Zi,
+		distance5           =:ora_distance5:ora_distance5Zi,
+		instruction5        =:ora_instruction5:ora_instruction5Zi,
+		circle5             =:ora_circle5:ora_circle5Zi,
+		toc                 =:ora_toc:ora_tocZi,
+		tom                 =:ora_tom:ora_tomZi,
+		mop                 =:ora_mop:ora_mopZi
+	W;
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//inserts a single entry from DB
+char* OFFCHECKA::insertDB()
+{
+	//
+	//copy the attributes ( ...) to Oracle Hosts( ora_..) 
+	//
+		copyAttributeToOracle();
+	//
+	// Do INSERT
+	//
+	EXEC SQL INSERT INTO OFFCHECKA
+	(
+		coildate,
+		coilno,
+		alloycode,
+		crewno,
+		shiftno,
+		defectname1,
+		updownsurface1,
+		side_distance1,
+		distance1,
+		instruction1,
+		circle1,
+		checkresult1,
+		codeman1,
+		defectname2,
+		updownsurface2,
+		side_distance2,
+		distance2,
+		instruction2,
+		circle2,
+		defectname3,
+		updownsurface3,
+		side_distance3,
+		distance3,
+		instruction3,
+		circle3,
+		defectname4,
+		updownsurface4,
+		side_distance4,
+		distance4,
+		instruction4,
+		circle4,
+		defectname5,
+		updownsurface5,
+		side_distance5,
+		distance5,
+		instruction5,
+		circle5,
+		toc,
+		tom,
+		mop
+	)
+
+	VALUES
+	(
+		:ora_coildate,
+		:ora_coilno:ora_coilnoZi,
+		:ora_alloycode:ora_alloycodeZi,
+		:ora_crewno:ora_crewnoZi,
+		:ora_shiftno:ora_shiftnoZi,
+		:ora_defectname1:ora_defectname1Zi,
+		:ora_updownsurface1:ora_updownsurface1Zi,
+		:ora_side_distance1:ora_side_distance1Zi,
+		:ora_distance1:ora_distance1Zi,
+		:ora_instruction1:ora_instruction1Zi,
+		:ora_circle1:ora_circle1Zi,
+		:ora_checkresult1:ora_checkresult1Zi,
+		:ora_codeman1:ora_codeman1Zi,
+		:ora_defectname2:ora_defectname2Zi,
+		:ora_updownsurface2:ora_updownsurface2Zi,
+		:ora_side_distance2:ora_side_distance2Zi,
+		:ora_distance2:ora_distance2Zi,
+		:ora_instruction2:ora_instruction2Zi,
+		:ora_circle2:ora_circle2Zi,
+		:ora_defectname3:ora_defectname3Zi,
+		:ora_updownsurface3:ora_updownsurface3Zi,
+		:ora_side_distance3:ora_side_distance3Zi,
+		:ora_distance3:ora_distance3Zi,
+		:ora_instruction3:ora_instruction3Zi,
+		:ora_circle3:ora_circle3Zi,
+		:ora_defectname4:ora_defectname4Zi,
+		:ora_updownsurface4:ora_updownsurface4Zi,
+		:ora_side_distance4:ora_side_distance4Zi,
+		:ora_distance4:ora_distance4Zi,
+		:ora_instruction4:ora_instruction4Zi,
+		:ora_circle4:ora_circle4Zi,
+		:ora_defectname5:ora_defectname5Zi,
+		:ora_updownsurface5:ora_updownsurface5Zi,
+		:ora_side_distance5:ora_side_distance5Zi,
+		:ora_distance5:ora_distance5Zi,
+		:ora_instruction5:ora_instruction5Zi,
+		:ora_circle5:ora_circle5Zi,
+		:ora_toc:ora_tocZi,
+		:ora_tom:ora_tomZi,
+		:ora_mop:ora_mopZi
+	);
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//this methode tries to update a DB record,when the update fails.
+char* OFFCHECKA::storeDB()
+{
+	char* ret = NULL;
+	setKeysFromRecord();
+	ret=updateDB();
+	if(ret != NULL)
+	{
+		ret=insertDB();
+		if(ret != NULL)
+		{
+			dbAccess = false;
+			return(ret);
+		}
+	}
+	return(ret);
+}
+
+//deletes a single entry from DB
+char* OFFCHECKA::deleteDB()
+{
+//
+//copy the host variables (k_...) to Oracle Host Keys (k_ora_..)
+//
+	copyKeyToHost();
+
+//
+// Do Delete 
+//
+	EXEC SQL DELETE FROM OFFCHECKA
+	W;
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+// Executes the SQL DELETE with a where clause
+char* OFFCHECKA::deleteDB(const char* where,long* count)
+{
+	*(count) = -1L;
+// Create dynamic statement.
+//
+	strcpy((char*)dynstr.arr,"DELETE");
+	strcat((char*)dynstr.arr," FROM OFFCHECKA");
+	if ( where != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, where );
+	}
+
+	dynstr.len = strlen( (char*) dynstr.arr);
+	EXEC SQL EXECUTE IMMEDIATE :dynstr;
+	oracleSqlCode = sqlca.sqlcode;
+		oracleRowsProcessed = sqlca.sqlerrd[2];
+	if (sqlca.sqlcode == 0 )
+		*(count) = sqlca.sqlerrd[2];
+	else 
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//openSetDB data with where condition and sort order.
+char* OFFCHECKA::openSetDB(const char* where,char* order)
+{
+//
+// Create dynamic statement.
+//
+	strcpy((char*)dynstr.arr,"SELECT ");
+	strcat((char*)dynstr.arr,"coildate,");
+	strcat((char*)dynstr.arr,"coilno,");
+	strcat((char*)dynstr.arr,"alloycode,");
+	strcat((char*)dynstr.arr,"crewno,");
+	strcat((char*)dynstr.arr,"shiftno,");
+	strcat((char*)dynstr.arr,"defectname1,");
+	strcat((char*)dynstr.arr,"updownsurface1,");
+	strcat((char*)dynstr.arr,"side_distance1,");
+	strcat((char*)dynstr.arr,"distance1,");
+	strcat((char*)dynstr.arr,"instruction1,");
+	strcat((char*)dynstr.arr,"circle1,");
+	strcat((char*)dynstr.arr,"checkresult1,");
+	strcat((char*)dynstr.arr,"codeman1,");
+	strcat((char*)dynstr.arr,"defectname2,");
+	strcat((char*)dynstr.arr,"updownsurface2,");
+	strcat((char*)dynstr.arr,"side_distance2,");
+	strcat((char*)dynstr.arr,"distance2,");
+	strcat((char*)dynstr.arr,"instruction2,");
+	strcat((char*)dynstr.arr,"circle2,");
+	strcat((char*)dynstr.arr,"defectname3,");
+	strcat((char*)dynstr.arr,"updownsurface3,");
+	strcat((char*)dynstr.arr,"side_distance3,");
+	strcat((char*)dynstr.arr,"distance3,");
+	strcat((char*)dynstr.arr,"instruction3,");
+	strcat((char*)dynstr.arr,"circle3,");
+	strcat((char*)dynstr.arr,"defectname4,");
+	strcat((char*)dynstr.arr,"updownsurface4,");
+	strcat((char*)dynstr.arr,"side_distance4,");
+	strcat((char*)dynstr.arr,"distance4,");
+	strcat((char*)dynstr.arr,"instruction4,");
+	strcat((char*)dynstr.arr,"circle4,");
+	strcat((char*)dynstr.arr,"defectname5,");
+	strcat((char*)dynstr.arr,"updownsurface5,");
+	strcat((char*)dynstr.arr,"side_distance5,");
+	strcat((char*)dynstr.arr,"distance5,");
+	strcat((char*)dynstr.arr,"instruction5,");
+	strcat((char*)dynstr.arr,"circle5,");
+	strcat((char*)dynstr.arr,"toc,");
+	strcat((char*)dynstr.arr,"tom,");
+	strcat((char*)dynstr.arr,"mop");
+
+	strcat((char*)dynstr.arr," FROM OFFCHECKA ");
+	if ( where != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, where);
+	}
+	if ( order != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, order);
+	}
+
+	dynstr.len = strlen( (char*) dynstr.arr);
+	EXEC SQL PREPARE set_OFFCHECKA FROM :dynstr;
+	if (sqlca.sqlcode == 0 )
+	{
+		EXEC SQL DECLARE cu_OFFCHECKA CURSOR FOR set_OFFCHECKA;
+		if (sqlca.sqlcode == 0 )
+			EXEC SQL OPEN cu_OFFCHECKA;
+	}
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	cuFl = OPENED;
+	return ( NULL );
+}
+
+//Executes the SQL FETCH Statement .
+char* OFFCHECKA::getSetDB()
+{
+	if ( cuFl != OPENED ) return ("No open Cursor Table:Me");
+	EXEC SQL FETCH cu_OFFCHECKA INTO
+		:ora_coildate,
+		:ora_coilno:ora_coilnoZi,
+		:ora_alloycode:ora_alloycodeZi,
+		:ora_crewno:ora_crewnoZi,
+		:ora_shiftno:ora_shiftnoZi,
+		:ora_defectname1:ora_defectname1Zi,
+		:ora_updownsurface1:ora_updownsurface1Zi,
+		:ora_side_distance1:ora_side_distance1Zi,
+		:ora_distance1:ora_distance1Zi,
+		:ora_instruction1:ora_instruction1Zi,
+		:ora_circle1:ora_circle1Zi,
+		:ora_checkresult1:ora_checkresult1Zi,
+		:ora_codeman1:ora_codeman1Zi,
+		:ora_defectname2:ora_defectname2Zi,
+		:ora_updownsurface2:ora_updownsurface2Zi,
+		:ora_side_distance2:ora_side_distance2Zi,
+		:ora_distance2:ora_distance2Zi,
+		:ora_instruction2:ora_instruction2Zi,
+		:ora_circle2:ora_circle2Zi,
+		:ora_defectname3:ora_defectname3Zi,
+		:ora_updownsurface3:ora_updownsurface3Zi,
+		:ora_side_distance3:ora_side_distance3Zi,
+		:ora_distance3:ora_distance3Zi,
+		:ora_instruction3:ora_instruction3Zi,
+		:ora_circle3:ora_circle3Zi,
+		:ora_defectname4:ora_defectname4Zi,
+		:ora_updownsurface4:ora_updownsurface4Zi,
+		:ora_side_distance4:ora_side_distance4Zi,
+		:ora_distance4:ora_distance4Zi,
+		:ora_instruction4:ora_instruction4Zi,
+		:ora_circle4:ora_circle4Zi,
+		:ora_defectname5:ora_defectname5Zi,
+		:ora_updownsurface5:ora_updownsurface5Zi,
+		:ora_side_distance5:ora_side_distance5Zi,
+		:ora_distance5:ora_distance5Zi,
+		:ora_instruction5:ora_instruction5Zi,
+		:ora_circle5:ora_circle5Zi,
+		:ora_toc:ora_tocZi,
+		:ora_tom:ora_tomZi,
+		:ora_mop:ora_mopZi;
+
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		pCatch->catchError(sqlca.sqlcode);
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		return (char*) sqlca.sqlerrm.sqlerrmc ;
+	}
+	//
+	// copy host variables into Class attributes
+	//
+	copyOracleToAttribute();
+	copyHostToKey();
+	return ( NULL );
+}
+
+//Close a Oracle Cursor
+char* OFFCHECKA::closeSetDB()
+{
+	EXEC SQL CLOSE cu_OFFCHECKA;
+	oracleSqlCode = sqlca.sqlcode;         
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		pCatch->catchError(sqlca.sqlcode);
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		return (char*) sqlca.sqlerrm.sqlerrmc ;
+	}
+	cuFl = CLOSED;
+	return ( NULL );
+}
+
+//Executes the SQL count(key) for a where clause
+char* OFFCHECKA::countDB(const char* where,long* count)
+{
+	*(count) = -1L;
+//
+// Create dynamic statement. 
+//
+	strncpy((char*)dynstr.arr,"SELECT count(*)", sizeof(dynstr.arr));
+	strcat((char*)dynstr.arr," FROM OFFCHECKA");
+	if ( where != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, where );
+	}
+	dynstr.len = strlen( (char*) dynstr.arr);
+	EXEC SQL PREPARE c_OFFCHECKA FROM :dynstr;
+	
+	if (sqlca.sqlcode == 0 )
+	{
+		EXEC SQL DECLARE ct_OFFCHECKA CURSOR FOR c_OFFCHECKA;
+		if (sqlca.sqlcode == 0 )
+		{
+			EXEC SQL OPEN ct_OFFCHECKA;
+			if (sqlca.sqlcode == 0 )			{
+				EXEC SQL FETCH ct_OFFCHECKA INTO :rowCnt;
+				if (sqlca.sqlcode == 0 )
+				*(count) = rowCnt;
+			}
+			EXEC SQL CLOSE ct_OFFCHECKA;
+		}
+	}
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//private methode copy Attribute to Oracle
+//copys Object attributes into Oracle Host variables.
+void OFFCHECKA::copyAttributeToOracle()
+{
+	char* ptrStr;
+	ptrStr = this->coildate();
+	if( strlen(ptrStr)< sizeof(ora_coildate.arr))
+	{
+		strncpy((char*)ora_coildate.arr, ptrStr, sizeof(ora_coildate.arr));
+		ora_coildate.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_coildate.len = 0;
+	ptrStr = this->coilno();
+	if( strlen(ptrStr)< sizeof(ora_coilno.arr))
+	{
+		strncpy((char*)ora_coilno.arr, ptrStr, sizeof(ora_coilno.arr));
+		ora_coilno.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_coilno.len = 0;
+	ora_coilnoZi = this->coilnoZi();
+	ptrStr = this->alloycode();
+	if( strlen(ptrStr)< sizeof(ora_alloycode.arr))
+	{
+		strncpy((char*)ora_alloycode.arr, ptrStr, sizeof(ora_alloycode.arr));
+		ora_alloycode.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_alloycode.len = 0;
+	ora_alloycodeZi = this->alloycodeZi();
+	ptrStr = this->crewno();
+	if( strlen(ptrStr)< sizeof(ora_crewno.arr))
+	{
+		strncpy((char*)ora_crewno.arr, ptrStr, sizeof(ora_crewno.arr));
+		ora_crewno.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_crewno.len = 0;
+	ora_crewnoZi = this->crewnoZi();
+	ptrStr = this->shiftno();
+	if( strlen(ptrStr)< sizeof(ora_shiftno.arr))
+	{
+		strncpy((char*)ora_shiftno.arr, ptrStr, sizeof(ora_shiftno.arr));
+		ora_shiftno.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_shiftno.len = 0;
+	ora_shiftnoZi = this->shiftnoZi();
+	ptrStr = this->defectname1();
+	if( strlen(ptrStr)< sizeof(ora_defectname1.arr))
+	{
+		strncpy((char*)ora_defectname1.arr, ptrStr, sizeof(ora_defectname1.arr));
+		ora_defectname1.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_defectname1.len = 0;
+	ora_defectname1Zi = this->defectname1Zi();
+	ptrStr = this->updownsurface1();
+	if( strlen(ptrStr)< sizeof(ora_updownsurface1.arr))
+	{
+		strncpy((char*)ora_updownsurface1.arr, ptrStr, sizeof(ora_updownsurface1.arr));
+		ora_updownsurface1.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_updownsurface1.len = 0;
+	ora_updownsurface1Zi = this->updownsurface1Zi();
+	ptrStr = this->side_distance1();
+	if( strlen(ptrStr)< sizeof(ora_side_distance1.arr))
+	{
+		strncpy((char*)ora_side_distance1.arr, ptrStr, sizeof(ora_side_distance1.arr));
+		ora_side_distance1.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_side_distance1.len = 0;
+	ora_side_distance1Zi = this->side_distance1Zi();
+	ptrStr = this->distance1();
+	if( strlen(ptrStr)< sizeof(ora_distance1.arr))
+	{
+		strncpy((char*)ora_distance1.arr, ptrStr, sizeof(ora_distance1.arr));
+		ora_distance1.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_distance1.len = 0;
+	ora_distance1Zi = this->distance1Zi();
+	ptrStr = this->instruction1();
+	if( strlen(ptrStr)< sizeof(ora_instruction1.arr))
+	{
+		strncpy((char*)ora_instruction1.arr, ptrStr, sizeof(ora_instruction1.arr));
+		ora_instruction1.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_instruction1.len = 0;
+	ora_instruction1Zi = this->instruction1Zi();
+	ptrStr = this->circle1();
+	if( strlen(ptrStr)< sizeof(ora_circle1.arr))
+	{
+		strncpy((char*)ora_circle1.arr, ptrStr, sizeof(ora_circle1.arr));
+		ora_circle1.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_circle1.len = 0;
+	ora_circle1Zi = this->circle1Zi();
+	ptrStr = this->checkresult1();
+	if( strlen(ptrStr)< sizeof(ora_checkresult1.arr))
+	{
+		strncpy((char*)ora_checkresult1.arr, ptrStr, sizeof(ora_checkresult1.arr));
+		ora_checkresult1.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_checkresult1.len = 0;
+	ora_checkresult1Zi = this->checkresult1Zi();
+	ptrStr = this->codeman1();
+	if( strlen(ptrStr)< sizeof(ora_codeman1.arr))
+	{
+		strncpy((char*)ora_codeman1.arr, ptrStr, sizeof(ora_codeman1.arr));
+		ora_codeman1.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_codeman1.len = 0;
+	ora_codeman1Zi = this->codeman1Zi();
+	ptrStr = this->defectname2();
+	if( strlen(ptrStr)< sizeof(ora_defectname2.arr))
+	{
+		strncpy((char*)ora_defectname2.arr, ptrStr, sizeof(ora_defectname2.arr));
+		ora_defectname2.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_defectname2.len = 0;
+	ora_defectname2Zi = this->defectname2Zi();
+	ptrStr = this->updownsurface2();
+	if( strlen(ptrStr)< sizeof(ora_updownsurface2.arr))
+	{
+		strncpy((char*)ora_updownsurface2.arr, ptrStr, sizeof(ora_updownsurface2.arr));
+		ora_updownsurface2.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_updownsurface2.len = 0;
+	ora_updownsurface2Zi = this->updownsurface2Zi();
+	ptrStr = this->side_distance2();
+	if( strlen(ptrStr)< sizeof(ora_side_distance2.arr))
+	{
+		strncpy((char*)ora_side_distance2.arr, ptrStr, sizeof(ora_side_distance2.arr));
+		ora_side_distance2.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_side_distance2.len = 0;
+	ora_side_distance2Zi = this->side_distance2Zi();
+	ptrStr = this->distance2();
+	if( strlen(ptrStr)< sizeof(ora_distance2.arr))
+	{
+		strncpy((char*)ora_distance2.arr, ptrStr, sizeof(ora_distance2.arr));
+		ora_distance2.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_distance2.len = 0;
+	ora_distance2Zi = this->distance2Zi();
+	ptrStr = this->instruction2();
+	if( strlen(ptrStr)< sizeof(ora_instruction2.arr))
+	{
+		strncpy((char*)ora_instruction2.arr, ptrStr, sizeof(ora_instruction2.arr));
+		ora_instruction2.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_instruction2.len = 0;
+	ora_instruction2Zi = this->instruction2Zi();
+	ptrStr = this->circle2();
+	if( strlen(ptrStr)< sizeof(ora_circle2.arr))
+	{
+		strncpy((char*)ora_circle2.arr, ptrStr, sizeof(ora_circle2.arr));
+		ora_circle2.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_circle2.len = 0;
+	ora_circle2Zi = this->circle2Zi();
+	ptrStr = this->defectname3();
+	if( strlen(ptrStr)< sizeof(ora_defectname3.arr))
+	{
+		strncpy((char*)ora_defectname3.arr, ptrStr, sizeof(ora_defectname3.arr));
+		ora_defectname3.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_defectname3.len = 0;
+	ora_defectname3Zi = this->defectname3Zi();
+	ptrStr = this->updownsurface3();
+	if( strlen(ptrStr)< sizeof(ora_updownsurface3.arr))
+	{
+		strncpy((char*)ora_updownsurface3.arr, ptrStr, sizeof(ora_updownsurface3.arr));
+		ora_updownsurface3.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_updownsurface3.len = 0;
+	ora_updownsurface3Zi = this->updownsurface3Zi();
+	ptrStr = this->side_distance3();
+	if( strlen(ptrStr)< sizeof(ora_side_distance3.arr))
+	{
+		strncpy((char*)ora_side_distance3.arr, ptrStr, sizeof(ora_side_distance3.arr));
+		ora_side_distance3.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_side_distance3.len = 0;
+	ora_side_distance3Zi = this->side_distance3Zi();
+	ptrStr = this->distance3();
+	if( strlen(ptrStr)< sizeof(ora_distance3.arr))
+	{
+		strncpy((char*)ora_distance3.arr, ptrStr, sizeof(ora_distance3.arr));
+		ora_distance3.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_distance3.len = 0;
+	ora_distance3Zi = this->distance3Zi();
+	ptrStr = this->instruction3();
+	if( strlen(ptrStr)< sizeof(ora_instruction3.arr))
+	{
+		strncpy((char*)ora_instruction3.arr, ptrStr, sizeof(ora_instruction3.arr));
+		ora_instruction3.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_instruction3.len = 0;
+	ora_instruction3Zi = this->instruction3Zi();
+	ptrStr = this->circle3();
+	if( strlen(ptrStr)< sizeof(ora_circle3.arr))
+	{
+		strncpy((char*)ora_circle3.arr, ptrStr, sizeof(ora_circle3.arr));
+		ora_circle3.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_circle3.len = 0;
+	ora_circle3Zi = this->circle3Zi();
+	ptrStr = this->defectname4();
+	if( strlen(ptrStr)< sizeof(ora_defectname4.arr))
+	{
+		strncpy((char*)ora_defectname4.arr, ptrStr, sizeof(ora_defectname4.arr));
+		ora_defectname4.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_defectname4.len = 0;
+	ora_defectname4Zi = this->defectname4Zi();
+	ptrStr = this->updownsurface4();
+	if( strlen(ptrStr)< sizeof(ora_updownsurface4.arr))
+	{
+		strncpy((char*)ora_updownsurface4.arr, ptrStr, sizeof(ora_updownsurface4.arr));
+		ora_updownsurface4.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_updownsurface4.len = 0;
+	ora_updownsurface4Zi = this->updownsurface4Zi();
+	ptrStr = this->side_distance4();
+	if( strlen(ptrStr)< sizeof(ora_side_distance4.arr))
+	{
+		strncpy((char*)ora_side_distance4.arr, ptrStr, sizeof(ora_side_distance4.arr));
+		ora_side_distance4.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_side_distance4.len = 0;
+	ora_side_distance4Zi = this->side_distance4Zi();
+	ptrStr = this->distance4();
+	if( strlen(ptrStr)< sizeof(ora_distance4.arr))
+	{
+		strncpy((char*)ora_distance4.arr, ptrStr, sizeof(ora_distance4.arr));
+		ora_distance4.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_distance4.len = 0;
+	ora_distance4Zi = this->distance4Zi();
+	ptrStr = this->instruction4();
+	if( strlen(ptrStr)< sizeof(ora_instruction4.arr))
+	{
+		strncpy((char*)ora_instruction4.arr, ptrStr, sizeof(ora_instruction4.arr));
+		ora_instruction4.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_instruction4.len = 0;
+	ora_instruction4Zi = this->instruction4Zi();
+	ptrStr = this->circle4();
+	if( strlen(ptrStr)< sizeof(ora_circle4.arr))
+	{
+		strncpy((char*)ora_circle4.arr, ptrStr, sizeof(ora_circle4.arr));
+		ora_circle4.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_circle4.len = 0;
+	ora_circle4Zi = this->circle4Zi();
+	ptrStr = this->defectname5();
+	if( strlen(ptrStr)< sizeof(ora_defectname5.arr))
+	{
+		strncpy((char*)ora_defectname5.arr, ptrStr, sizeof(ora_defectname5.arr));
+		ora_defectname5.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_defectname5.len = 0;
+	ora_defectname5Zi = this->defectname5Zi();
+	ptrStr = this->updownsurface5();
+	if( strlen(ptrStr)< sizeof(ora_updownsurface5.arr))
+	{
+		strncpy((char*)ora_updownsurface5.arr, ptrStr, sizeof(ora_updownsurface5.arr));
+		ora_updownsurface5.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_updownsurface5.len = 0;
+	ora_updownsurface5Zi = this->updownsurface5Zi();
+	ptrStr = this->side_distance5();
+	if( strlen(ptrStr)< sizeof(ora_side_distance5.arr))
+	{
+		strncpy((char*)ora_side_distance5.arr, ptrStr, sizeof(ora_side_distance5.arr));
+		ora_side_distance5.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_side_distance5.len = 0;
+	ora_side_distance5Zi = this->side_distance5Zi();
+	ptrStr = this->distance5();
+	if( strlen(ptrStr)< sizeof(ora_distance5.arr))
+	{
+		strncpy((char*)ora_distance5.arr, ptrStr, sizeof(ora_distance5.arr));
+		ora_distance5.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_distance5.len = 0;
+	ora_distance5Zi = this->distance5Zi();
+	ptrStr = this->instruction5();
+	if( strlen(ptrStr)< sizeof(ora_instruction5.arr))
+	{
+		strncpy((char*)ora_instruction5.arr, ptrStr, sizeof(ora_instruction5.arr));
+		ora_instruction5.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_instruction5.len = 0;
+	ora_instruction5Zi = this->instruction5Zi();
+	ptrStr = this->circle5();
+	if( strlen(ptrStr)< sizeof(ora_circle5.arr))
+	{
+		strncpy((char*)ora_circle5.arr, ptrStr, sizeof(ora_circle5.arr));
+		ora_circle5.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_circle5.len = 0;
+	ora_circle5Zi = this->circle5Zi();
+	ptrStr = this->toc();
+	if( strlen(ptrStr)< sizeof(ora_toc.arr))
+	{
+		strncpy((char*)ora_toc.arr, ptrStr, sizeof(ora_toc.arr));
+		ora_toc.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_toc.len = 0;
+	ora_tocZi = this->tocZi();
+	ptrStr = this->tom();
+	if( strlen(ptrStr)< sizeof(ora_tom.arr))
+	{
+		strncpy((char*)ora_tom.arr, ptrStr, sizeof(ora_tom.arr));
+		ora_tom.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_tom.len = 0;
+	ora_tomZi = this->tomZi();
+	ptrStr = this->mop();
+	if( strlen(ptrStr)< sizeof(ora_mop.arr))
+	{
+		strncpy((char*)ora_mop.arr, ptrStr, sizeof(ora_mop.arr));
+		ora_mop.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_mop.len = 0;
+	ora_mopZi = this->mopZi();
+}
+
+//private methode copy Oracle to Attribute
+//copys Oracle Host variables into Object attributes.
+void OFFCHECKA::copyOracleToAttribute()
+{
+	ora_coildate.arr[ora_coildate.len] = '\0';
+	this->set_coildate((char*) ora_coildate.arr);
+	ora_coilno.arr[ora_coilno.len] = '\0';
+	this->set_coilno((char*) ora_coilno.arr);
+	this->set_coilnoZi((short)ora_coilnoZi);
+	ora_alloycode.arr[ora_alloycode.len] = '\0';
+	this->set_alloycode((char*) ora_alloycode.arr);
+	this->set_alloycodeZi((short)ora_alloycodeZi);
+	ora_crewno.arr[ora_crewno.len] = '\0';
+	this->set_crewno((char*) ora_crewno.arr);
+	this->set_crewnoZi((short)ora_crewnoZi);
+	ora_shiftno.arr[ora_shiftno.len] = '\0';
+	this->set_shiftno((char*) ora_shiftno.arr);
+	this->set_shiftnoZi((short)ora_shiftnoZi);
+	ora_defectname1.arr[ora_defectname1.len] = '\0';
+	this->set_defectname1((char*) ora_defectname1.arr);
+	this->set_defectname1Zi((short)ora_defectname1Zi);
+	ora_updownsurface1.arr[ora_updownsurface1.len] = '\0';
+	this->set_updownsurface1((char*) ora_updownsurface1.arr);
+	this->set_updownsurface1Zi((short)ora_updownsurface1Zi);
+	ora_side_distance1.arr[ora_side_distance1.len] = '\0';
+	this->set_side_distance1((char*) ora_side_distance1.arr);
+	this->set_side_distance1Zi((short)ora_side_distance1Zi);
+	ora_distance1.arr[ora_distance1.len] = '\0';
+	this->set_distance1((char*) ora_distance1.arr);
+	this->set_distance1Zi((short)ora_distance1Zi);
+	ora_instruction1.arr[ora_instruction1.len] = '\0';
+	this->set_instruction1((char*) ora_instruction1.arr);
+	this->set_instruction1Zi((short)ora_instruction1Zi);
+	ora_circle1.arr[ora_circle1.len] = '\0';
+	this->set_circle1((char*) ora_circle1.arr);
+	this->set_circle1Zi((short)ora_circle1Zi);
+	ora_checkresult1.arr[ora_checkresult1.len] = '\0';
+	this->set_checkresult1((char*) ora_checkresult1.arr);
+	this->set_checkresult1Zi((short)ora_checkresult1Zi);
+	ora_codeman1.arr[ora_codeman1.len] = '\0';
+	this->set_codeman1((char*) ora_codeman1.arr);
+	this->set_codeman1Zi((short)ora_codeman1Zi);
+	ora_defectname2.arr[ora_defectname2.len] = '\0';
+	this->set_defectname2((char*) ora_defectname2.arr);
+	this->set_defectname2Zi((short)ora_defectname2Zi);
+	ora_updownsurface2.arr[ora_updownsurface2.len] = '\0';
+	this->set_updownsurface2((char*) ora_updownsurface2.arr);
+	this->set_updownsurface2Zi((short)ora_updownsurface2Zi);
+	ora_side_distance2.arr[ora_side_distance2.len] = '\0';
+	this->set_side_distance2((char*) ora_side_distance2.arr);
+	this->set_side_distance2Zi((short)ora_side_distance2Zi);
+	ora_distance2.arr[ora_distance2.len] = '\0';
+	this->set_distance2((char*) ora_distance2.arr);
+	this->set_distance2Zi((short)ora_distance2Zi);
+	ora_instruction2.arr[ora_instruction2.len] = '\0';
+	this->set_instruction2((char*) ora_instruction2.arr);
+	this->set_instruction2Zi((short)ora_instruction2Zi);
+	ora_circle2.arr[ora_circle2.len] = '\0';
+	this->set_circle2((char*) ora_circle2.arr);
+	this->set_circle2Zi((short)ora_circle2Zi);
+	ora_defectname3.arr[ora_defectname3.len] = '\0';
+	this->set_defectname3((char*) ora_defectname3.arr);
+	this->set_defectname3Zi((short)ora_defectname3Zi);
+	ora_updownsurface3.arr[ora_updownsurface3.len] = '\0';
+	this->set_updownsurface3((char*) ora_updownsurface3.arr);
+	this->set_updownsurface3Zi((short)ora_updownsurface3Zi);
+	ora_side_distance3.arr[ora_side_distance3.len] = '\0';
+	this->set_side_distance3((char*) ora_side_distance3.arr);
+	this->set_side_distance3Zi((short)ora_side_distance3Zi);
+	ora_distance3.arr[ora_distance3.len] = '\0';
+	this->set_distance3((char*) ora_distance3.arr);
+	this->set_distance3Zi((short)ora_distance3Zi);
+	ora_instruction3.arr[ora_instruction3.len] = '\0';
+	this->set_instruction3((char*) ora_instruction3.arr);
+	this->set_instruction3Zi((short)ora_instruction3Zi);
+	ora_circle3.arr[ora_circle3.len] = '\0';
+	this->set_circle3((char*) ora_circle3.arr);
+	this->set_circle3Zi((short)ora_circle3Zi);
+	ora_defectname4.arr[ora_defectname4.len] = '\0';
+	this->set_defectname4((char*) ora_defectname4.arr);
+	this->set_defectname4Zi((short)ora_defectname4Zi);
+	ora_updownsurface4.arr[ora_updownsurface4.len] = '\0';
+	this->set_updownsurface4((char*) ora_updownsurface4.arr);
+	this->set_updownsurface4Zi((short)ora_updownsurface4Zi);
+	ora_side_distance4.arr[ora_side_distance4.len] = '\0';
+	this->set_side_distance4((char*) ora_side_distance4.arr);
+	this->set_side_distance4Zi((short)ora_side_distance4Zi);
+	ora_distance4.arr[ora_distance4.len] = '\0';
+	this->set_distance4((char*) ora_distance4.arr);
+	this->set_distance4Zi((short)ora_distance4Zi);
+	ora_instruction4.arr[ora_instruction4.len] = '\0';
+	this->set_instruction4((char*) ora_instruction4.arr);
+	this->set_instruction4Zi((short)ora_instruction4Zi);
+	ora_circle4.arr[ora_circle4.len] = '\0';
+	this->set_circle4((char*) ora_circle4.arr);
+	this->set_circle4Zi((short)ora_circle4Zi);
+	ora_defectname5.arr[ora_defectname5.len] = '\0';
+	this->set_defectname5((char*) ora_defectname5.arr);
+	this->set_defectname5Zi((short)ora_defectname5Zi);
+	ora_updownsurface5.arr[ora_updownsurface5.len] = '\0';
+	this->set_updownsurface5((char*) ora_updownsurface5.arr);
+	this->set_updownsurface5Zi((short)ora_updownsurface5Zi);
+	ora_side_distance5.arr[ora_side_distance5.len] = '\0';
+	this->set_side_distance5((char*) ora_side_distance5.arr);
+	this->set_side_distance5Zi((short)ora_side_distance5Zi);
+	ora_distance5.arr[ora_distance5.len] = '\0';
+	this->set_distance5((char*) ora_distance5.arr);
+	this->set_distance5Zi((short)ora_distance5Zi);
+	ora_instruction5.arr[ora_instruction5.len] = '\0';
+	this->set_instruction5((char*) ora_instruction5.arr);
+	this->set_instruction5Zi((short)ora_instruction5Zi);
+	ora_circle5.arr[ora_circle5.len] = '\0';
+	this->set_circle5((char*) ora_circle5.arr);
+	this->set_circle5Zi((short)ora_circle5Zi);
+	ora_toc.arr[ora_toc.len] = '\0';
+	this->set_toc((char*) ora_toc.arr);
+	this->set_tocZi((short)ora_tocZi);
+	ora_tom.arr[ora_tom.len] = '\0';
+	this->set_tom((char*) ora_tom.arr);
+	this->set_tomZi((short)ora_tomZi);
+	ora_mop.arr[ora_mop.len] = '\0';
+	this->set_mop((char*) ora_mop.arr);
+	this->set_mopZi((short)ora_mopZi);
+}
+
+//private methode copy Key to host
+//copys Object attributes into Oralce Key variables.
+void OFFCHECKA::copyKeyToHost()
+{
+	char* ptrStr;
+}
+
+//private methode copy Host to Key
+// copys Oracle Host Key variables into Object Key attributes.
+void OFFCHECKA::copyHostToKey()
+{
+}
+
+//private methode log Oracle message information
+void OFFCHECKA::logOraMessageInfo()
+{
+	LOG d("OFFCHECKA::logOraMessageInfo()");
+	sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+	oraca.orastxt.orastxtc[oraca.orastxt.orastxtl] = '\0';
+	oraca.orasfnm.orasfnmc[oraca.orasfnm.orasfnml] = '\0';
+	
+	//* negating a error code submitted perhaps positively.
+	if (sqlca.sqlcode > 0) sqlca.sqlcode *= -1;
+	
+	//* Distribute fault text, SQL statement and file in the Debug System.
+	d << "ORA-Error: "<< sqlca.sqlerrm.sqlerrmc; d.Info();
+	d << "OracaText: "<< oraca.orastxt.orastxtc; d.Info();
+	d << "in line " << oraca.oraslnr << " in file " << oraca.orasfnm.orasfnmc; d.Info();
+}
+
+//this methode stores the unique key attributes
+void OFFCHECKA::setPrimKey()
+{
+}
+
+//this methode stores the unique key attributes
+void OFFCHECKA::initInsertKeys()
+{
+	setPrimKey();
+}
+
+//this methode set the unique key attributes from the DB Record Attributes
+void OFFCHECKA::setKeysFromRecord()
+{
+}
+
+//			         
+//O P E R A T O R  + 
+//===================
+//                   
+OFFCHECKA OFFCHECKA::operator+(const OFFCHECKA &inst) const
+{
+	OFFCHECKA ptrOFFCHECKA(*this);
+//----------------------------------------------------------
+	ptrOFFCHECKA.set_coildate(inst.coildate());
+//----------------------------------------------------------
+	if(inst.coilnoZi() != -1)
+	{
+		ptrOFFCHECKA.set_coilno(inst.coilno());
+		ptrOFFCHECKA.set_coilnoZi(inst.coilnoZi());
+	}
+//----------------------------------------------------------
+	if(inst.alloycodeZi() != -1)
+	{
+		ptrOFFCHECKA.set_alloycode(inst.alloycode());
+		ptrOFFCHECKA.set_alloycodeZi(inst.alloycodeZi());
+	}
+//----------------------------------------------------------
+	if(inst.crewnoZi() != -1)
+	{
+		ptrOFFCHECKA.set_crewno(inst.crewno());
+		ptrOFFCHECKA.set_crewnoZi(inst.crewnoZi());
+	}
+//----------------------------------------------------------
+	if(inst.shiftnoZi() != -1)
+	{
+		ptrOFFCHECKA.set_shiftno(inst.shiftno());
+		ptrOFFCHECKA.set_shiftnoZi(inst.shiftnoZi());
+	}
+//----------------------------------------------------------
+	if(inst.defectname1Zi() != -1)
+	{
+		ptrOFFCHECKA.set_defectname1(inst.defectname1());
+		ptrOFFCHECKA.set_defectname1Zi(inst.defectname1Zi());
+	}
+//----------------------------------------------------------
+	if(inst.updownsurface1Zi() != -1)
+	{
+		ptrOFFCHECKA.set_updownsurface1(inst.updownsurface1());
+		ptrOFFCHECKA.set_updownsurface1Zi(inst.updownsurface1Zi());
+	}
+//----------------------------------------------------------
+	if(inst.side_distance1Zi() != -1)
+	{
+		ptrOFFCHECKA.set_side_distance1(inst.side_distance1());
+		ptrOFFCHECKA.set_side_distance1Zi(inst.side_distance1Zi());
+	}
+//----------------------------------------------------------
+	if(inst.distance1Zi() != -1)
+	{
+		ptrOFFCHECKA.set_distance1(inst.distance1());
+		ptrOFFCHECKA.set_distance1Zi(inst.distance1Zi());
+	}
+//----------------------------------------------------------
+	if(inst.instruction1Zi() != -1)
+	{
+		ptrOFFCHECKA.set_instruction1(inst.instruction1());
+		ptrOFFCHECKA.set_instruction1Zi(inst.instruction1Zi());
+	}
+//----------------------------------------------------------
+	if(inst.circle1Zi() != -1)
+	{
+		ptrOFFCHECKA.set_circle1(inst.circle1());
+		ptrOFFCHECKA.set_circle1Zi(inst.circle1Zi());
+	}
+//----------------------------------------------------------
+	if(inst.checkresult1Zi() != -1)
+	{
+		ptrOFFCHECKA.set_checkresult1(inst.checkresult1());
+		ptrOFFCHECKA.set_checkresult1Zi(inst.checkresult1Zi());
+	}
+//----------------------------------------------------------
+	if(inst.codeman1Zi() != -1)
+	{
+		ptrOFFCHECKA.set_codeman1(inst.codeman1());
+		ptrOFFCHECKA.set_codeman1Zi(inst.codeman1Zi());
+	}
+//----------------------------------------------------------
+	if(inst.defectname2Zi() != -1)
+	{
+		ptrOFFCHECKA.set_defectname2(inst.defectname2());
+		ptrOFFCHECKA.set_defectname2Zi(inst.defectname2Zi());
+	}
+//----------------------------------------------------------
+	if(inst.updownsurface2Zi() != -1)
+	{
+		ptrOFFCHECKA.set_updownsurface2(inst.updownsurface2());
+		ptrOFFCHECKA.set_updownsurface2Zi(inst.updownsurface2Zi());
+	}
+//----------------------------------------------------------
+	if(inst.side_distance2Zi() != -1)
+	{
+		ptrOFFCHECKA.set_side_distance2(inst.side_distance2());
+		ptrOFFCHECKA.set_side_distance2Zi(inst.side_distance2Zi());
+	}
+//----------------------------------------------------------
+	if(inst.distance2Zi() != -1)
+	{
+		ptrOFFCHECKA.set_distance2(inst.distance2());
+		ptrOFFCHECKA.set_distance2Zi(inst.distance2Zi());
+	}
+//----------------------------------------------------------
+	if(inst.instruction2Zi() != -1)
+	{
+		ptrOFFCHECKA.set_instruction2(inst.instruction2());
+		ptrOFFCHECKA.set_instruction2Zi(inst.instruction2Zi());
+	}
+//----------------------------------------------------------
+	if(inst.circle2Zi() != -1)
+	{
+		ptrOFFCHECKA.set_circle2(inst.circle2());
+		ptrOFFCHECKA.set_circle2Zi(inst.circle2Zi());
+	}
+//----------------------------------------------------------
+	if(inst.defectname3Zi() != -1)
+	{
+		ptrOFFCHECKA.set_defectname3(inst.defectname3());
+		ptrOFFCHECKA.set_defectname3Zi(inst.defectname3Zi());
+	}
+//----------------------------------------------------------
+	if(inst.updownsurface3Zi() != -1)
+	{
+		ptrOFFCHECKA.set_updownsurface3(inst.updownsurface3());
+		ptrOFFCHECKA.set_updownsurface3Zi(inst.updownsurface3Zi());
+	}
+//----------------------------------------------------------
+	if(inst.side_distance3Zi() != -1)
+	{
+		ptrOFFCHECKA.set_side_distance3(inst.side_distance3());
+		ptrOFFCHECKA.set_side_distance3Zi(inst.side_distance3Zi());
+	}
+//----------------------------------------------------------
+	if(inst.distance3Zi() != -1)
+	{
+		ptrOFFCHECKA.set_distance3(inst.distance3());
+		ptrOFFCHECKA.set_distance3Zi(inst.distance3Zi());
+	}
+//----------------------------------------------------------
+	if(inst.instruction3Zi() != -1)
+	{
+		ptrOFFCHECKA.set_instruction3(inst.instruction3());
+		ptrOFFCHECKA.set_instruction3Zi(inst.instruction3Zi());
+	}
+//----------------------------------------------------------
+	if(inst.circle3Zi() != -1)
+	{
+		ptrOFFCHECKA.set_circle3(inst.circle3());
+		ptrOFFCHECKA.set_circle3Zi(inst.circle3Zi());
+	}
+//----------------------------------------------------------
+	if(inst.defectname4Zi() != -1)
+	{
+		ptrOFFCHECKA.set_defectname4(inst.defectname4());
+		ptrOFFCHECKA.set_defectname4Zi(inst.defectname4Zi());
+	}
+//----------------------------------------------------------
+	if(inst.updownsurface4Zi() != -1)
+	{
+		ptrOFFCHECKA.set_updownsurface4(inst.updownsurface4());
+		ptrOFFCHECKA.set_updownsurface4Zi(inst.updownsurface4Zi());
+	}
+//----------------------------------------------------------
+	if(inst.side_distance4Zi() != -1)
+	{
+		ptrOFFCHECKA.set_side_distance4(inst.side_distance4());
+		ptrOFFCHECKA.set_side_distance4Zi(inst.side_distance4Zi());
+	}
+//----------------------------------------------------------
+	if(inst.distance4Zi() != -1)
+	{
+		ptrOFFCHECKA.set_distance4(inst.distance4());
+		ptrOFFCHECKA.set_distance4Zi(inst.distance4Zi());
+	}
+//----------------------------------------------------------
+	if(inst.instruction4Zi() != -1)
+	{
+		ptrOFFCHECKA.set_instruction4(inst.instruction4());
+		ptrOFFCHECKA.set_instruction4Zi(inst.instruction4Zi());
+	}
+//----------------------------------------------------------
+	if(inst.circle4Zi() != -1)
+	{
+		ptrOFFCHECKA.set_circle4(inst.circle4());
+		ptrOFFCHECKA.set_circle4Zi(inst.circle4Zi());
+	}
+//----------------------------------------------------------
+	if(inst.defectname5Zi() != -1)
+	{
+		ptrOFFCHECKA.set_defectname5(inst.defectname5());
+		ptrOFFCHECKA.set_defectname5Zi(inst.defectname5Zi());
+	}
+//----------------------------------------------------------
+	if(inst.updownsurface5Zi() != -1)
+	{
+		ptrOFFCHECKA.set_updownsurface5(inst.updownsurface5());
+		ptrOFFCHECKA.set_updownsurface5Zi(inst.updownsurface5Zi());
+	}
+//----------------------------------------------------------
+	if(inst.side_distance5Zi() != -1)
+	{
+		ptrOFFCHECKA.set_side_distance5(inst.side_distance5());
+		ptrOFFCHECKA.set_side_distance5Zi(inst.side_distance5Zi());
+	}
+//----------------------------------------------------------
+	if(inst.distance5Zi() != -1)
+	{
+		ptrOFFCHECKA.set_distance5(inst.distance5());
+		ptrOFFCHECKA.set_distance5Zi(inst.distance5Zi());
+	}
+//----------------------------------------------------------
+	if(inst.instruction5Zi() != -1)
+	{
+		ptrOFFCHECKA.set_instruction5(inst.instruction5());
+		ptrOFFCHECKA.set_instruction5Zi(inst.instruction5Zi());
+	}
+//----------------------------------------------------------
+	if(inst.circle5Zi() != -1)
+	{
+		ptrOFFCHECKA.set_circle5(inst.circle5());
+		ptrOFFCHECKA.set_circle5Zi(inst.circle5Zi());
+	}
+//----------------------------------------------------------
+	if(inst.tocZi() != -1)
+	{
+		ptrOFFCHECKA.set_toc(inst.toc());
+		ptrOFFCHECKA.set_tocZi(inst.tocZi());
+	}
+//----------------------------------------------------------
+	if(inst.tomZi() != -1)
+	{
+		ptrOFFCHECKA.set_tom(inst.tom());
+		ptrOFFCHECKA.set_tomZi(inst.tomZi());
+	}
+//----------------------------------------------------------
+	if(inst.mopZi() != -1)
+	{
+		ptrOFFCHECKA.set_mop(inst.mop());
+		ptrOFFCHECKA.set_mopZi(inst.mopZi());
+	}
+	return( ptrOFFCHECKA );
+}
+
+//			         
+//O P E R A T O R  = 
+//===================
+//                   
+const OFFCHECKA& OFFCHECKA::operator=(const OFFCHECKA &inst)
+{
+//----------------------------------------------------------
+	this->set_coildate(inst.coildate());
+//----------------------------------------------------------
+	this->set_coilno(inst.coilno());
+	this->set_coilnoZi(inst.coilnoZi());
+//----------------------------------------------------------
+	this->set_alloycode(inst.alloycode());
+	this->set_alloycodeZi(inst.alloycodeZi());
+//----------------------------------------------------------
+	this->set_crewno(inst.crewno());
+	this->set_crewnoZi(inst.crewnoZi());
+//----------------------------------------------------------
+	this->set_shiftno(inst.shiftno());
+	this->set_shiftnoZi(inst.shiftnoZi());
+//----------------------------------------------------------
+	this->set_defectname1(inst.defectname1());
+	this->set_defectname1Zi(inst.defectname1Zi());
+//----------------------------------------------------------
+	this->set_updownsurface1(inst.updownsurface1());
+	this->set_updownsurface1Zi(inst.updownsurface1Zi());
+//----------------------------------------------------------
+	this->set_side_distance1(inst.side_distance1());
+	this->set_side_distance1Zi(inst.side_distance1Zi());
+//----------------------------------------------------------
+	this->set_distance1(inst.distance1());
+	this->set_distance1Zi(inst.distance1Zi());
+//----------------------------------------------------------
+	this->set_instruction1(inst.instruction1());
+	this->set_instruction1Zi(inst.instruction1Zi());
+//----------------------------------------------------------
+	this->set_circle1(inst.circle1());
+	this->set_circle1Zi(inst.circle1Zi());
+//----------------------------------------------------------
+	this->set_checkresult1(inst.checkresult1());
+	this->set_checkresult1Zi(inst.checkresult1Zi());
+//----------------------------------------------------------
+	this->set_codeman1(inst.codeman1());
+	this->set_codeman1Zi(inst.codeman1Zi());
+//----------------------------------------------------------
+	this->set_defectname2(inst.defectname2());
+	this->set_defectname2Zi(inst.defectname2Zi());
+//----------------------------------------------------------
+	this->set_updownsurface2(inst.updownsurface2());
+	this->set_updownsurface2Zi(inst.updownsurface2Zi());
+//----------------------------------------------------------
+	this->set_side_distance2(inst.side_distance2());
+	this->set_side_distance2Zi(inst.side_distance2Zi());
+//----------------------------------------------------------
+	this->set_distance2(inst.distance2());
+	this->set_distance2Zi(inst.distance2Zi());
+//----------------------------------------------------------
+	this->set_instruction2(inst.instruction2());
+	this->set_instruction2Zi(inst.instruction2Zi());
+//----------------------------------------------------------
+	this->set_circle2(inst.circle2());
+	this->set_circle2Zi(inst.circle2Zi());
+//----------------------------------------------------------
+	this->set_defectname3(inst.defectname3());
+	this->set_defectname3Zi(inst.defectname3Zi());
+//----------------------------------------------------------
+	this->set_updownsurface3(inst.updownsurface3());
+	this->set_updownsurface3Zi(inst.updownsurface3Zi());
+//----------------------------------------------------------
+	this->set_side_distance3(inst.side_distance3());
+	this->set_side_distance3Zi(inst.side_distance3Zi());
+//----------------------------------------------------------
+	this->set_distance3(inst.distance3());
+	this->set_distance3Zi(inst.distance3Zi());
+//----------------------------------------------------------
+	this->set_instruction3(inst.instruction3());
+	this->set_instruction3Zi(inst.instruction3Zi());
+//----------------------------------------------------------
+	this->set_circle3(inst.circle3());
+	this->set_circle3Zi(inst.circle3Zi());
+//----------------------------------------------------------
+	this->set_defectname4(inst.defectname4());
+	this->set_defectname4Zi(inst.defectname4Zi());
+//----------------------------------------------------------
+	this->set_updownsurface4(inst.updownsurface4());
+	this->set_updownsurface4Zi(inst.updownsurface4Zi());
+//----------------------------------------------------------
+	this->set_side_distance4(inst.side_distance4());
+	this->set_side_distance4Zi(inst.side_distance4Zi());
+//----------------------------------------------------------
+	this->set_distance4(inst.distance4());
+	this->set_distance4Zi(inst.distance4Zi());
+//----------------------------------------------------------
+	this->set_instruction4(inst.instruction4());
+	this->set_instruction4Zi(inst.instruction4Zi());
+//----------------------------------------------------------
+	this->set_circle4(inst.circle4());
+	this->set_circle4Zi(inst.circle4Zi());
+//----------------------------------------------------------
+	this->set_defectname5(inst.defectname5());
+	this->set_defectname5Zi(inst.defectname5Zi());
+//----------------------------------------------------------
+	this->set_updownsurface5(inst.updownsurface5());
+	this->set_updownsurface5Zi(inst.updownsurface5Zi());
+//----------------------------------------------------------
+	this->set_side_distance5(inst.side_distance5());
+	this->set_side_distance5Zi(inst.side_distance5Zi());
+//----------------------------------------------------------
+	this->set_distance5(inst.distance5());
+	this->set_distance5Zi(inst.distance5Zi());
+//----------------------------------------------------------
+	this->set_instruction5(inst.instruction5());
+	this->set_instruction5Zi(inst.instruction5Zi());
+//----------------------------------------------------------
+	this->set_circle5(inst.circle5());
+	this->set_circle5Zi(inst.circle5Zi());
+//----------------------------------------------------------
+	this->set_toc(inst.toc());
+	this->set_tocZi(inst.tocZi());
+//----------------------------------------------------------
+	this->set_tom(inst.tom());
+	this->set_tomZi(inst.tomZi());
+//----------------------------------------------------------
+	this->set_mop(inst.mop());
+	this->set_mopZi(inst.mopZi());
+	return(*this);
+}
+

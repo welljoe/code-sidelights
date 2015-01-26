@@ -1,0 +1,958 @@
+/* *******************************************************************/
+/* *   File               :    ACCOUNTTHICK.pc
+/* *   Short Description  :    ORACLE DATABASE ACCESS
+/* * 		                   ACCOUNT THICK TABLE
+/* *   Author             :    DB CODE Generator
+/* *   Created Date       :    13.06.2013
+/* *   Tech.Support       :    LiuWeiZhao. email:welljoe@hotmail.com 
+/* *******************************************************************/
+/* *   Copyright (c)  SGAI AI 2009   All Rights Reserved
+/* *******************************************************************/
+
+#include "LOG.h"
+#include "ACCOUNTTHICK.h"
+//
+// Declare ORACLE Host Variables
+//
+
+#define SQLCA_STORAGE_CLASS static
+#define ORACA_STORAGE_CLASS static
+EXEC SQL INCLUDE sqlca;
+EXEC SQL INCLUDE oraca;
+
+#define OPENED 1
+#define CLOSED 2
+EXEC SQL BEGIN DECLARE SECTION;
+/* ****************************************************************************** */
+/*                                                                                */
+/*                               define Oracle                                    */
+/*                               Host Variables                                   */
+/*                                                          .                     */
+/*                                                                                */
+/* ****************************************************************************** */
+
+static VARCHAR	dynstr[16000];
+static long		rowCnt;       
+static long		cuFl;         
+//Unit[-]:日期.Limit:[-,-]
+static VARCHAR  ora_tdate[33];
+static short    ora_tdateZi;
+//Unit[-]:班组.Limit:[-,-]
+static VARCHAR  ora_crewno[9];
+static short    ora_crewnoZi;
+//Unit[-]:班次.Limit:[-,-]
+static short    ora_shiftno;
+static short    ora_shiftnoZi;
+//Unit[-]:卷号.Limit:[-,-]
+static VARCHAR  ora_coilno[17];
+//Unit[-]:厚度波动记录ID.Limit:[-,-]
+static long     ora_recid;
+//Unit[-]:厚度波动次数.Limit:[-,-]
+static short    ora_thickchgno;
+static short    ora_thickchgnoZi;
+//Unit[-]:厚度波动位置.Limit:[-,-]
+static long     ora_thickchgpos;
+static short    ora_thickchgposZi;
+//Unit[-]:厚度波动值.Limit:[-,-]
+static long     ora_thickchgval;
+static short    ora_thickchgvalZi;
+//Unit[-]:厚度波动原因.Limit:[-,-]
+static VARCHAR  ora_thickchgrea[33];
+static short    ora_thickchgreaZi;
+//Unit[-]:最低酸洗速度.Limit:[-,-]
+static long     ora_minplspeed;
+static short    ora_minplspeedZi;
+//Unit[-]:厚度波动记录人.Limit:[-,-]
+static VARCHAR  ora_recman[33];
+static short    ora_recmanZi;
+//Unit[-]:创建时间.Limit:[-,-]
+static VARCHAR  ora_toc[15];
+static short    ora_tocZi;
+//Unit[-]:最后修改时间.Limit:[-,-]
+static VARCHAR  ora_tom[15];
+static short    ora_tomZi;
+//Unit[-]:创建或者修改者.Limit:[-,-]
+static VARCHAR  ora_mop[121];
+static short    ora_mopZi;
+// Host arguments for Primary key
+static VARCHAR  k_ora_coilno[17];   // Unit[-]:卷号.Limit:[-,-]
+static long     k_ora_recid;   // Unit[-]:厚度波动记录ID.Limit:[-,-]
+
+EXEC SQL END DECLARE SECTION;        
+             
+// 				             
+//C O N S T R U C T O R S    
+//=======================    
+//                           
+ACCOUNTTHICK::ACCOUNTTHICK()
+{
+	initial();                                             
+}
+
+//					
+//C O P Y  -  C O N S T R U C T O R 
+//==================================
+ACCOUNTTHICK::ACCOUNTTHICK(const ACCOUNTTHICK &inst)
+{
+//----------------------------------------------------------
+	this->set_tdate(inst.tdate());
+	this->set_tdateZi(inst.tdateZi());
+//----------------------------------------------------------
+	this->set_crewno(inst.crewno());
+	this->set_crewnoZi(inst.crewnoZi());
+//----------------------------------------------------------
+	this->set_shiftno(inst.shiftno());
+	this->set_shiftnoZi(inst.shiftnoZi());
+//----------------------------------------------------------
+	this->set_coilno(inst.coilno());
+//----------------------------------------------------------
+	this->set_recid(inst.recid());
+//----------------------------------------------------------
+	this->set_thickchgno(inst.thickchgno());
+	this->set_thickchgnoZi(inst.thickchgnoZi());
+//----------------------------------------------------------
+	this->set_thickchgpos(inst.thickchgpos());
+	this->set_thickchgposZi(inst.thickchgposZi());
+//----------------------------------------------------------
+	this->set_thickchgval(inst.thickchgval());
+	this->set_thickchgvalZi(inst.thickchgvalZi());
+//----------------------------------------------------------
+	this->set_thickchgrea(inst.thickchgrea());
+	this->set_thickchgreaZi(inst.thickchgreaZi());
+//----------------------------------------------------------
+	this->set_minplspeed(inst.minplspeed());
+	this->set_minplspeedZi(inst.minplspeedZi());
+//----------------------------------------------------------
+	this->set_recman(inst.recman());
+	this->set_recmanZi(inst.recmanZi());
+//----------------------------------------------------------
+	this->set_toc(inst.toc());
+	this->set_tocZi(inst.tocZi());
+//----------------------------------------------------------
+	this->set_tom(inst.tom());
+	this->set_tomZi(inst.tomZi());
+//----------------------------------------------------------
+	this->set_mop(inst.mop());
+	this->set_mopZi(inst.mopZi());
+}
+
+//					
+//C O N S T R U C T O R -W I T H P A R A M E T E R S
+//===================================================
+//					
+ACCOUNTTHICK::ACCOUNTTHICK(char* arg1,long arg2)
+{
+	initial();					               
+	setPrimKey (arg1,arg2);    
+	//read DB record                           
+	dbAccess = true;                           
+	dbMessage = readDB();                      
+	if ( dbMessage != NULL ) dbAccess = false; 
+}
+
+//D E S T R U C T O R S  
+//=======================
+//                       
+ACCOUNTTHICK::~ACCOUNTTHICK()
+{
+}
+
+//initialise all member variables
+void ACCOUNTTHICK::initial()
+{
+	set_tdate("");
+	set_tdateZi(-1);
+	set_crewno("");
+	set_crewnoZi(-1);
+	set_shiftno(0);
+	set_shiftnoZi(-1);
+	set_coilno("");
+	set_recid(0);
+	set_thickchgno(0);
+	set_thickchgnoZi(-1);
+	set_thickchgpos(0);
+	set_thickchgposZi(-1);
+	set_thickchgval(0);
+	set_thickchgvalZi(-1);
+	set_thickchgrea("");
+	set_thickchgreaZi(-1);
+	set_minplspeed(0);
+	set_minplspeedZi(-1);
+	set_recman("");
+	set_recmanZi(-1);
+	set_toc("");
+	set_tocZi(-1);
+	set_tom("");
+	set_tomZi(-1);
+	set_mop("");
+	set_mopZi(-1);
+	//initialies Primary key members
+	set_k_coilno("");
+	set_k_recid(0);
+// Initial Oracle Options
+	oraca.oradbgf  = 1; // gather debug informations       
+	oraca.oracchf  = 1; // gather cursor cache informations
+	oraca.orahchf  = 1; // check heap                      
+	oraca.orastxtf = 3; // always save last sql-statement  
+	                                                       
+	EXEC ORACLE OPTION (ORACA=YES);                        
+	EXEC ORACLE OPTION (HOLD_CURSOR=YES);                  
+	EXEC ORACLE OPTION (RELEASE_CURSOR=NO);                
+	EXEC ORACLE OPTION (MAXOPENCURSORS=50);                
+	pCatch = CatchDbaxError::instance();                   
+	                                                       
+}
+
+//read a single entry from DB.
+char* ACCOUNTTHICK::readDB()
+{
+	//
+	//copy the host variables (k_...) to Oracle Host Keys (k_ora_..)
+	//
+		copyKeyToHost();
+	//
+	// Do SELECT
+	//
+	EXEC SQL SELECT 
+		tdate,
+		crewno,
+		shiftno,
+		coilno,
+		recid,
+		thickchgno,
+		thickchgpos,
+		thickchgval,
+		thickchgrea,
+		minplspeed,
+		recman,
+		TO_CHAR(toc , 'YYYYMMDDHH24MISS'),
+		TO_CHAR(tom , 'YYYYMMDDHH24MISS'),
+		mop
+	INTO
+		:ora_tdate:ora_tdateZi,
+		:ora_crewno:ora_crewnoZi,
+		:ora_shiftno:ora_shiftnoZi,
+		:ora_coilno,
+		:ora_recid,
+		:ora_thickchgno:ora_thickchgnoZi,
+		:ora_thickchgpos:ora_thickchgposZi,
+		:ora_thickchgval:ora_thickchgvalZi,
+		:ora_thickchgrea:ora_thickchgreaZi,
+		:ora_minplspeed:ora_minplspeedZi,
+		:ora_recman:ora_recmanZi,
+		:ora_toc:ora_tocZi,
+		:ora_tom:ora_tomZi,
+		:ora_mop:ora_mopZi
+	FROM ACCOUNTTHICK
+	WHERE
+				coilno          = :k_ora_coilno AND 
+				recid           = :k_ora_recid ;
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	//
+	// copy host variables into Class attributes
+	//
+	copyOracleToAttribute();
+	return ( NULL );
+}
+
+//updates a single entry from DB
+char* ACCOUNTTHICK::updateDB()
+{
+	//
+	//copy the host variables (k_...) to Oracle Host Keys (k_ora_..)
+	//
+		copyKeyToHost();
+	//copy the attributes ( ...) to Oracle Hosts( ora_..)
+	//
+		copyAttributeToOracle();
+	//
+	// Do UPDATE
+	//
+	EXEC SQL UPDATE ACCOUNTTHICK
+	SET 
+		tdate               =:ora_tdate:ora_tdateZi,
+		crewno              =:ora_crewno:ora_crewnoZi,
+		shiftno             =:ora_shiftno:ora_shiftnoZi,
+		coilno              =:ora_coilno,
+		recid               =:ora_recid,
+		thickchgno          =:ora_thickchgno:ora_thickchgnoZi,
+		thickchgpos         =:ora_thickchgpos:ora_thickchgposZi,
+		thickchgval         =:ora_thickchgval:ora_thickchgvalZi,
+		thickchgrea         =:ora_thickchgrea:ora_thickchgreaZi,
+		minplspeed          =:ora_minplspeed:ora_minplspeedZi,
+		recman              =:ora_recman:ora_recmanZi,
+		toc                 =TO_DATE( :ora_toc:ora_tocZi,'YYYYMMDDHH24MISS'),
+		tom                 =TO_DATE( :ora_tom:ora_tomZi,'YYYYMMDDHH24MISS'),
+		mop                 =:ora_mop:ora_mopZi
+	WHERE
+		coilno          = :k_ora_coilno AND 
+		recid           = :k_ora_recid ;
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//inserts a single entry from DB
+char* ACCOUNTTHICK::insertDB()
+{
+	//
+	//copy the attributes ( ...) to Oracle Hosts( ora_..) 
+	//
+		copyAttributeToOracle();
+	//
+	// Do INSERT
+	//
+	EXEC SQL INSERT INTO ACCOUNTTHICK
+	(
+		tdate,
+		crewno,
+		shiftno,
+		coilno,
+		recid,
+		thickchgno,
+		thickchgpos,
+		thickchgval,
+		thickchgrea,
+		minplspeed,
+		recman,
+		toc,
+		tom,
+		mop
+	)
+
+	VALUES
+	(
+		:ora_tdate:ora_tdateZi,
+		:ora_crewno:ora_crewnoZi,
+		:ora_shiftno:ora_shiftnoZi,
+		:ora_coilno,
+		:ora_recid,
+		:ora_thickchgno:ora_thickchgnoZi,
+		:ora_thickchgpos:ora_thickchgposZi,
+		:ora_thickchgval:ora_thickchgvalZi,
+		:ora_thickchgrea:ora_thickchgreaZi,
+		:ora_minplspeed:ora_minplspeedZi,
+		:ora_recman:ora_recmanZi,
+		TO_DATE( :ora_toc:ora_tocZi,'YYYYMMDDHH24MISS'),
+		TO_DATE( :ora_tom:ora_tomZi,'YYYYMMDDHH24MISS'),
+		:ora_mop:ora_mopZi
+	);
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//this methode tries to update a DB record,when the update fails.
+char* ACCOUNTTHICK::storeDB()
+{
+	char* ret = NULL;
+	setKeysFromRecord();
+	ret=updateDB();
+	if(ret != NULL)
+	{
+		ret=insertDB();
+		if(ret != NULL)
+		{
+			dbAccess = false;
+			return(ret);
+		}
+	}
+	return(ret);
+}
+
+//deletes a single entry from DB
+char* ACCOUNTTHICK::deleteDB()
+{
+//
+//copy the host variables (k_...) to Oracle Host Keys (k_ora_..)
+//
+	copyKeyToHost();
+
+//
+// Do Delete 
+//
+	EXEC SQL DELETE FROM ACCOUNTTHICK
+	WHERE
+				coilno          = :k_ora_coilno AND 
+				recid           = :k_ora_recid ;
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+// Executes the SQL DELETE with a where clause
+char* ACCOUNTTHICK::deleteDB(const char* where,long* count)
+{
+	*(count) = -1L;
+// Create dynamic statement.
+//
+	strcpy((char*)dynstr.arr,"DELETE");
+	strcat((char*)dynstr.arr," FROM ACCOUNTTHICK");
+	if ( where != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, where );
+	}
+
+	dynstr.len = strlen( (char*) dynstr.arr);
+	EXEC SQL EXECUTE IMMEDIATE :dynstr;
+	oracleSqlCode = sqlca.sqlcode;
+		oracleRowsProcessed = sqlca.sqlerrd[2];
+	if (sqlca.sqlcode == 0 )
+		*(count) = sqlca.sqlerrd[2];
+	else 
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//openSetDB data with where condition and sort order.
+char* ACCOUNTTHICK::openSetDB(const char* where,char* order)
+{
+//
+// Create dynamic statement.
+//
+	strcpy((char*)dynstr.arr,"SELECT ");
+	strcat((char*)dynstr.arr,"tdate,");
+	strcat((char*)dynstr.arr,"crewno,");
+	strcat((char*)dynstr.arr,"shiftno,");
+	strcat((char*)dynstr.arr,"coilno,");
+	strcat((char*)dynstr.arr,"recid,");
+	strcat((char*)dynstr.arr,"thickchgno,");
+	strcat((char*)dynstr.arr,"thickchgpos,");
+	strcat((char*)dynstr.arr,"thickchgval,");
+	strcat((char*)dynstr.arr,"thickchgrea,");
+	strcat((char*)dynstr.arr,"minplspeed,");
+	strcat((char*)dynstr.arr,"recman,");
+	strcat((char*)dynstr.arr,"TO_CHAR(toc , 'YYYYMMDDHH24MISS'),");
+	strcat((char*)dynstr.arr,"TO_CHAR(tom , 'YYYYMMDDHH24MISS'),");
+	strcat((char*)dynstr.arr,"mop");
+
+	strcat((char*)dynstr.arr," FROM ACCOUNTTHICK ");
+	if ( where != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, where);
+	}
+	if ( order != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, order);
+	}
+
+	dynstr.len = strlen( (char*) dynstr.arr);
+	EXEC SQL PREPARE set_ACCOUNTTHICK FROM :dynstr;
+	if (sqlca.sqlcode == 0 )
+	{
+		EXEC SQL DECLARE cu_ACCOUNTTHICK CURSOR FOR set_ACCOUNTTHICK;
+		if (sqlca.sqlcode == 0 )
+			EXEC SQL OPEN cu_ACCOUNTTHICK;
+	}
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	cuFl = OPENED;
+	return ( NULL );
+}
+
+//Executes the SQL FETCH Statement .
+char* ACCOUNTTHICK::getSetDB()
+{
+	if ( cuFl != OPENED ) return ("No open Cursor Table:Me");
+	EXEC SQL FETCH cu_ACCOUNTTHICK INTO
+		:ora_tdate:ora_tdateZi,
+		:ora_crewno:ora_crewnoZi,
+		:ora_shiftno:ora_shiftnoZi,
+		:ora_coilno,
+		:ora_recid,
+		:ora_thickchgno:ora_thickchgnoZi,
+		:ora_thickchgpos:ora_thickchgposZi,
+		:ora_thickchgval:ora_thickchgvalZi,
+		:ora_thickchgrea:ora_thickchgreaZi,
+		:ora_minplspeed:ora_minplspeedZi,
+		:ora_recman:ora_recmanZi,
+		:ora_toc:ora_tocZi,
+		:ora_tom:ora_tomZi,
+		:ora_mop:ora_mopZi;
+
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		pCatch->catchError(sqlca.sqlcode);
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		return (char*) sqlca.sqlerrm.sqlerrmc ;
+	}
+	//
+	// copy host variables into Class attributes
+	//
+	copyOracleToAttribute();
+	copyHostToKey();
+	return ( NULL );
+}
+
+//Close a Oracle Cursor
+char* ACCOUNTTHICK::closeSetDB()
+{
+	EXEC SQL CLOSE cu_ACCOUNTTHICK;
+	oracleSqlCode = sqlca.sqlcode;         
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		pCatch->catchError(sqlca.sqlcode);
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		return (char*) sqlca.sqlerrm.sqlerrmc ;
+	}
+	cuFl = CLOSED;
+	return ( NULL );
+}
+
+//Executes the SQL count(key) for a where clause
+char* ACCOUNTTHICK::countDB(const char* where,long* count)
+{
+	*(count) = -1L;
+//
+// Create dynamic statement. 
+//
+	strncpy((char*)dynstr.arr,"SELECT count(coilno)", sizeof(dynstr.arr));
+	strcat((char*)dynstr.arr," FROM ACCOUNTTHICK");
+	if ( where != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, where );
+	}
+	dynstr.len = strlen( (char*) dynstr.arr);
+	EXEC SQL PREPARE c_ACCOUNTTHICK FROM :dynstr;
+	
+	if (sqlca.sqlcode == 0 )
+	{
+		EXEC SQL DECLARE ct_ACCOUNTTHICK CURSOR FOR c_ACCOUNTTHICK;
+		if (sqlca.sqlcode == 0 )
+		{
+			EXEC SQL OPEN ct_ACCOUNTTHICK;
+			if (sqlca.sqlcode == 0 )			{
+				EXEC SQL FETCH ct_ACCOUNTTHICK INTO :rowCnt;
+				if (sqlca.sqlcode == 0 )
+				*(count) = rowCnt;
+			}
+			EXEC SQL CLOSE ct_ACCOUNTTHICK;
+		}
+	}
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//private methode copy Attribute to Oracle
+//copys Object attributes into Oracle Host variables.
+void ACCOUNTTHICK::copyAttributeToOracle()
+{
+	char* ptrStr;
+	ptrStr = this->tdate();
+	if( strlen(ptrStr)< sizeof(ora_tdate.arr))
+	{
+		strncpy((char*)ora_tdate.arr, ptrStr, sizeof(ora_tdate.arr));
+		ora_tdate.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_tdate.len = 0;
+	ora_tdateZi = this->tdateZi();
+	ptrStr = this->crewno();
+	if( strlen(ptrStr)< sizeof(ora_crewno.arr))
+	{
+		strncpy((char*)ora_crewno.arr, ptrStr, sizeof(ora_crewno.arr));
+		ora_crewno.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_crewno.len = 0;
+	ora_crewnoZi = this->crewnoZi();
+	ora_shiftno = this->shiftno();
+	ora_shiftnoZi = this->shiftnoZi();
+	ptrStr = this->coilno();
+	if( strlen(ptrStr)< sizeof(ora_coilno.arr))
+	{
+		strncpy((char*)ora_coilno.arr, ptrStr, sizeof(ora_coilno.arr));
+		ora_coilno.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_coilno.len = 0;
+	ora_recid = this->recid();
+	ora_thickchgno = this->thickchgno();
+	ora_thickchgnoZi = this->thickchgnoZi();
+	ora_thickchgpos = this->thickchgpos();
+	ora_thickchgposZi = this->thickchgposZi();
+	ora_thickchgval = this->thickchgval();
+	ora_thickchgvalZi = this->thickchgvalZi();
+	ptrStr = this->thickchgrea();
+	if( strlen(ptrStr)< sizeof(ora_thickchgrea.arr))
+	{
+		strncpy((char*)ora_thickchgrea.arr, ptrStr, sizeof(ora_thickchgrea.arr));
+		ora_thickchgrea.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_thickchgrea.len = 0;
+	ora_thickchgreaZi = this->thickchgreaZi();
+	ora_minplspeed = this->minplspeed();
+	ora_minplspeedZi = this->minplspeedZi();
+	ptrStr = this->recman();
+	if( strlen(ptrStr)< sizeof(ora_recman.arr))
+	{
+		strncpy((char*)ora_recman.arr, ptrStr, sizeof(ora_recman.arr));
+		ora_recman.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_recman.len = 0;
+	ora_recmanZi = this->recmanZi();
+	ptrStr = this->toc();
+	if( strlen(ptrStr)< sizeof(ora_toc.arr))
+	{
+		strncpy((char*)ora_toc.arr, ptrStr, sizeof(ora_toc.arr));
+		ora_toc.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_toc.len = 0;
+	ora_tocZi = this->tocZi();
+	ptrStr = this->tom();
+	if( strlen(ptrStr)< sizeof(ora_tom.arr))
+	{
+		strncpy((char*)ora_tom.arr, ptrStr, sizeof(ora_tom.arr));
+		ora_tom.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_tom.len = 0;
+	ora_tomZi = this->tomZi();
+	ptrStr = this->mop();
+	if( strlen(ptrStr)< sizeof(ora_mop.arr))
+	{
+		strncpy((char*)ora_mop.arr, ptrStr, sizeof(ora_mop.arr));
+		ora_mop.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_mop.len = 0;
+	ora_mopZi = this->mopZi();
+}
+
+//private methode copy Oracle to Attribute
+//copys Oracle Host variables into Object attributes.
+void ACCOUNTTHICK::copyOracleToAttribute()
+{
+	ora_tdate.arr[ora_tdate.len] = '\0';
+	this->set_tdate((char*) ora_tdate.arr);
+	this->set_tdateZi((short)ora_tdateZi);
+	ora_crewno.arr[ora_crewno.len] = '\0';
+	this->set_crewno((char*) ora_crewno.arr);
+	this->set_crewnoZi((short)ora_crewnoZi);
+	this->set_shiftno((short)ora_shiftno);
+	this->set_shiftnoZi((short)ora_shiftnoZi);
+	ora_coilno.arr[ora_coilno.len] = '\0';
+	this->set_coilno((char*) ora_coilno.arr);
+	this->set_recid((long)ora_recid);
+	this->set_thickchgno((short)ora_thickchgno);
+	this->set_thickchgnoZi((short)ora_thickchgnoZi);
+	this->set_thickchgpos((long)ora_thickchgpos);
+	this->set_thickchgposZi((short)ora_thickchgposZi);
+	this->set_thickchgval((long)ora_thickchgval);
+	this->set_thickchgvalZi((short)ora_thickchgvalZi);
+	ora_thickchgrea.arr[ora_thickchgrea.len] = '\0';
+	this->set_thickchgrea((char*) ora_thickchgrea.arr);
+	this->set_thickchgreaZi((short)ora_thickchgreaZi);
+	this->set_minplspeed((long)ora_minplspeed);
+	this->set_minplspeedZi((short)ora_minplspeedZi);
+	ora_recman.arr[ora_recman.len] = '\0';
+	this->set_recman((char*) ora_recman.arr);
+	this->set_recmanZi((short)ora_recmanZi);
+	ora_toc.arr[ora_toc.len] = '\0';
+	this->set_toc((char*) ora_toc.arr);
+	this->set_tocZi((short)ora_tocZi);
+	ora_tom.arr[ora_tom.len] = '\0';
+	this->set_tom((char*) ora_tom.arr);
+	this->set_tomZi((short)ora_tomZi);
+	ora_mop.arr[ora_mop.len] = '\0';
+	this->set_mop((char*) ora_mop.arr);
+	this->set_mopZi((short)ora_mopZi);
+}
+
+//private methode copy Key to host
+//copys Object attributes into Oralce Key variables.
+void ACCOUNTTHICK::copyKeyToHost()
+{
+	char* ptrStr;
+	ptrStr = this->k_coilno();
+	if( strlen(ptrStr)< sizeof(k_ora_coilno.arr))
+	{
+		strncpy((char*)k_ora_coilno.arr, ptrStr, sizeof(k_ora_coilno.arr));
+		k_ora_coilno.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		k_ora_coilno.len = 0;
+	k_ora_recid = this->k_recid();
+}
+
+//private methode copy Host to Key
+// copys Oracle Host Key variables into Object Key attributes.
+void ACCOUNTTHICK::copyHostToKey()
+{
+	ora_coilno.arr[ora_coilno.len] = '\0';
+	this->set_k_coilno((char*) ora_coilno.arr);
+	this->set_k_recid((long)ora_recid);
+}
+
+//private methode log Oracle message information
+void ACCOUNTTHICK::logOraMessageInfo()
+{
+	LOG d("ACCOUNTTHICK::logOraMessageInfo()");
+	sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+	oraca.orastxt.orastxtc[oraca.orastxt.orastxtl] = '\0';
+	oraca.orasfnm.orasfnmc[oraca.orasfnm.orasfnml] = '\0';
+	
+	//* negating a error code submitted perhaps positively.
+	if (sqlca.sqlcode > 0) sqlca.sqlcode *= -1;
+	
+	//* Distribute fault text, SQL statement and file in the Debug System.
+	d << "ORA-Error: "<< sqlca.sqlerrm.sqlerrmc; d.Info();
+	d << "OracaText: "<< oraca.orastxt.orastxtc; d.Info();
+	d << "in line " << oraca.oraslnr << " in file " << oraca.orasfnm.orasfnmc; d.Info();
+}
+
+//this methode stores the unique key attributes
+void ACCOUNTTHICK::setPrimKey(char* arg1,long arg2)
+{
+	strncpy( (char*)c_k_coilno, arg1, sizeof(c_k_coilno));
+	c_k_coilno[sizeof(c_k_coilno)-1] = '\0';
+	l_k_recid = arg2;
+}
+
+//this methode stores the unique key attributes
+void ACCOUNTTHICK::initInsertKeys(char* arg1,long arg2)
+{
+	setPrimKey(arg1,arg2);
+	strncpy( (char*)c_coilno, arg1, sizeof(c_coilno));
+	c_coilno[sizeof(c_coilno)-1] = '\0';
+	l_recid = arg2;
+}
+
+//this methode set the unique key attributes from the DB Record Attributes
+void ACCOUNTTHICK::setKeysFromRecord()
+{
+	set_k_coilno( coilno() );
+	set_k_recid( recid() );
+}
+
+//			         
+//O P E R A T O R  + 
+//===================
+//                   
+ACCOUNTTHICK ACCOUNTTHICK::operator+(const ACCOUNTTHICK &inst) const
+{
+	ACCOUNTTHICK ptrACCOUNTTHICK(*this);
+//----------------------------------------------------------
+	if(inst.tdateZi() != -1)
+	{
+		ptrACCOUNTTHICK.set_tdate(inst.tdate());
+		ptrACCOUNTTHICK.set_tdateZi(inst.tdateZi());
+	}
+//----------------------------------------------------------
+	if(inst.crewnoZi() != -1)
+	{
+		ptrACCOUNTTHICK.set_crewno(inst.crewno());
+		ptrACCOUNTTHICK.set_crewnoZi(inst.crewnoZi());
+	}
+//----------------------------------------------------------
+	if(inst.shiftnoZi() != -1)
+	{
+		ptrACCOUNTTHICK.set_shiftno(inst.shiftno());
+		ptrACCOUNTTHICK.set_shiftnoZi(inst.shiftnoZi());
+	}
+//----------------------------------------------------------
+	ptrACCOUNTTHICK.set_coilno(inst.coilno());
+//----------------------------------------------------------
+	ptrACCOUNTTHICK.set_recid(inst.recid());
+//----------------------------------------------------------
+	if(inst.thickchgnoZi() != -1)
+	{
+		ptrACCOUNTTHICK.set_thickchgno(inst.thickchgno());
+		ptrACCOUNTTHICK.set_thickchgnoZi(inst.thickchgnoZi());
+	}
+//----------------------------------------------------------
+	if(inst.thickchgposZi() != -1)
+	{
+		ptrACCOUNTTHICK.set_thickchgpos(inst.thickchgpos());
+		ptrACCOUNTTHICK.set_thickchgposZi(inst.thickchgposZi());
+	}
+//----------------------------------------------------------
+	if(inst.thickchgvalZi() != -1)
+	{
+		ptrACCOUNTTHICK.set_thickchgval(inst.thickchgval());
+		ptrACCOUNTTHICK.set_thickchgvalZi(inst.thickchgvalZi());
+	}
+//----------------------------------------------------------
+	if(inst.thickchgreaZi() != -1)
+	{
+		ptrACCOUNTTHICK.set_thickchgrea(inst.thickchgrea());
+		ptrACCOUNTTHICK.set_thickchgreaZi(inst.thickchgreaZi());
+	}
+//----------------------------------------------------------
+	if(inst.minplspeedZi() != -1)
+	{
+		ptrACCOUNTTHICK.set_minplspeed(inst.minplspeed());
+		ptrACCOUNTTHICK.set_minplspeedZi(inst.minplspeedZi());
+	}
+//----------------------------------------------------------
+	if(inst.recmanZi() != -1)
+	{
+		ptrACCOUNTTHICK.set_recman(inst.recman());
+		ptrACCOUNTTHICK.set_recmanZi(inst.recmanZi());
+	}
+//----------------------------------------------------------
+	if(inst.tocZi() != -1)
+	{
+		ptrACCOUNTTHICK.set_toc(inst.toc());
+		ptrACCOUNTTHICK.set_tocZi(inst.tocZi());
+	}
+//----------------------------------------------------------
+	if(inst.tomZi() != -1)
+	{
+		ptrACCOUNTTHICK.set_tom(inst.tom());
+		ptrACCOUNTTHICK.set_tomZi(inst.tomZi());
+	}
+//----------------------------------------------------------
+	if(inst.mopZi() != -1)
+	{
+		ptrACCOUNTTHICK.set_mop(inst.mop());
+		ptrACCOUNTTHICK.set_mopZi(inst.mopZi());
+	}
+	return( ptrACCOUNTTHICK );
+}
+
+//			         
+//O P E R A T O R  = 
+//===================
+//                   
+const ACCOUNTTHICK& ACCOUNTTHICK::operator=(const ACCOUNTTHICK &inst)
+{
+//----------------------------------------------------------
+	this->set_tdate(inst.tdate());
+	this->set_tdateZi(inst.tdateZi());
+//----------------------------------------------------------
+	this->set_crewno(inst.crewno());
+	this->set_crewnoZi(inst.crewnoZi());
+//----------------------------------------------------------
+	this->set_shiftno(inst.shiftno());
+	this->set_shiftnoZi(inst.shiftnoZi());
+//----------------------------------------------------------
+	this->set_coilno(inst.coilno());
+//----------------------------------------------------------
+	this->set_recid(inst.recid());
+//----------------------------------------------------------
+	this->set_thickchgno(inst.thickchgno());
+	this->set_thickchgnoZi(inst.thickchgnoZi());
+//----------------------------------------------------------
+	this->set_thickchgpos(inst.thickchgpos());
+	this->set_thickchgposZi(inst.thickchgposZi());
+//----------------------------------------------------------
+	this->set_thickchgval(inst.thickchgval());
+	this->set_thickchgvalZi(inst.thickchgvalZi());
+//----------------------------------------------------------
+	this->set_thickchgrea(inst.thickchgrea());
+	this->set_thickchgreaZi(inst.thickchgreaZi());
+//----------------------------------------------------------
+	this->set_minplspeed(inst.minplspeed());
+	this->set_minplspeedZi(inst.minplspeedZi());
+//----------------------------------------------------------
+	this->set_recman(inst.recman());
+	this->set_recmanZi(inst.recmanZi());
+//----------------------------------------------------------
+	this->set_toc(inst.toc());
+	this->set_tocZi(inst.tocZi());
+//----------------------------------------------------------
+	this->set_tom(inst.tom());
+	this->set_tomZi(inst.tomZi());
+//----------------------------------------------------------
+	this->set_mop(inst.mop());
+	this->set_mopZi(inst.mopZi());
+	return(*this);
+}
+

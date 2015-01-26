@@ -1,0 +1,978 @@
+/* *******************************************************************/
+/* *   File               :    COILRECDEAL.pc
+/* *   Short Description  :    ORACLE DATABASE ACCESS
+/* * 		                   COIL MANAGE TABLE
+/* *   Author             :    DB CODE Generator
+/* *   Created Date       :    13.06.2013
+/* *   Tech.Support       :    LiuWeiZhao. email:welljoe@hotmail.com 
+/* *******************************************************************/
+/* *   Copyright (c)  SGAI AI 2009   All Rights Reserved
+/* *******************************************************************/
+
+#include "LOG.h"
+#include "COILRECDEAL.h"
+//
+// Declare ORACLE Host Variables
+//
+
+#define SQLCA_STORAGE_CLASS static
+#define ORACA_STORAGE_CLASS static
+EXEC SQL INCLUDE sqlca;
+EXEC SQL INCLUDE oraca;
+
+#define OPENED 1
+#define CLOSED 2
+EXEC SQL BEGIN DECLARE SECTION;
+/* ****************************************************************************** */
+/*                                                                                */
+/*                               define Oracle                                    */
+/*                               Host Variables                                   */
+/*                                                          .                     */
+/*                                                                                */
+/* ****************************************************************************** */
+
+static VARCHAR	dynstr[16000];
+static long		rowCnt;       
+static long		cuFl;         
+//Unit[-]:Product coil number.Limit:[-,-]
+static VARCHAR  ora_pcoil[17];
+//Unit[-]:Hot coil number.Limit:[-,-]
+static VARCHAR  ora_hcoil[17];
+//Unit[-]:钢种材料碳当量.Limit:[-,-]
+static long     ora_ceq;
+static short    ora_ceqZi;
+//Unit[-]:原料带钢厚度.Limit:[-,-]
+static long     ora_hentry;
+static short    ora_hentryZi;
+//Unit[-]:产品带钢厚度.Limit:[-,-]
+static long     ora_hexit;
+static short    ora_hexitZi;
+//Unit[-]:产品带钢宽度.Limit:[-,-]
+static long     ora_width;
+static short    ora_widthZi;
+//Unit[-]:钢种材料.Limit:[-,-]
+static VARCHAR  ora_alloycode[6];
+static short    ora_alloycodeZi;
+//Unit[-]:生产开始时间.Limit:[-,-]
+static VARCHAR  ora_prodstart[17];
+static short    ora_prodstartZi;
+//Unit[-]:生产结束时间.Limit:[-,-]
+static VARCHAR  ora_prodend[17];
+static short    ora_prodendZi;
+//Unit[-]:Shift No.Limit:[-,-]
+static short    ora_shiftno;
+static short    ora_shiftnoZi;
+//Unit[-]:Crew No.Limit:[-,-]
+static VARCHAR  ora_crewno[3];
+static short    ora_crewnoZi;
+//Unit[-]:创建时间.Limit:[-,-]
+static VARCHAR  ora_toc[15];
+static short    ora_tocZi;
+//Unit[-]:最后修改时间.Limit:[-,-]
+static VARCHAR  ora_tom[15];
+static short    ora_tomZi;
+//Unit[-]:创建或者修改者.Limit:[-,-]
+static VARCHAR  ora_mop[121];
+static short    ora_mopZi;
+// Host arguments for Primary key
+static VARCHAR  k_ora_pcoil[17];   // Unit[-]:Product coil number.Limit:[-,-]
+static VARCHAR  k_ora_hcoil[17];   // Unit[-]:Hot coil number.Limit:[-,-]
+
+EXEC SQL END DECLARE SECTION;             
+             
+// 				             
+//C O N S T R U C T O R S    
+//=======================    
+//                           
+COILRECDEAL::COILRECDEAL()
+{
+	initial();                                             
+}
+
+//					
+//C O P Y  -  C O N S T R U C T O R 
+//==================================
+COILRECDEAL::COILRECDEAL(const COILRECDEAL &inst)
+{
+//----------------------------------------------------------
+	this->set_pcoil(inst.pcoil());
+//----------------------------------------------------------
+	this->set_hcoil(inst.hcoil());
+//----------------------------------------------------------
+	this->set_ceq(inst.ceq());
+	this->set_ceqZi(inst.ceqZi());
+//----------------------------------------------------------
+	this->set_hentry(inst.hentry());
+	this->set_hentryZi(inst.hentryZi());
+//----------------------------------------------------------
+	this->set_hexit(inst.hexit());
+	this->set_hexitZi(inst.hexitZi());
+//----------------------------------------------------------
+	this->set_width(inst.width());
+	this->set_widthZi(inst.widthZi());
+//----------------------------------------------------------
+	this->set_alloycode(inst.alloycode());
+	this->set_alloycodeZi(inst.alloycodeZi());
+//----------------------------------------------------------
+	this->set_prodstart(inst.prodstart());
+	this->set_prodstartZi(inst.prodstartZi());
+//----------------------------------------------------------
+	this->set_prodend(inst.prodend());
+	this->set_prodendZi(inst.prodendZi());
+//----------------------------------------------------------
+	this->set_shiftno(inst.shiftno());
+	this->set_shiftnoZi(inst.shiftnoZi());
+//----------------------------------------------------------
+	this->set_crewno(inst.crewno());
+	this->set_crewnoZi(inst.crewnoZi());
+//----------------------------------------------------------
+	this->set_toc(inst.toc());
+	this->set_tocZi(inst.tocZi());
+//----------------------------------------------------------
+	this->set_tom(inst.tom());
+	this->set_tomZi(inst.tomZi());
+//----------------------------------------------------------
+	this->set_mop(inst.mop());
+	this->set_mopZi(inst.mopZi());
+}
+
+//					
+//C O N S T R U C T O R -W I T H P A R A M E T E R S
+//===================================================
+//					
+COILRECDEAL::COILRECDEAL(char* arg1,char* arg2)
+{
+	initial();					               
+	setPrimKey (arg1,arg2);    
+	//read DB record                           
+	dbAccess = true;                           
+	dbMessage = readDB();                      
+	if ( dbMessage != NULL ) dbAccess = false; 
+}
+
+//D E S T R U C T O R S  
+//=======================
+//                       
+COILRECDEAL::~COILRECDEAL()
+{
+}
+
+//initialise all member variables
+void COILRECDEAL::initial()
+{
+	set_pcoil("");
+	set_hcoil("");
+	set_ceq(0);
+	set_ceqZi(-1);
+	set_hentry(0);
+	set_hentryZi(-1);
+	set_hexit(0);
+	set_hexitZi(-1);
+	set_width(0);
+	set_widthZi(-1);
+	set_alloycode("");
+	set_alloycodeZi(-1);
+	set_prodstart("");
+	set_prodstartZi(-1);
+	set_prodend("");
+	set_prodendZi(-1);
+	set_shiftno(0);
+	set_shiftnoZi(-1);
+	set_crewno("");
+	set_crewnoZi(-1);
+	set_toc("");
+	set_tocZi(-1);
+	set_tom("");
+	set_tomZi(-1);
+	set_mop("");
+	set_mopZi(-1);
+	//initialies Primary key members
+	set_k_pcoil("");
+	set_k_hcoil("");
+// Initial Oracle Options
+	oraca.oradbgf  = 1; // gather debug informations       
+	oraca.oracchf  = 1; // gather cursor cache informations
+	oraca.orahchf  = 1; // check heap                      
+	oraca.orastxtf = 3; // always save last sql-statement  
+	                                                       
+	EXEC ORACLE OPTION (ORACA=YES);                        
+	EXEC ORACLE OPTION (HOLD_CURSOR=YES);                  
+	EXEC ORACLE OPTION (RELEASE_CURSOR=NO);                
+	EXEC ORACLE OPTION (MAXOPENCURSORS=50);                
+	pCatch = CatchDbaxError::instance();                   
+	                                                       
+}
+
+//read a single entry from DB.
+char* COILRECDEAL::readDB()
+{
+	//
+	//copy the host variables (k_...) to Oracle Host Keys (k_ora_..)
+	//
+		copyKeyToHost();
+	//
+	// Do SELECT
+	//
+	EXEC SQL SELECT 
+		pcoil,
+		hcoil,
+		ceq,
+		hentry,
+		hexit,
+		width,
+		alloycode,
+		prodstart,
+		prodend,
+		shiftno,
+		crewno,
+		TO_CHAR(toc , 'YYYYMMDDHH24MISS'),
+		TO_CHAR(tom , 'YYYYMMDDHH24MISS'),
+		mop
+	INTO
+		:ora_pcoil,
+		:ora_hcoil,
+		:ora_ceq:ora_ceqZi,
+		:ora_hentry:ora_hentryZi,
+		:ora_hexit:ora_hexitZi,
+		:ora_width:ora_widthZi,
+		:ora_alloycode:ora_alloycodeZi,
+		:ora_prodstart:ora_prodstartZi,
+		:ora_prodend:ora_prodendZi,
+		:ora_shiftno:ora_shiftnoZi,
+		:ora_crewno:ora_crewnoZi,
+		:ora_toc:ora_tocZi,
+		:ora_tom:ora_tomZi,
+		:ora_mop:ora_mopZi
+	FROM COILRECDEAL
+	WHERE
+				pcoil           = :k_ora_pcoil AND 
+				hcoil           = :k_ora_hcoil ;
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	//
+	// copy host variables into Class attributes
+	//
+	copyOracleToAttribute();
+	return ( NULL );
+}
+
+//updates a single entry from DB
+char* COILRECDEAL::updateDB()
+{
+	//
+	//copy the host variables (k_...) to Oracle Host Keys (k_ora_..)
+	//
+		copyKeyToHost();
+	//copy the attributes ( ...) to Oracle Hosts( ora_..)
+	//
+		copyAttributeToOracle();
+	//
+	// Do UPDATE
+	//
+	EXEC SQL UPDATE COILRECDEAL
+	SET 
+		pcoil               =:ora_pcoil,
+		hcoil               =:ora_hcoil,
+		ceq                 =:ora_ceq:ora_ceqZi,
+		hentry              =:ora_hentry:ora_hentryZi,
+		hexit               =:ora_hexit:ora_hexitZi,
+		width               =:ora_width:ora_widthZi,
+		alloycode           =:ora_alloycode:ora_alloycodeZi,
+		prodstart           =:ora_prodstart:ora_prodstartZi,
+		prodend             =:ora_prodend:ora_prodendZi,
+		shiftno             =:ora_shiftno:ora_shiftnoZi,
+		crewno              =:ora_crewno:ora_crewnoZi,
+		toc                 =TO_DATE( :ora_toc:ora_tocZi,'YYYYMMDDHH24MISS'),
+		tom                 =TO_DATE( :ora_tom:ora_tomZi,'YYYYMMDDHH24MISS'),
+		mop                 =:ora_mop:ora_mopZi
+	WHERE
+		pcoil           = :k_ora_pcoil AND 
+		hcoil           = :k_ora_hcoil ;
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//inserts a single entry from DB
+char* COILRECDEAL::insertDB()
+{
+	//
+	//copy the attributes ( ...) to Oracle Hosts( ora_..) 
+	//
+		copyAttributeToOracle();
+	//
+	// Do INSERT
+	//
+	EXEC SQL INSERT INTO COILRECDEAL
+	(
+		pcoil,
+		hcoil,
+		ceq,
+		hentry,
+		hexit,
+		width,
+		alloycode,
+		prodstart,
+		prodend,
+		shiftno,
+		crewno,
+		toc,
+		tom,
+		mop
+	)
+
+	VALUES
+	(
+		:ora_pcoil,
+		:ora_hcoil,
+		:ora_ceq:ora_ceqZi,
+		:ora_hentry:ora_hentryZi,
+		:ora_hexit:ora_hexitZi,
+		:ora_width:ora_widthZi,
+		:ora_alloycode:ora_alloycodeZi,
+		:ora_prodstart:ora_prodstartZi,
+		:ora_prodend:ora_prodendZi,
+		:ora_shiftno:ora_shiftnoZi,
+		:ora_crewno:ora_crewnoZi,
+		TO_DATE( :ora_toc:ora_tocZi,'YYYYMMDDHH24MISS'),
+		TO_DATE( :ora_tom:ora_tomZi,'YYYYMMDDHH24MISS'),
+		:ora_mop:ora_mopZi
+	);
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//this methode tries to update a DB record,when the update fails.
+char* COILRECDEAL::storeDB()
+{
+	char* ret = NULL;
+	setKeysFromRecord();
+	ret=updateDB();
+	if(ret != NULL)
+	{
+		ret=insertDB();
+		if(ret != NULL)
+		{
+			dbAccess = false;
+			return(ret);
+		}
+	}
+	return(ret);
+}
+
+//deletes a single entry from DB
+char* COILRECDEAL::deleteDB()
+{
+//
+//copy the host variables (k_...) to Oracle Host Keys (k_ora_..)
+//
+	copyKeyToHost();
+
+//
+// Do Delete 
+//
+	EXEC SQL DELETE FROM COILRECDEAL
+	WHERE
+				pcoil           = :k_ora_pcoil AND 
+				hcoil           = :k_ora_hcoil ;
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+// Executes the SQL DELETE with a where clause
+char* COILRECDEAL::deleteDB(const char* where,long* count)
+{
+	*(count) = -1L;
+// Create dynamic statement.
+//
+	strcpy((char*)dynstr.arr,"DELETE");
+	strcat((char*)dynstr.arr," FROM COILRECDEAL");
+	if ( where != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, where );
+	}
+
+	dynstr.len = strlen( (char*) dynstr.arr);
+	EXEC SQL EXECUTE IMMEDIATE :dynstr;
+	oracleSqlCode = sqlca.sqlcode;
+		oracleRowsProcessed = sqlca.sqlerrd[2];
+	if (sqlca.sqlcode == 0 )
+		*(count) = sqlca.sqlerrd[2];
+	else 
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//openSetDB data with where condition and sort order.
+char* COILRECDEAL::openSetDB(const char* where,char* order)
+{
+//
+// Create dynamic statement.
+//
+	strcpy((char*)dynstr.arr,"SELECT ");
+	strcat((char*)dynstr.arr,"pcoil,");
+	strcat((char*)dynstr.arr,"hcoil,");
+	strcat((char*)dynstr.arr,"ceq,");
+	strcat((char*)dynstr.arr,"hentry,");
+	strcat((char*)dynstr.arr,"hexit,");
+	strcat((char*)dynstr.arr,"width,");
+	strcat((char*)dynstr.arr,"alloycode,");
+	strcat((char*)dynstr.arr,"prodstart,");
+	strcat((char*)dynstr.arr,"prodend,");
+	strcat((char*)dynstr.arr,"shiftno,");
+	strcat((char*)dynstr.arr,"crewno,");
+	strcat((char*)dynstr.arr,"TO_CHAR(toc , 'YYYYMMDDHH24MISS'),");
+	strcat((char*)dynstr.arr,"TO_CHAR(tom , 'YYYYMMDDHH24MISS'),");
+	strcat((char*)dynstr.arr,"mop");
+
+	strcat((char*)dynstr.arr," FROM COILRECDEAL ");
+	if ( where != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, where);
+	}
+	if ( order != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, order);
+	}
+
+	dynstr.len = strlen( (char*) dynstr.arr);
+	EXEC SQL PREPARE set_COILRECDEAL FROM :dynstr;
+	if (sqlca.sqlcode == 0 )
+	{
+		EXEC SQL DECLARE cu_COILRECDEAL CURSOR FOR set_COILRECDEAL;
+		if (sqlca.sqlcode == 0 )
+			EXEC SQL OPEN cu_COILRECDEAL;
+	}
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	cuFl = OPENED;
+	return ( NULL );
+}
+
+//Executes the SQL FETCH Statement .
+char* COILRECDEAL::getSetDB()
+{
+	if ( cuFl != OPENED ) return ("No open Cursor Table:Me");
+	EXEC SQL FETCH cu_COILRECDEAL INTO
+		:ora_pcoil,
+		:ora_hcoil,
+		:ora_ceq:ora_ceqZi,
+		:ora_hentry:ora_hentryZi,
+		:ora_hexit:ora_hexitZi,
+		:ora_width:ora_widthZi,
+		:ora_alloycode:ora_alloycodeZi,
+		:ora_prodstart:ora_prodstartZi,
+		:ora_prodend:ora_prodendZi,
+		:ora_shiftno:ora_shiftnoZi,
+		:ora_crewno:ora_crewnoZi,
+		:ora_toc:ora_tocZi,
+		:ora_tom:ora_tomZi,
+		:ora_mop:ora_mopZi;
+
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		pCatch->catchError(sqlca.sqlcode);
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		return (char*) sqlca.sqlerrm.sqlerrmc ;
+	}
+	//
+	// copy host variables into Class attributes
+	//
+	copyOracleToAttribute();
+	copyHostToKey();
+	return ( NULL );
+}
+
+//Close a Oracle Cursor
+char* COILRECDEAL::closeSetDB()
+{
+	EXEC SQL CLOSE cu_COILRECDEAL;
+	oracleSqlCode = sqlca.sqlcode;         
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		pCatch->catchError(sqlca.sqlcode);
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		return (char*) sqlca.sqlerrm.sqlerrmc ;
+	}
+	cuFl = CLOSED;
+	return ( NULL );
+}
+
+//Executes the SQL count(key) for a where clause
+char* COILRECDEAL::countDB(const char* where,long* count)
+{
+	*(count) = -1L;
+//
+// Create dynamic statement. 
+//
+	strncpy((char*)dynstr.arr,"SELECT count(pcoil)", sizeof(dynstr.arr));
+	strcat((char*)dynstr.arr," FROM COILRECDEAL");
+	if ( where != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, where );
+	}
+	dynstr.len = strlen( (char*) dynstr.arr);
+	EXEC SQL PREPARE c_COILRECDEAL FROM :dynstr;
+	
+	if (sqlca.sqlcode == 0 )
+	{
+		EXEC SQL DECLARE ct_COILRECDEAL CURSOR FOR c_COILRECDEAL;
+		if (sqlca.sqlcode == 0 )
+		{
+			EXEC SQL OPEN ct_COILRECDEAL;
+			if (sqlca.sqlcode == 0 )			{
+				EXEC SQL FETCH ct_COILRECDEAL INTO :rowCnt;
+				if (sqlca.sqlcode == 0 )
+				*(count) = rowCnt;
+			}
+			EXEC SQL CLOSE ct_COILRECDEAL;
+		}
+	}
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//private methode copy Attribute to Oracle
+//copys Object attributes into Oracle Host variables.
+void COILRECDEAL::copyAttributeToOracle()
+{
+	char* ptrStr;
+	ptrStr = this->pcoil();
+	if( strlen(ptrStr)< sizeof(ora_pcoil.arr))
+	{
+		strncpy((char*)ora_pcoil.arr, ptrStr, sizeof(ora_pcoil.arr));
+		ora_pcoil.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_pcoil.len = 0;
+	ptrStr = this->hcoil();
+	if( strlen(ptrStr)< sizeof(ora_hcoil.arr))
+	{
+		strncpy((char*)ora_hcoil.arr, ptrStr, sizeof(ora_hcoil.arr));
+		ora_hcoil.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_hcoil.len = 0;
+	ora_ceq = this->ceq();
+	ora_ceqZi = this->ceqZi();
+	ora_hentry = this->hentry();
+	ora_hentryZi = this->hentryZi();
+	ora_hexit = this->hexit();
+	ora_hexitZi = this->hexitZi();
+	ora_width = this->width();
+	ora_widthZi = this->widthZi();
+	ptrStr = this->alloycode();
+	if( strlen(ptrStr)< sizeof(ora_alloycode.arr))
+	{
+		strncpy((char*)ora_alloycode.arr, ptrStr, sizeof(ora_alloycode.arr));
+		ora_alloycode.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_alloycode.len = 0;
+	ora_alloycodeZi = this->alloycodeZi();
+	ptrStr = this->prodstart();
+	if( strlen(ptrStr)< sizeof(ora_prodstart.arr))
+	{
+		strncpy((char*)ora_prodstart.arr, ptrStr, sizeof(ora_prodstart.arr));
+		ora_prodstart.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_prodstart.len = 0;
+	ora_prodstartZi = this->prodstartZi();
+	ptrStr = this->prodend();
+	if( strlen(ptrStr)< sizeof(ora_prodend.arr))
+	{
+		strncpy((char*)ora_prodend.arr, ptrStr, sizeof(ora_prodend.arr));
+		ora_prodend.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_prodend.len = 0;
+	ora_prodendZi = this->prodendZi();
+	ora_shiftno = this->shiftno();
+	ora_shiftnoZi = this->shiftnoZi();
+	ptrStr = this->crewno();
+	if( strlen(ptrStr)< sizeof(ora_crewno.arr))
+	{
+		strncpy((char*)ora_crewno.arr, ptrStr, sizeof(ora_crewno.arr));
+		ora_crewno.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_crewno.len = 0;
+	ora_crewnoZi = this->crewnoZi();
+	ptrStr = this->toc();
+	if( strlen(ptrStr)< sizeof(ora_toc.arr))
+	{
+		strncpy((char*)ora_toc.arr, ptrStr, sizeof(ora_toc.arr));
+		ora_toc.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_toc.len = 0;
+	ora_tocZi = this->tocZi();
+	ptrStr = this->tom();
+	if( strlen(ptrStr)< sizeof(ora_tom.arr))
+	{
+		strncpy((char*)ora_tom.arr, ptrStr, sizeof(ora_tom.arr));
+		ora_tom.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_tom.len = 0;
+	ora_tomZi = this->tomZi();
+	ptrStr = this->mop();
+	if( strlen(ptrStr)< sizeof(ora_mop.arr))
+	{
+		strncpy((char*)ora_mop.arr, ptrStr, sizeof(ora_mop.arr));
+		ora_mop.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_mop.len = 0;
+	ora_mopZi = this->mopZi();
+}
+
+//private methode copy Oracle to Attribute
+//copys Oracle Host variables into Object attributes.
+void COILRECDEAL::copyOracleToAttribute()
+{
+	ora_pcoil.arr[ora_pcoil.len] = '\0';
+	this->set_pcoil((char*) ora_pcoil.arr);
+	ora_hcoil.arr[ora_hcoil.len] = '\0';
+	this->set_hcoil((char*) ora_hcoil.arr);
+	this->set_ceq((long)ora_ceq);
+	this->set_ceqZi((short)ora_ceqZi);
+	this->set_hentry((long)ora_hentry);
+	this->set_hentryZi((short)ora_hentryZi);
+	this->set_hexit((long)ora_hexit);
+	this->set_hexitZi((short)ora_hexitZi);
+	this->set_width((long)ora_width);
+	this->set_widthZi((short)ora_widthZi);
+	ora_alloycode.arr[ora_alloycode.len] = '\0';
+	this->set_alloycode((char*) ora_alloycode.arr);
+	this->set_alloycodeZi((short)ora_alloycodeZi);
+	ora_prodstart.arr[ora_prodstart.len] = '\0';
+	this->set_prodstart((char*) ora_prodstart.arr);
+	this->set_prodstartZi((short)ora_prodstartZi);
+	ora_prodend.arr[ora_prodend.len] = '\0';
+	this->set_prodend((char*) ora_prodend.arr);
+	this->set_prodendZi((short)ora_prodendZi);
+	this->set_shiftno((short)ora_shiftno);
+	this->set_shiftnoZi((short)ora_shiftnoZi);
+	ora_crewno.arr[ora_crewno.len] = '\0';
+	this->set_crewno((char*) ora_crewno.arr);
+	this->set_crewnoZi((short)ora_crewnoZi);
+	ora_toc.arr[ora_toc.len] = '\0';
+	this->set_toc((char*) ora_toc.arr);
+	this->set_tocZi((short)ora_tocZi);
+	ora_tom.arr[ora_tom.len] = '\0';
+	this->set_tom((char*) ora_tom.arr);
+	this->set_tomZi((short)ora_tomZi);
+	ora_mop.arr[ora_mop.len] = '\0';
+	this->set_mop((char*) ora_mop.arr);
+	this->set_mopZi((short)ora_mopZi);
+}
+
+//private methode copy Key to host
+//copys Object attributes into Oralce Key variables.
+void COILRECDEAL::copyKeyToHost()
+{
+	char* ptrStr;
+	ptrStr = this->k_pcoil();
+	if( strlen(ptrStr)< sizeof(k_ora_pcoil.arr))
+	{
+		strncpy((char*)k_ora_pcoil.arr, ptrStr, sizeof(k_ora_pcoil.arr));
+		k_ora_pcoil.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		k_ora_pcoil.len = 0;
+	ptrStr = this->k_hcoil();
+	if( strlen(ptrStr)< sizeof(k_ora_hcoil.arr))
+	{
+		strncpy((char*)k_ora_hcoil.arr, ptrStr, sizeof(k_ora_hcoil.arr));
+		k_ora_hcoil.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		k_ora_hcoil.len = 0;
+}
+
+//private methode copy Host to Key
+// copys Oracle Host Key variables into Object Key attributes.
+void COILRECDEAL::copyHostToKey()
+{
+	ora_pcoil.arr[ora_pcoil.len] = '\0';
+	this->set_k_pcoil((char*) ora_pcoil.arr);
+	ora_hcoil.arr[ora_hcoil.len] = '\0';
+	this->set_k_hcoil((char*) ora_hcoil.arr);
+}
+
+//private methode log Oracle message information
+void COILRECDEAL::logOraMessageInfo()
+{
+	LOG d("COILRECDEAL::logOraMessageInfo()");
+	sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+	oraca.orastxt.orastxtc[oraca.orastxt.orastxtl] = '\0';
+	oraca.orasfnm.orasfnmc[oraca.orasfnm.orasfnml] = '\0';
+	
+	//* negating a error code submitted perhaps positively.
+	if (sqlca.sqlcode > 0) sqlca.sqlcode *= -1;
+	
+	//* Distribute fault text, SQL statement and file in the Debug System.
+	d << "ORA-Error: "<< sqlca.sqlerrm.sqlerrmc; d.Info();
+	d << "OracaText: "<< oraca.orastxt.orastxtc; d.Info();
+	d << "in line " << oraca.oraslnr << " in file " << oraca.orasfnm.orasfnmc; d.Info();
+}
+
+//this methode stores the unique key attributes
+void COILRECDEAL::setPrimKey(char* arg1,char* arg2)
+{
+	strncpy( (char*)c_k_pcoil, arg1, sizeof(c_k_pcoil));
+	c_k_pcoil[sizeof(c_k_pcoil)-1] = '\0';
+	strncpy( (char*)c_k_hcoil, arg2, sizeof(c_k_hcoil));
+	c_k_hcoil[sizeof(c_k_hcoil)-1] = '\0';
+}
+
+//this methode stores the unique key attributes
+void COILRECDEAL::initInsertKeys(char* arg1,char* arg2)
+{
+	setPrimKey(arg1,arg2);
+	strncpy( (char*)c_pcoil, arg1, sizeof(c_pcoil));
+	c_pcoil[sizeof(c_pcoil)-1] = '\0';
+	strncpy( (char*)c_hcoil, arg2, sizeof(c_hcoil));
+	c_hcoil[sizeof(c_hcoil)-1] = '\0';
+}
+
+//this methode set the unique key attributes from the DB Record Attributes
+void COILRECDEAL::setKeysFromRecord()
+{
+	set_k_pcoil( pcoil() );
+	set_k_hcoil( hcoil() );
+}
+
+//			         
+//O P E R A T O R  + 
+//===================
+//                   
+COILRECDEAL COILRECDEAL::operator+(const COILRECDEAL &inst) const
+{
+	COILRECDEAL ptrCOILRECDEAL(*this);
+//----------------------------------------------------------
+	ptrCOILRECDEAL.set_pcoil(inst.pcoil());
+//----------------------------------------------------------
+	ptrCOILRECDEAL.set_hcoil(inst.hcoil());
+//----------------------------------------------------------
+	if(inst.ceqZi() != -1)
+	{
+		ptrCOILRECDEAL.set_ceq(inst.ceq());
+		ptrCOILRECDEAL.set_ceqZi(inst.ceqZi());
+	}
+//----------------------------------------------------------
+	if(inst.hentryZi() != -1)
+	{
+		ptrCOILRECDEAL.set_hentry(inst.hentry());
+		ptrCOILRECDEAL.set_hentryZi(inst.hentryZi());
+	}
+//----------------------------------------------------------
+	if(inst.hexitZi() != -1)
+	{
+		ptrCOILRECDEAL.set_hexit(inst.hexit());
+		ptrCOILRECDEAL.set_hexitZi(inst.hexitZi());
+	}
+//----------------------------------------------------------
+	if(inst.widthZi() != -1)
+	{
+		ptrCOILRECDEAL.set_width(inst.width());
+		ptrCOILRECDEAL.set_widthZi(inst.widthZi());
+	}
+//----------------------------------------------------------
+	if(inst.alloycodeZi() != -1)
+	{
+		ptrCOILRECDEAL.set_alloycode(inst.alloycode());
+		ptrCOILRECDEAL.set_alloycodeZi(inst.alloycodeZi());
+	}
+//----------------------------------------------------------
+	if(inst.prodstartZi() != -1)
+	{
+		ptrCOILRECDEAL.set_prodstart(inst.prodstart());
+		ptrCOILRECDEAL.set_prodstartZi(inst.prodstartZi());
+	}
+//----------------------------------------------------------
+	if(inst.prodendZi() != -1)
+	{
+		ptrCOILRECDEAL.set_prodend(inst.prodend());
+		ptrCOILRECDEAL.set_prodendZi(inst.prodendZi());
+	}
+//----------------------------------------------------------
+	if(inst.shiftnoZi() != -1)
+	{
+		ptrCOILRECDEAL.set_shiftno(inst.shiftno());
+		ptrCOILRECDEAL.set_shiftnoZi(inst.shiftnoZi());
+	}
+//----------------------------------------------------------
+	if(inst.crewnoZi() != -1)
+	{
+		ptrCOILRECDEAL.set_crewno(inst.crewno());
+		ptrCOILRECDEAL.set_crewnoZi(inst.crewnoZi());
+	}
+//----------------------------------------------------------
+	if(inst.tocZi() != -1)
+	{
+		ptrCOILRECDEAL.set_toc(inst.toc());
+		ptrCOILRECDEAL.set_tocZi(inst.tocZi());
+	}
+//----------------------------------------------------------
+	if(inst.tomZi() != -1)
+	{
+		ptrCOILRECDEAL.set_tom(inst.tom());
+		ptrCOILRECDEAL.set_tomZi(inst.tomZi());
+	}
+//----------------------------------------------------------
+	if(inst.mopZi() != -1)
+	{
+		ptrCOILRECDEAL.set_mop(inst.mop());
+		ptrCOILRECDEAL.set_mopZi(inst.mopZi());
+	}
+	return( ptrCOILRECDEAL );
+}
+
+//			         
+//O P E R A T O R  = 
+//===================
+//                   
+const COILRECDEAL& COILRECDEAL::operator=(const COILRECDEAL &inst)
+{
+//----------------------------------------------------------
+	this->set_pcoil(inst.pcoil());
+//----------------------------------------------------------
+	this->set_hcoil(inst.hcoil());
+//----------------------------------------------------------
+	this->set_ceq(inst.ceq());
+	this->set_ceqZi(inst.ceqZi());
+//----------------------------------------------------------
+	this->set_hentry(inst.hentry());
+	this->set_hentryZi(inst.hentryZi());
+//----------------------------------------------------------
+	this->set_hexit(inst.hexit());
+	this->set_hexitZi(inst.hexitZi());
+//----------------------------------------------------------
+	this->set_width(inst.width());
+	this->set_widthZi(inst.widthZi());
+//----------------------------------------------------------
+	this->set_alloycode(inst.alloycode());
+	this->set_alloycodeZi(inst.alloycodeZi());
+//----------------------------------------------------------
+	this->set_prodstart(inst.prodstart());
+	this->set_prodstartZi(inst.prodstartZi());
+//----------------------------------------------------------
+	this->set_prodend(inst.prodend());
+	this->set_prodendZi(inst.prodendZi());
+//----------------------------------------------------------
+	this->set_shiftno(inst.shiftno());
+	this->set_shiftnoZi(inst.shiftnoZi());
+//----------------------------------------------------------
+	this->set_crewno(inst.crewno());
+	this->set_crewnoZi(inst.crewnoZi());
+//----------------------------------------------------------
+	this->set_toc(inst.toc());
+	this->set_tocZi(inst.tocZi());
+//----------------------------------------------------------
+	this->set_tom(inst.tom());
+	this->set_tomZi(inst.tomZi());
+//----------------------------------------------------------
+	this->set_mop(inst.mop());
+	this->set_mopZi(inst.mopZi());
+	return(*this);
+}
+

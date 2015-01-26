@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type='text/xsl' href='_UpgradeReport_Files/UpgradeReport.xslt'?><UpgradeLog>
+<Properties><Property Name="Solution" Value="DBCodeGenerator">
+</Property><Property Name="解决方案文件" Value="E:\utlProj\DBCodeGenerator\DBCodeGenerator.sln">
+</Property><Property Name="用户选项文件" Value="E:\utlProj\DBCodeGenerator\DBCodeGenerator.suo">
+</Property><Property Name="Date" Value="2013年6月13日">
+</Property><Property Name="Time" Value="16:34">
+</Property></Properties><Event ErrorLevel="0" Project="" Source="DBCodeGenerator.sln" Description="文件已成功备份为 E:\utlProj\DBCodeGenerator\Backup\DBCodeGenerator.sln">
+</Event><Event ErrorLevel="0" Project="" Source="DBCodeGenerator.suo" Description="文件已成功备份为 E:\utlProj\DBCodeGenerator\Backup\DBCodeGenerator.suo">
+</Event><Event ErrorLevel="0" Project="DBCodeGenerator" Source="DBCodeGenerator\DBCodeGenerator.vbproj" Description="项目文件已成功备份为 E:\utlProj\DBCodeGenerator\Backup\DBCodeGenerator\DBCodeGenerator.vbproj">
+</Event><Event ErrorLevel="0" Project="DBCodeGenerator" Source="DBCodeGenerator\DBCodeGenerator.vbproj.user" Description="项目用户文件成功备份为 E:\utlProj\DBCodeGenerator\Backup\DBCodeGenerator\DBCodeGenerator.vbproj.user">
+</Event><Event ErrorLevel="0" Project="DBCodeGenerator" Source="DBCodeGenerator\AboutMe.Designer.vb" Description="文件已成功备份为 E:\utlProj\DBCodeGenerator\Backup\DBCodeGenerator\AboutMe.Designer.vb">
+</Event><Event ErrorLevel="0" Project="DBCodeGenerator" Source="DBCodeGenerator\AboutMe.vb" Description="文件已成功备份为 E:\utlProj\DBCodeGenerator\Backup\DBCodeGenerator\AboutMe.vb">
+</Event><Event ErrorLevel="0" Project="DBCodeGenerator" Source="DBCodeGenerator\ApplicationEvents.vb" Description="文件已成功备份为 E:\utlProj\DBCodeGenerator\Backup\DBCodeGenerator\ApplicationEvents.vb">
+</Event><Event ErrorLevel="0" Project="DBCodeGenerator" Source="DBCodeGenerator\DataBaseCodeGenerator.Designer.vb" Description="文件已成功备份为 E:\utlProj\DBCodeGenerator\Backup\DBCodeGenerator\DataBaseCodeGenerator.Designer.vb">
+</Event><Event ErrorLevel="0" Project="DBCodeGenerator" Source="DBCodeGenerator\DataBaseCodeGenerator.vb" Description="文件已成功备份为 E:\utlProj\DBCodeGenerator\Backup\DBCodeGenerator\DataBaseCodeGenerator.vb">
+</Event><Event ErrorLevel="0" Project="DBCodeGenerator" Source="DBCodeGenerator\DataTypes.Designer.vb" Description="文件已成功备份为 E:\utlProj\DBCodeGenerator\Backup\DBCodeGenerator\DataTypes.Designer.vb">
+</Event><Event ErrorLevel="0" Project="DBCodeGenerator" Source="DBCodeGenerator\DataTypes.vb" Description="文件已成功备份为 E:\utlProj\DBCodeGenerator\Backup\DBCodeGenerator\DataTypes.vb">
+</Event><Event ErrorLevel="0" Project="DBCodeGenerator" Source="DBCodeGenerator\ImporExcelDlg.Designer.vb" Description="文件已成功备份为 E:\utlProj\DBCodeGenerator\Backup\DBCodeGenerator\ImporExcelDlg.Designer.vb">
+</Event><Event ErrorLevel="0" Project="DBCodeGenerator" Source="DBCodeGenerator\ImporExcelDlg.vb" Description="文件已成功备份为 E:\utlProj\DBCodeGenerator\Backup\DBCodeGenerator\ImporExcelDlg.vb">
+</Event><Event ErrorLevel="0" Project="DBCodeGenerator" Source="DBCodeGenerator\ModuleGlobalDefine.vb" Description="文件已成功备份为 E:\utlProj\DBCodeGenerator\Backup\DBCodeGenerator\ModuleGlobalDefine.vb">
+</Event><Event ErrorLevel="0" Project="DBCodeGenerator" Source="DBCodeGenerator\My Project\AssemblyInfo.vb" Description="文件已成功备份为 E:\utlProj\DBCodeGenerator\Backup\DBCodeGenerator\My Project\AssemblyInfo.vb">
+</Event><Event ErrorLevel="0" Project="DBCodeGenerator" Source="DBCodeGenerator\My Project\Application.Designer.vb" Description="文件已成功备份为 E:\utlProj\DBCodeGenerator\Backup\DBCodeGenerator\My Project\Application.Designer.vb">
+</Event><Event ErrorLevel="0" Project="DBCodeGenerator" Source="DBCodeGenerator\My Project\Resources.Designer.vb" Description="文件已成功备份为 E:\utlProj\DBCodeGenerator\Backup\DBCodeGenerator\My Project\Resources.Designer.vb">
+</Event><Event ErrorLevel="0" Project="DBCodeGenerator" Source="DBCodeGenerator\My Project\Settings.Designer.vb" Description="文件已成功备份为 E:\utlProj\DBCodeGenerator\Backup\DBCodeGenerator\My Project\Settings.Designer.vb">
+</Event><Event ErrorLevel="0" Project="DBCodeGenerator" Source="DBCodeGenerator\ProjectOptionsDlg.Designer.vb" Description="文件已成功备份为 E:\utlProj\DBCodeGenerator\Backup\DBCodeGenerator\ProjectOptionsDlg.Designer.vb">
+</Event><Event ErrorLevel="0" Project="DBCodeGenerator" Source="DBCodeGenerator\ProjectOptionsDlg.vb" Description="文件已成功备份为 E:\utlProj\DBCodeGenerator\Backup\DBCodeGenerator\ProjectOptionsDlg.vb">
+</Event><Event ErrorLevel="0" Project="DBCodeGenerator" Source="DBCodeGenerator\TableFieldDlg.Designer.vb" Description="文件已成功备份为 E:\utlProj\DBCodeGenerator\Backup\DBCodeGenerator\TableFieldDlg.Designer.vb">
+</Event><Event ErrorLevel="0" Project="DBCodeGenerator" Source="DBCodeGenerator\TableFieldDlg.vb" Description="文件已成功备份为 E:\utlProj\DBCodeGenerator\Backup\DBCodeGenerator\TableFieldDlg.vb">
+</Event><Event ErrorLevel="0" Project="DBCodeGenerator" Source="DBCodeGenerator\My Project\Application.myapp" Description="文件已成功备份为 E:\utlProj\DBCodeGenerator\Backup\DBCodeGenerator\My Project\Application.myapp">
+</Event><Event ErrorLevel="0" Project="DBCodeGenerator" Source="DBCodeGenerator\My Project\Settings.settings" Description="文件已成功备份为 E:\utlProj\DBCodeGenerator\Backup\DBCodeGenerator\My Project\Settings.settings">
+</Event><Event ErrorLevel="0" Project="DBCodeGenerator" Source="DBCodeGenerator\log.JPG" Description="文件已成功备份为 E:\utlProj\DBCodeGenerator\Backup\DBCodeGenerator\log.JPG">
+</Event><Event ErrorLevel="0" Project="DBCodeGenerator" Source="DBCodeGenerator\add.bmp" Description="文件已成功备份为 E:\utlProj\DBCodeGenerator\Backup\DBCodeGenerator\add.bmp">
+</Event><Event ErrorLevel="0" Project="DBCodeGenerator" Source="DBCodeGenerator\brows.bmp" Description="文件已成功备份为 E:\utlProj\DBCodeGenerator\Backup\DBCodeGenerator\brows.bmp">
+</Event><Event ErrorLevel="0" Project="DBCodeGenerator" Source="DBCodeGenerator\DBCodeGenerator_TemporaryKey.pfx" Description="文件已成功备份为 E:\utlProj\DBCodeGenerator\Backup\DBCodeGenerator\DBCodeGenerator_TemporaryKey.pfx">
+</Event><Event ErrorLevel="0" Project="DBCodeGenerator" Source="DBCodeGenerator\Icon1.ico" Description="文件已成功备份为 E:\utlProj\DBCodeGenerator\Backup\DBCodeGenerator\Icon1.ico">
+</Event><Event ErrorLevel="0" Project="DBCodeGenerator" Source="DBCodeGenerator\AboutMe.resx" Description="文件已成功备份为 E:\utlProj\DBCodeGenerator\Backup\DBCodeGenerator\AboutMe.resx">
+</Event><Event ErrorLevel="0" Project="DBCodeGenerator" Source="DBCodeGenerator\DataBaseCodeGenerator.resx" Description="文件已成功备份为 E:\utlProj\DBCodeGenerator\Backup\DBCodeGenerator\DataBaseCodeGenerator.resx">
+</Event><Event ErrorLevel="0" Project="DBCodeGenerator" Source="DBCodeGenerator\DataTypes.resx" Description="文件已成功备份为 E:\utlProj\DBCodeGenerator\Backup\DBCodeGenerator\DataTypes.resx">
+</Event><Event ErrorLevel="0" Project="DBCodeGenerator" Source="DBCodeGenerator\ImporExcelDlg.resx" Description="文件已成功备份为 E:\utlProj\DBCodeGenerator\Backup\DBCodeGenerator\ImporExcelDlg.resx">
+</Event><Event ErrorLevel="0" Project="DBCodeGenerator" Source="DBCodeGenerator\My Project\Resources.resx" Description="文件已成功备份为 E:\utlProj\DBCodeGenerator\Backup\DBCodeGenerator\My Project\Resources.resx">
+</Event><Event ErrorLevel="0" Project="DBCodeGenerator" Source="DBCodeGenerator\ProjectOptionsDlg.resx" Description="文件已成功备份为 E:\utlProj\DBCodeGenerator\Backup\DBCodeGenerator\ProjectOptionsDlg.resx">
+</Event><Event ErrorLevel="0" Project="DBCodeGenerator" Source="DBCodeGenerator\TableFieldDlg.resx" Description="文件已成功备份为 E:\utlProj\DBCodeGenerator\Backup\DBCodeGenerator\TableFieldDlg.resx">
+</Event><Event ErrorLevel="0" Project="DBCodeGenerator" Source="DBCodeGenerator\My Project\app.manifest" Description="文件已成功备份为 E:\utlProj\DBCodeGenerator\Backup\DBCodeGenerator\My Project\app.manifest">
+</Event><Event ErrorLevel="1" Project="DBCodeGenerator" Source="DBCodeGenerator\DBCodeGenerator.vbproj" Description="您的项目以 .NET Framework 2.0 或 3.0 为目标。如果您的项目使用的程序集需要更新的 .NET Framework，则项目生成将失败。通过单击项目菜单上的“属性”，然后在“.NET Framework”下拉框中选择一个新版本，可以更改 .NET Framework 的版本。(在 Visual Basic 中，可在单击“高级编辑器选项...”按钮时显示的“编译”选项卡上找到此下拉框。)">
+</Event><Event ErrorLevel="0" Project="DBCodeGenerator" Source="DBCodeGenerator\DBCodeGenerator.vbproj" Description="项目已成功转换">
+</Event><Event ErrorLevel="3" Project="DBCodeGenerator" Source="DBCodeGenerator\DBCodeGenerator.vbproj" Description="Converted">
+</Event><Event ErrorLevel="0" Project="" Source="DBCodeGenerator.sln" Description="成功转换解决方案">
+</Event><Event ErrorLevel="3" Project="" Source="DBCodeGenerator.sln" Description="Converted">
+</Event><Event ErrorLevel="0" Project="DBCodeGenerator" Source="DBCodeGenerator\DBCodeGenerator.vbproj" Description="扫描完成: 项目文件不需要升级。">
+</Event></UpgradeLog>

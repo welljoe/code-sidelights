@@ -1,0 +1,806 @@
+/* *******************************************************************/
+/* *   File               :    OFFCHECKC.pc
+/* *   Short Description  :    ORACLE DATABASE ACCESS
+/* * 		                   ACCOUNT OFFCHECKC TABLE
+/* *   Author             :    DB CODE Generator
+/* *   Created Date       :    13.06.2013
+/* *   Tech.Support       :    LiuWeiZhao. email:welljoe@hotmail.com 
+/* *******************************************************************/
+/* *   Copyright (c)  SGAI AI 2009   All Rights Reserved
+/* *******************************************************************/
+
+#include "LOG.h"
+#include "OFFCHECKC.h"
+//
+// Declare ORACLE Host Variables
+//
+
+#define SQLCA_STORAGE_CLASS static
+#define ORACA_STORAGE_CLASS static
+EXEC SQL INCLUDE sqlca;
+EXEC SQL INCLUDE oraca;
+
+#define OPENED 1
+#define CLOSED 2
+EXEC SQL BEGIN DECLARE SECTION;
+/* ****************************************************************************** */
+/*                                                                                */
+/*                               define Oracle                                    */
+/*                               Host Variables                                   */
+/*                                                          .                     */
+/*                                                                                */
+/* ****************************************************************************** */
+
+static VARCHAR	dynstr[16000];
+static long		rowCnt;       
+static long		cuFl;         
+//Unit[-]:日期.Limit:[-,-]
+static VARCHAR  ora_coildate[33];
+//Unit[-]:冷轧卷号.Limit:[-,-]
+static VARCHAR  ora_coilno[23];
+static short    ora_coilnoZi;
+//Unit[-]:钢种.Limit:[-,-]
+static VARCHAR  ora_alloycode[33];
+static short    ora_alloycodeZi;
+//Unit[-]:板形.Limit:[-,-]
+static VARCHAR  ora_flat[33];
+static short    ora_flatZi;
+//Unit[-]:翘曲度.Limit:[-,-]
+static VARCHAR  ora_bend[33];
+static short    ora_bendZi;
+//Unit[-]:记录人.Limit:[-,-]
+static VARCHAR  ora_codeman[33];
+static short    ora_codemanZi;
+//Unit[-]:创建时间.Limit:[-,-]
+static VARCHAR  ora_toc[15];
+static short    ora_tocZi;
+//Unit[-]:最后修改时间.Limit:[-,-]
+static VARCHAR  ora_tom[15];
+static short    ora_tomZi;
+//Unit[-]:创建或者修改者.Limit:[-,-]
+static VARCHAR  ora_mop[121];
+static short    ora_mopZi;
+// Host arguments for Primary key
+
+EXEC SQL END DECLARE SECTION;            
+             
+// 				             
+//C O N S T R U C T O R S    
+//=======================    
+//                           
+OFFCHECKC::OFFCHECKC()
+{
+	initial();                                             
+}
+
+//					
+//C O P Y  -  C O N S T R U C T O R 
+//==================================
+OFFCHECKC::OFFCHECKC(const OFFCHECKC &inst)
+{
+//----------------------------------------------------------
+	this->set_coildate(inst.coildate());
+//----------------------------------------------------------
+	this->set_coilno(inst.coilno());
+	this->set_coilnoZi(inst.coilnoZi());
+//----------------------------------------------------------
+	this->set_alloycode(inst.alloycode());
+	this->set_alloycodeZi(inst.alloycodeZi());
+//----------------------------------------------------------
+	this->set_flat(inst.flat());
+	this->set_flatZi(inst.flatZi());
+//----------------------------------------------------------
+	this->set_bend(inst.bend());
+	this->set_bendZi(inst.bendZi());
+//----------------------------------------------------------
+	this->set_codeman(inst.codeman());
+	this->set_codemanZi(inst.codemanZi());
+//----------------------------------------------------------
+	this->set_toc(inst.toc());
+	this->set_tocZi(inst.tocZi());
+//----------------------------------------------------------
+	this->set_tom(inst.tom());
+	this->set_tomZi(inst.tomZi());
+//----------------------------------------------------------
+	this->set_mop(inst.mop());
+	this->set_mopZi(inst.mopZi());
+}
+
+//					
+//C O N S T R U C T O R -W I T H P A R A M E T E R S
+//===================================================
+//					
+OFFCHECKC::OFFCHECKC()
+{
+	initial();					               
+	setPrimKey ();    
+	//read DB record                           
+	dbAccess = true;                           
+	dbMessage = readDB();                      
+	if ( dbMessage != NULL ) dbAccess = false; 
+}
+
+//D E S T R U C T O R S  
+//=======================
+//                       
+OFFCHECKC::~OFFCHECKC()
+{
+}
+
+//initialise all member variables
+void OFFCHECKC::initial()
+{
+	set_coildate("");
+	set_coilno("");
+	set_coilnoZi(-1);
+	set_alloycode("");
+	set_alloycodeZi(-1);
+	set_flat("");
+	set_flatZi(-1);
+	set_bend("");
+	set_bendZi(-1);
+	set_codeman("");
+	set_codemanZi(-1);
+	set_toc("");
+	set_tocZi(-1);
+	set_tom("");
+	set_tomZi(-1);
+	set_mop("");
+	set_mopZi(-1);
+	//initialies Primary key members
+// Initial Oracle Options
+	oraca.oradbgf  = 1; // gather debug informations       
+	oraca.oracchf  = 1; // gather cursor cache informations
+	oraca.orahchf  = 1; // check heap                      
+	oraca.orastxtf = 3; // always save last sql-statement  
+	                                                       
+	EXEC ORACLE OPTION (ORACA=YES);                        
+	EXEC ORACLE OPTION (HOLD_CURSOR=YES);                  
+	EXEC ORACLE OPTION (RELEASE_CURSOR=NO);                
+	EXEC ORACLE OPTION (MAXOPENCURSORS=50);                
+	pCatch = CatchDbaxError::instance();                   
+	                                                       
+}
+
+//read a single entry from DB.
+char* OFFCHECKC::readDB()
+{
+	//
+	//copy the host variables (k_...) to Oracle Host Keys (k_ora_..)
+	//
+		copyKeyToHost();
+	//
+	// Do SELECT
+	//
+	EXEC SQL SELECT 
+		coildate,
+		coilno,
+		alloycode,
+		flat,
+		bend,
+		codeman,
+		toc,
+		tom,
+		mop
+	INTO
+		:ora_coildate,
+		:ora_coilno:ora_coilnoZi,
+		:ora_alloycode:ora_alloycodeZi,
+		:ora_flat:ora_flatZi,
+		:ora_bend:ora_bendZi,
+		:ora_codeman:ora_codemanZi,
+		:ora_toc:ora_tocZi,
+		:ora_tom:ora_tomZi,
+		:ora_mop:ora_mopZi
+	FROM OFFCHECKC
+	W;
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	//
+	// copy host variables into Class attributes
+	//
+	copyOracleToAttribute();
+	return ( NULL );
+}
+
+//updates a single entry from DB
+char* OFFCHECKC::updateDB()
+{
+	//
+	//copy the host variables (k_...) to Oracle Host Keys (k_ora_..)
+	//
+		copyKeyToHost();
+	//copy the attributes ( ...) to Oracle Hosts( ora_..)
+	//
+		copyAttributeToOracle();
+	//
+	// Do UPDATE
+	//
+	EXEC SQL UPDATE OFFCHECKC
+	SET 
+		coildate            =:ora_coildate,
+		coilno              =:ora_coilno:ora_coilnoZi,
+		alloycode           =:ora_alloycode:ora_alloycodeZi,
+		flat                =:ora_flat:ora_flatZi,
+		bend                =:ora_bend:ora_bendZi,
+		codeman             =:ora_codeman:ora_codemanZi,
+		toc                 =:ora_toc:ora_tocZi,
+		tom                 =:ora_tom:ora_tomZi,
+		mop                 =:ora_mop:ora_mopZi
+	W;
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//inserts a single entry from DB
+char* OFFCHECKC::insertDB()
+{
+	//
+	//copy the attributes ( ...) to Oracle Hosts( ora_..) 
+	//
+		copyAttributeToOracle();
+	//
+	// Do INSERT
+	//
+	EXEC SQL INSERT INTO OFFCHECKC
+	(
+		coildate,
+		coilno,
+		alloycode,
+		flat,
+		bend,
+		codeman,
+		toc,
+		tom,
+		mop
+	)
+
+	VALUES
+	(
+		:ora_coildate,
+		:ora_coilno:ora_coilnoZi,
+		:ora_alloycode:ora_alloycodeZi,
+		:ora_flat:ora_flatZi,
+		:ora_bend:ora_bendZi,
+		:ora_codeman:ora_codemanZi,
+		:ora_toc:ora_tocZi,
+		:ora_tom:ora_tomZi,
+		:ora_mop:ora_mopZi
+	);
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//this methode tries to update a DB record,when the update fails.
+char* OFFCHECKC::storeDB()
+{
+	char* ret = NULL;
+	setKeysFromRecord();
+	ret=updateDB();
+	if(ret != NULL)
+	{
+		ret=insertDB();
+		if(ret != NULL)
+		{
+			dbAccess = false;
+			return(ret);
+		}
+	}
+	return(ret);
+}
+
+//deletes a single entry from DB
+char* OFFCHECKC::deleteDB()
+{
+//
+//copy the host variables (k_...) to Oracle Host Keys (k_ora_..)
+//
+	copyKeyToHost();
+
+//
+// Do Delete 
+//
+	EXEC SQL DELETE FROM OFFCHECKC
+	W;
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+// Executes the SQL DELETE with a where clause
+char* OFFCHECKC::deleteDB(const char* where,long* count)
+{
+	*(count) = -1L;
+// Create dynamic statement.
+//
+	strcpy((char*)dynstr.arr,"DELETE");
+	strcat((char*)dynstr.arr," FROM OFFCHECKC");
+	if ( where != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, where );
+	}
+
+	dynstr.len = strlen( (char*) dynstr.arr);
+	EXEC SQL EXECUTE IMMEDIATE :dynstr;
+	oracleSqlCode = sqlca.sqlcode;
+		oracleRowsProcessed = sqlca.sqlerrd[2];
+	if (sqlca.sqlcode == 0 )
+		*(count) = sqlca.sqlerrd[2];
+	else 
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//openSetDB data with where condition and sort order.
+char* OFFCHECKC::openSetDB(const char* where,char* order)
+{
+//
+// Create dynamic statement.
+//
+	strcpy((char*)dynstr.arr,"SELECT ");
+	strcat((char*)dynstr.arr,"coildate,");
+	strcat((char*)dynstr.arr,"coilno,");
+	strcat((char*)dynstr.arr,"alloycode,");
+	strcat((char*)dynstr.arr,"flat,");
+	strcat((char*)dynstr.arr,"bend,");
+	strcat((char*)dynstr.arr,"codeman,");
+	strcat((char*)dynstr.arr,"toc,");
+	strcat((char*)dynstr.arr,"tom,");
+	strcat((char*)dynstr.arr,"mop");
+
+	strcat((char*)dynstr.arr," FROM OFFCHECKC ");
+	if ( where != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, where);
+	}
+	if ( order != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, order);
+	}
+
+	dynstr.len = strlen( (char*) dynstr.arr);
+	EXEC SQL PREPARE set_OFFCHECKC FROM :dynstr;
+	if (sqlca.sqlcode == 0 )
+	{
+		EXEC SQL DECLARE cu_OFFCHECKC CURSOR FOR set_OFFCHECKC;
+		if (sqlca.sqlcode == 0 )
+			EXEC SQL OPEN cu_OFFCHECKC;
+	}
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	cuFl = OPENED;
+	return ( NULL );
+}
+
+//Executes the SQL FETCH Statement .
+char* OFFCHECKC::getSetDB()
+{
+	if ( cuFl != OPENED ) return ("No open Cursor Table:Me");
+	EXEC SQL FETCH cu_OFFCHECKC INTO
+		:ora_coildate,
+		:ora_coilno:ora_coilnoZi,
+		:ora_alloycode:ora_alloycodeZi,
+		:ora_flat:ora_flatZi,
+		:ora_bend:ora_bendZi,
+		:ora_codeman:ora_codemanZi,
+		:ora_toc:ora_tocZi,
+		:ora_tom:ora_tomZi,
+		:ora_mop:ora_mopZi;
+
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		pCatch->catchError(sqlca.sqlcode);
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		return (char*) sqlca.sqlerrm.sqlerrmc ;
+	}
+	//
+	// copy host variables into Class attributes
+	//
+	copyOracleToAttribute();
+	copyHostToKey();
+	return ( NULL );
+}
+
+//Close a Oracle Cursor
+char* OFFCHECKC::closeSetDB()
+{
+	EXEC SQL CLOSE cu_OFFCHECKC;
+	oracleSqlCode = sqlca.sqlcode;         
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		pCatch->catchError(sqlca.sqlcode);
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		return (char*) sqlca.sqlerrm.sqlerrmc ;
+	}
+	cuFl = CLOSED;
+	return ( NULL );
+}
+
+//Executes the SQL count(key) for a where clause
+char* OFFCHECKC::countDB(const char* where,long* count)
+{
+	*(count) = -1L;
+//
+// Create dynamic statement. 
+//
+	strncpy((char*)dynstr.arr,"SELECT count(*)", sizeof(dynstr.arr));
+	strcat((char*)dynstr.arr," FROM OFFCHECKC");
+	if ( where != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, where );
+	}
+	dynstr.len = strlen( (char*) dynstr.arr);
+	EXEC SQL PREPARE c_OFFCHECKC FROM :dynstr;
+	
+	if (sqlca.sqlcode == 0 )
+	{
+		EXEC SQL DECLARE ct_OFFCHECKC CURSOR FOR c_OFFCHECKC;
+		if (sqlca.sqlcode == 0 )
+		{
+			EXEC SQL OPEN ct_OFFCHECKC;
+			if (sqlca.sqlcode == 0 )			{
+				EXEC SQL FETCH ct_OFFCHECKC INTO :rowCnt;
+				if (sqlca.sqlcode == 0 )
+				*(count) = rowCnt;
+			}
+			EXEC SQL CLOSE ct_OFFCHECKC;
+		}
+	}
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//private methode copy Attribute to Oracle
+//copys Object attributes into Oracle Host variables.
+void OFFCHECKC::copyAttributeToOracle()
+{
+	char* ptrStr;
+	ptrStr = this->coildate();
+	if( strlen(ptrStr)< sizeof(ora_coildate.arr))
+	{
+		strncpy((char*)ora_coildate.arr, ptrStr, sizeof(ora_coildate.arr));
+		ora_coildate.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_coildate.len = 0;
+	ptrStr = this->coilno();
+	if( strlen(ptrStr)< sizeof(ora_coilno.arr))
+	{
+		strncpy((char*)ora_coilno.arr, ptrStr, sizeof(ora_coilno.arr));
+		ora_coilno.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_coilno.len = 0;
+	ora_coilnoZi = this->coilnoZi();
+	ptrStr = this->alloycode();
+	if( strlen(ptrStr)< sizeof(ora_alloycode.arr))
+	{
+		strncpy((char*)ora_alloycode.arr, ptrStr, sizeof(ora_alloycode.arr));
+		ora_alloycode.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_alloycode.len = 0;
+	ora_alloycodeZi = this->alloycodeZi();
+	ptrStr = this->flat();
+	if( strlen(ptrStr)< sizeof(ora_flat.arr))
+	{
+		strncpy((char*)ora_flat.arr, ptrStr, sizeof(ora_flat.arr));
+		ora_flat.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_flat.len = 0;
+	ora_flatZi = this->flatZi();
+	ptrStr = this->bend();
+	if( strlen(ptrStr)< sizeof(ora_bend.arr))
+	{
+		strncpy((char*)ora_bend.arr, ptrStr, sizeof(ora_bend.arr));
+		ora_bend.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_bend.len = 0;
+	ora_bendZi = this->bendZi();
+	ptrStr = this->codeman();
+	if( strlen(ptrStr)< sizeof(ora_codeman.arr))
+	{
+		strncpy((char*)ora_codeman.arr, ptrStr, sizeof(ora_codeman.arr));
+		ora_codeman.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_codeman.len = 0;
+	ora_codemanZi = this->codemanZi();
+	ptrStr = this->toc();
+	if( strlen(ptrStr)< sizeof(ora_toc.arr))
+	{
+		strncpy((char*)ora_toc.arr, ptrStr, sizeof(ora_toc.arr));
+		ora_toc.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_toc.len = 0;
+	ora_tocZi = this->tocZi();
+	ptrStr = this->tom();
+	if( strlen(ptrStr)< sizeof(ora_tom.arr))
+	{
+		strncpy((char*)ora_tom.arr, ptrStr, sizeof(ora_tom.arr));
+		ora_tom.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_tom.len = 0;
+	ora_tomZi = this->tomZi();
+	ptrStr = this->mop();
+	if( strlen(ptrStr)< sizeof(ora_mop.arr))
+	{
+		strncpy((char*)ora_mop.arr, ptrStr, sizeof(ora_mop.arr));
+		ora_mop.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_mop.len = 0;
+	ora_mopZi = this->mopZi();
+}
+
+//private methode copy Oracle to Attribute
+//copys Oracle Host variables into Object attributes.
+void OFFCHECKC::copyOracleToAttribute()
+{
+	ora_coildate.arr[ora_coildate.len] = '\0';
+	this->set_coildate((char*) ora_coildate.arr);
+	ora_coilno.arr[ora_coilno.len] = '\0';
+	this->set_coilno((char*) ora_coilno.arr);
+	this->set_coilnoZi((short)ora_coilnoZi);
+	ora_alloycode.arr[ora_alloycode.len] = '\0';
+	this->set_alloycode((char*) ora_alloycode.arr);
+	this->set_alloycodeZi((short)ora_alloycodeZi);
+	ora_flat.arr[ora_flat.len] = '\0';
+	this->set_flat((char*) ora_flat.arr);
+	this->set_flatZi((short)ora_flatZi);
+	ora_bend.arr[ora_bend.len] = '\0';
+	this->set_bend((char*) ora_bend.arr);
+	this->set_bendZi((short)ora_bendZi);
+	ora_codeman.arr[ora_codeman.len] = '\0';
+	this->set_codeman((char*) ora_codeman.arr);
+	this->set_codemanZi((short)ora_codemanZi);
+	ora_toc.arr[ora_toc.len] = '\0';
+	this->set_toc((char*) ora_toc.arr);
+	this->set_tocZi((short)ora_tocZi);
+	ora_tom.arr[ora_tom.len] = '\0';
+	this->set_tom((char*) ora_tom.arr);
+	this->set_tomZi((short)ora_tomZi);
+	ora_mop.arr[ora_mop.len] = '\0';
+	this->set_mop((char*) ora_mop.arr);
+	this->set_mopZi((short)ora_mopZi);
+}
+
+//private methode copy Key to host
+//copys Object attributes into Oralce Key variables.
+void OFFCHECKC::copyKeyToHost()
+{
+	char* ptrStr;
+}
+
+//private methode copy Host to Key
+// copys Oracle Host Key variables into Object Key attributes.
+void OFFCHECKC::copyHostToKey()
+{
+}
+
+//private methode log Oracle message information
+void OFFCHECKC::logOraMessageInfo()
+{
+	LOG d("OFFCHECKC::logOraMessageInfo()");
+	sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+	oraca.orastxt.orastxtc[oraca.orastxt.orastxtl] = '\0';
+	oraca.orasfnm.orasfnmc[oraca.orasfnm.orasfnml] = '\0';
+	
+	//* negating a error code submitted perhaps positively.
+	if (sqlca.sqlcode > 0) sqlca.sqlcode *= -1;
+	
+	//* Distribute fault text, SQL statement and file in the Debug System.
+	d << "ORA-Error: "<< sqlca.sqlerrm.sqlerrmc; d.Info();
+	d << "OracaText: "<< oraca.orastxt.orastxtc; d.Info();
+	d << "in line " << oraca.oraslnr << " in file " << oraca.orasfnm.orasfnmc; d.Info();
+}
+
+//this methode stores the unique key attributes
+void OFFCHECKC::setPrimKey()
+{
+}
+
+//this methode stores the unique key attributes
+void OFFCHECKC::initInsertKeys()
+{
+	setPrimKey();
+}
+
+//this methode set the unique key attributes from the DB Record Attributes
+void OFFCHECKC::setKeysFromRecord()
+{
+}
+
+//			         
+//O P E R A T O R  + 
+//===================
+//                   
+OFFCHECKC OFFCHECKC::operator+(const OFFCHECKC &inst) const
+{
+	OFFCHECKC ptrOFFCHECKC(*this);
+//----------------------------------------------------------
+	ptrOFFCHECKC.set_coildate(inst.coildate());
+//----------------------------------------------------------
+	if(inst.coilnoZi() != -1)
+	{
+		ptrOFFCHECKC.set_coilno(inst.coilno());
+		ptrOFFCHECKC.set_coilnoZi(inst.coilnoZi());
+	}
+//----------------------------------------------------------
+	if(inst.alloycodeZi() != -1)
+	{
+		ptrOFFCHECKC.set_alloycode(inst.alloycode());
+		ptrOFFCHECKC.set_alloycodeZi(inst.alloycodeZi());
+	}
+//----------------------------------------------------------
+	if(inst.flatZi() != -1)
+	{
+		ptrOFFCHECKC.set_flat(inst.flat());
+		ptrOFFCHECKC.set_flatZi(inst.flatZi());
+	}
+//----------------------------------------------------------
+	if(inst.bendZi() != -1)
+	{
+		ptrOFFCHECKC.set_bend(inst.bend());
+		ptrOFFCHECKC.set_bendZi(inst.bendZi());
+	}
+//----------------------------------------------------------
+	if(inst.codemanZi() != -1)
+	{
+		ptrOFFCHECKC.set_codeman(inst.codeman());
+		ptrOFFCHECKC.set_codemanZi(inst.codemanZi());
+	}
+//----------------------------------------------------------
+	if(inst.tocZi() != -1)
+	{
+		ptrOFFCHECKC.set_toc(inst.toc());
+		ptrOFFCHECKC.set_tocZi(inst.tocZi());
+	}
+//----------------------------------------------------------
+	if(inst.tomZi() != -1)
+	{
+		ptrOFFCHECKC.set_tom(inst.tom());
+		ptrOFFCHECKC.set_tomZi(inst.tomZi());
+	}
+//----------------------------------------------------------
+	if(inst.mopZi() != -1)
+	{
+		ptrOFFCHECKC.set_mop(inst.mop());
+		ptrOFFCHECKC.set_mopZi(inst.mopZi());
+	}
+	return( ptrOFFCHECKC );
+}
+
+//			         
+//O P E R A T O R  = 
+//===================
+//                   
+const OFFCHECKC& OFFCHECKC::operator=(const OFFCHECKC &inst)
+{
+//----------------------------------------------------------
+	this->set_coildate(inst.coildate());
+//----------------------------------------------------------
+	this->set_coilno(inst.coilno());
+	this->set_coilnoZi(inst.coilnoZi());
+//----------------------------------------------------------
+	this->set_alloycode(inst.alloycode());
+	this->set_alloycodeZi(inst.alloycodeZi());
+//----------------------------------------------------------
+	this->set_flat(inst.flat());
+	this->set_flatZi(inst.flatZi());
+//----------------------------------------------------------
+	this->set_bend(inst.bend());
+	this->set_bendZi(inst.bendZi());
+//----------------------------------------------------------
+	this->set_codeman(inst.codeman());
+	this->set_codemanZi(inst.codemanZi());
+//----------------------------------------------------------
+	this->set_toc(inst.toc());
+	this->set_tocZi(inst.tocZi());
+//----------------------------------------------------------
+	this->set_tom(inst.tom());
+	this->set_tomZi(inst.tomZi());
+//----------------------------------------------------------
+	this->set_mop(inst.mop());
+	this->set_mopZi(inst.mopZi());
+	return(*this);
+}
+

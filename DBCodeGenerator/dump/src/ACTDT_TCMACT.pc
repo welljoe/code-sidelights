@@ -1,0 +1,5128 @@
+/* *******************************************************************/
+/* *   File               :    ACTDT_TCMACT.pc
+/* *   Short Description  :    ORACLE DATABASE ACCESS
+/* * 		                   TCM section actual data
+/* *   Author             :    DB CODE Generator
+/* *   Created Date       :    13.06.2013
+/* *   Tech.Support       :    LiuWeiZhao. email:welljoe@hotmail.com 
+/* *******************************************************************/
+/* *   Copyright (c)  SGAI AI 2009   All Rights Reserved
+/* *******************************************************************/
+
+#include "LOG.h"
+#include "ACTDT_TCMACT.h"
+//
+// Declare ORACLE Host Variables
+//
+
+#define SQLCA_STORAGE_CLASS static
+#define ORACA_STORAGE_CLASS static
+EXEC SQL INCLUDE sqlca;
+EXEC SQL INCLUDE oraca;
+
+#define OPENED 1
+#define CLOSED 2
+EXEC SQL BEGIN DECLARE SECTION;
+/* ****************************************************************************** */
+/*                                                                                */
+/*                               define Oracle                                    */
+/*                               Host Variables                                   */
+/*                                                          .                     */
+/*                                                                                */
+/* ****************************************************************************** */
+
+static VARCHAR	dynstr[16000];
+static long		rowCnt;       
+static long		cuFl;         
+//Unit[-]:Date.Limit:[-,-]
+static VARCHAR  ora_datee[9];
+//Unit[-]:Time.Limit:[-,-]
+static VARCHAR  ora_timee[7];
+//Unit[-]:Sampling no..Limit:[-,500000]
+static short    ora_samp_no;
+//Unit[-]:TCM line start/stop.Limit:[-,-]
+static short    ora_linsts;
+static short    ora_linstsZi;
+//Unit[-]:Roll changing mode.Limit:[-,-]
+static short    ora_rmd;
+static short    ora_rmdZi;
+//Unit[-]:Upper position TR number.Limit:[-,-]
+static short    ora_trno;
+static short    ora_trnoZi;
+//Unit[10-1mm]:TR coil outer diameter.Limit:[-,-]
+static short    ora_dia;
+static short    ora_diaZi;
+//Unit[-]:Accel pattern code(1:H,2:M, 3:L).Limit:[-,-]
+static short    ora_acd;
+static short    ora_acdZi;
+//Unit[%]:RHEOSTAT PRESENT(MRH).Limit:[-,-]
+static short    ora_mrh;
+static short    ora_mrhZi;
+//Unit[-]:Dummy stand selection.Limit:[-,-]
+static short    ora_dstd;
+static short    ora_dstdZi;
+//Unit[10-3mm]:No.1 std entry X-RAY (Setting data).Limit:[-,-]
+static short    ora_xrys1;
+static short    ora_xrys1Zi;
+//Unit[10-3mm]:No.1 std delivery X-RAY (Setting data).Limit:[-,-]
+static short    ora_xrys2;
+static short    ora_xrys2Zi;
+//Unit[10-3mm]:No.2 std delivery X-RAY (Setting data).Limit:[-,-]
+static short    ora_xrys3;
+static short    ora_xrys3Zi;
+//Unit[10-3mm]:No.3 std delivery X-RAY (Setting data).Limit:[-,-]
+static short    ora_xrys4;
+static short    ora_xrys4Zi;
+//Unit[10-3mm]:No.4 std delivery X-RAY (Setting data).Limit:[-,-]
+static short    ora_xrys5;
+static short    ora_xrys5Zi;
+//Unit[10-3mm]:No.5 std delivery X-RAY (Setting data).Limit:[-,-]
+static short    ora_xrys6;
+static short    ora_xrys6Zi;
+//Unit[10-3mm]:No.1 std entry X-RAY (Actual data).Limit:[-,-]
+static short    ora_xrya1;
+static short    ora_xrya1Zi;
+//Unit[10-3mm]:No.1 std delivery X-RAY (Actual data).Limit:[-,-]
+static short    ora_xrya2;
+static short    ora_xrya2Zi;
+//Unit[10-3mm]:No.2 std delivery X-RAY (Actual data).Limit:[-,-]
+static short    ora_xrya3;
+static short    ora_xrya3Zi;
+//Unit[10-3mm]:No.3 std delivery X-RAY (Actual data).Limit:[-,-]
+static short    ora_xrya4;
+static short    ora_xrya4Zi;
+//Unit[10-3mm]:No.4 std delivery X-RAY (Actual data).Limit:[-,-]
+static short    ora_xrya5;
+static short    ora_xrya5Zi;
+//Unit[10-3mm]:No.5 std delivery X-RAY (Actual data).Limit:[-,-]
+static short    ora_xrya6;
+static short    ora_xrya6Zi;
+//Unit[10-1mpm]:Mill entry strip speed.Limit:[-,-]
+static short    ora_sspd1;
+static short    ora_sspd1Zi;
+//Unit[10-1mpm]:No.1 std delivery strip speed.Limit:[-,-]
+static short    ora_sspd2;
+static short    ora_sspd2Zi;
+//Unit[10-1mpm]:No.2 std delivery strip speed.Limit:[-,-]
+static short    ora_sspd3;
+static short    ora_sspd3Zi;
+//Unit[10-1mpm]:No.3 std delivery strip speed.Limit:[-,-]
+static short    ora_sspd4;
+static short    ora_sspd4Zi;
+//Unit[10-1mpm]:No.4 std delivery strip speed.Limit:[-,-]
+static short    ora_sspd5;
+static short    ora_sspd5Zi;
+//Unit[10-1mpm]:No.5 std delivery strip speed.Limit:[-,-]
+static short    ora_sspd6;
+static short    ora_sspd6Zi;
+//Unit[10-1mpm]:No.1 std delivery roll speed.Limit:[-,-]
+static short    ora_rspd1;
+static short    ora_rspd1Zi;
+//Unit[10-1mpm]:No.2 std delivery roll speed.Limit:[-,-]
+static short    ora_rspd2;
+static short    ora_rspd2Zi;
+//Unit[10-1mpm]:No.3 std delivery roll speed.Limit:[-,-]
+static short    ora_rspd3;
+static short    ora_rspd3Zi;
+//Unit[10-1mpm]:No.4 std delivery roll speed.Limit:[-,-]
+static short    ora_rspd4;
+static short    ora_rspd4Zi;
+//Unit[10-1mpm]:No.5 std delivery roll speed.Limit:[-,-]
+static short    ora_rspd5;
+static short    ora_rspd5Zi;
+//Unit[KN/ch]:WR bender 1std.Limit:[-,-]
+static short    ora_wrben1;
+static short    ora_wrben1Zi;
+//Unit[KN/ch]:WR bender 2std.Limit:[-,-]
+static short    ora_wrben2;
+static short    ora_wrben2Zi;
+//Unit[KN/ch]:WR bender 3std.Limit:[-,-]
+static short    ora_wrben3;
+static short    ora_wrben3Zi;
+//Unit[KN/ch]:WR bender 4std.Limit:[-,-]
+static short    ora_wrben4;
+static short    ora_wrben4Zi;
+//Unit[KN/ch]:WR bender 5std.Limit:[-,-]
+static short    ora_wrben5;
+static short    ora_wrben5Zi;
+//Unit[KN/ch]:IMR bender 1std.Limit:[-,-]
+static short    ora_imrben1;
+static short    ora_imrben1Zi;
+//Unit[KN/ch]:IMR bender 2std.Limit:[-,-]
+static short    ora_imrben2;
+static short    ora_imrben2Zi;
+//Unit[KN/ch]:IMR bender 3std.Limit:[-,-]
+static short    ora_imrben3;
+static short    ora_imrben3Zi;
+//Unit[KN/ch]:IMR bender 4std.Limit:[-,-]
+static short    ora_imrben4;
+static short    ora_imrben4Zi;
+//Unit[KN/ch]:IMR bender 5std.Limit:[-,-]
+static short    ora_imrben5;
+static short    ora_imrben5Zi;
+//Unit[mm]:WRS 1 std TOP   F.U..Limit:[-,-]
+static short    ora_wrst1;
+static short    ora_wrst1Zi;
+//Unit[mm]:WRS 1 std BOT.Limit:[-,-]
+static short    ora_wrsb1;
+static short    ora_wrsb1Zi;
+//Unit[mm]:WRS 2 std TOP.Limit:[-,-]
+static short    ora_wrst2;
+static short    ora_wrst2Zi;
+//Unit[mm]:WRS 2 std BOT.Limit:[-,-]
+static short    ora_wrsb2;
+static short    ora_wrsb2Zi;
+//Unit[mm]:WRS 3 std TOP.Limit:[-,-]
+static short    ora_wrst3;
+static short    ora_wrst3Zi;
+//Unit[mm]:WRS 3 std BOT.Limit:[-,-]
+static short    ora_wrsb3;
+static short    ora_wrsb3Zi;
+//Unit[mm]:WRS 4 std TOP.Limit:[-,-]
+static short    ora_wrst4;
+static short    ora_wrst4Zi;
+//Unit[-]:WRS 4 std BOT.Limit:[-,-]
+static short    ora_wrsb4;
+static short    ora_wrsb4Zi;
+//Unit[-]:WRS 5 std TOP.Limit:[-,-]
+static short    ora_wrst5;
+static short    ora_wrst5Zi;
+//Unit[-]:WRS 5 std BOT.Limit:[-,-]
+static short    ora_wrsb5;
+static short    ora_wrsb5Zi;
+//Unit[mm]:IMR shift 1 std TOP.Limit:[-,-]
+static short    ora_imsht1;
+static short    ora_imsht1Zi;
+//Unit[mm]:IMR shift 1 std BOT.Limit:[-,-]
+static short    ora_imshb1;
+static short    ora_imshb1Zi;
+//Unit[mm]:IMR shift 2 std TOP.Limit:[-,-]
+static short    ora_imsht2;
+static short    ora_imsht2Zi;
+//Unit[mm]:IMR shift 2 std BOT.Limit:[-,-]
+static short    ora_imshb2;
+static short    ora_imshb2Zi;
+//Unit[mm]:IMR shift 3 std TOP.Limit:[-,-]
+static short    ora_imsht3;
+static short    ora_imsht3Zi;
+//Unit[mm]:IMR shift 3 std BOT.Limit:[-,-]
+static short    ora_imshb3;
+static short    ora_imshb3Zi;
+//Unit[mm]:IMR shift 4 std TOP.Limit:[-,-]
+static short    ora_imsht4;
+static short    ora_imsht4Zi;
+//Unit[-]:IMR shift 4 std BOT.Limit:[-,-]
+static short    ora_imshb4;
+static short    ora_imshb4Zi;
+//Unit[-]:IMR shift 5 std TOP.Limit:[-,-]
+static short    ora_imsht5;
+static short    ora_imsht5Zi;
+//Unit[-]:IMR shift 5 std BOT.Limit:[-,-]
+static short    ora_imshb5;
+static short    ora_imshb5Zi;
+//Unit[-]:Roll gap 1 std (WS).Limit:[-,-]
+static short    ora_wgws1;
+static short    ora_wgws1Zi;
+//Unit[KN]:Roll gap 2 std (WS).Limit:[-,-]
+static short    ora_wgws2;
+static short    ora_wgws2Zi;
+//Unit[mm]:Roll gap 3 std (WS).Limit:[-,-]
+static short    ora_wgws3;
+static short    ora_wgws3Zi;
+//Unit[mm]:Roll gap 4 std (WS).Limit:[-,-]
+static short    ora_wgws4;
+static short    ora_wgws4Zi;
+//Unit[KN]:Roll gap 5 std (WS).Limit:[-,-]
+static short    ora_wgws5;
+static short    ora_wgws5Zi;
+//Unit[-]:Roll gap 1 std (DS).Limit:[-,-]
+static short    ora_wgds1;
+static short    ora_wgds1Zi;
+//Unit[-]:Roll gap 2 std (DS).Limit:[-,-]
+static short    ora_wgds2;
+static short    ora_wgds2Zi;
+//Unit[10-1mm]:Roll gap 3 std (DS).Limit:[-,-]
+static short    ora_wgds3;
+static short    ora_wgds3Zi;
+//Unit[10-1mm]:Roll gap 4 std (DS).Limit:[-,-]
+static short    ora_wgds4;
+static short    ora_wgds4Zi;
+//Unit[10-1mm]:Roll gap 5 std (DS).Limit:[-,-]
+static short    ora_wgds5;
+static short    ora_wgds5Zi;
+//Unit[10-1mm]:Roll force 1 std total.Limit:[-,-]
+static short    ora_rttl1;
+static short    ora_rttl1Zi;
+//Unit[10-1mm]:Roll force 2 std total.Limit:[-,-]
+static short    ora_rttl2;
+static short    ora_rttl2Zi;
+//Unit[-]:Roll force 3 std total.Limit:[-,-]
+static short    ora_rttl3;
+static short    ora_rttl3Zi;
+//Unit[10-1mpm]:Roll force 4 std total.Limit:[-,-]
+static short    ora_rttl4;
+static short    ora_rttl4Zi;
+//Unit[-]:Roll force 5 std total.Limit:[-,-]
+static short    ora_rttl5;
+static short    ora_rttl5Zi;
+//Unit[%]:Roll force 1 std differential.Limit:[-,-]
+static short    ora_rdf1;
+static short    ora_rdf1Zi;
+//Unit[KN]:Roll force 2 std differential.Limit:[-,-]
+static short    ora_rdf2;
+static short    ora_rdf2Zi;
+//Unit[-]:Roll force 3 std differential.Limit:[-,-]
+static short    ora_rdf3;
+static short    ora_rdf3Zi;
+//Unit[mm]:Roll force 4 std differential.Limit:[-,-]
+static short    ora_rdf4;
+static short    ora_rdf4Zi;
+//Unit[%]:Roll force 5 std differential.Limit:[-,-]
+static short    ora_rdf5;
+static short    ora_rdf5Zi;
+//Unit[-]:Tension before 1 std (total).Limit:[-,-]
+static short    ora_tens1;
+static short    ora_tens1Zi;
+//Unit[mm]:Tension after 1 std (total).Limit:[-,-]
+static short    ora_tens2;
+static short    ora_tens2Zi;
+//Unit[%]:Tension after 2 std (total).Limit:[-,-]
+static short    ora_tens3;
+static short    ora_tens3Zi;
+//Unit[KN]:Tension after 3 std (total).Limit:[-,-]
+static short    ora_tens4;
+static short    ora_tens4Zi;
+//Unit[-]:Tension after 4 std (total).Limit:[-,-]
+static short    ora_tens5;
+static short    ora_tens5Zi;
+//Unit[10-1mpm]:Tension after 5 std (total).Limit:[-,-]
+static short    ora_tens6;
+static short    ora_tens6Zi;
+//Unit[-]:Tension differential  before 1 std (total).Limit:[-,-]
+static short    ora_tendf1;
+static short    ora_tendf1Zi;
+//Unit[-]:Tension differential after 1 std (total).Limit:[-,-]
+static short    ora_tendf2;
+static short    ora_tendf2Zi;
+//Unit[-]:Tension differential after 2 std (total).Limit:[-,-]
+static short    ora_tendf3;
+static short    ora_tendf3Zi;
+//Unit[-]:Tensiondifferential after 3 std (total).Limit:[-,-]
+static short    ora_tendf4;
+static short    ora_tendf4Zi;
+//Unit[-]:Tension differential after 4 std (total).Limit:[-,-]
+static short    ora_tendf5;
+static short    ora_tendf5Zi;
+//Unit[-]:Tension differential after 5 std (total).Limit:[-,-]
+static short    ora_tendf6;
+static short    ora_tendf6Zi;
+//Unit[KN]:Motor current mill BR 1 roll.Limit:[-,-]
+static short    ora_mcnb1;
+static short    ora_mcnb1Zi;
+//Unit[¡æ]:Motor current mill BR 2 roll.Limit:[-,-]
+static short    ora_mcnb2;
+static short    ora_mcnb2Zi;
+//Unit[10-1%]:Motor current mill BR 3 roll.Limit:[-,-]
+static short    ora_mcnb3;
+static short    ora_mcnb3Zi;
+//Unit[10-1%]:Motor current mill BR 4 roll.Limit:[-,-]
+static short    ora_mcnb4;
+static short    ora_mcnb4Zi;
+//Unit[¡æ]:Motor current 1 std.Limit:[-,-]
+static short    ora_mcst1;
+static short    ora_mcst1Zi;
+//Unit[KN]:Motor current 2 std.Limit:[-,-]
+static short    ora_mcst2;
+static short    ora_mcst2Zi;
+//Unit[¡æ]:Motor current 3 std.Limit:[-,-]
+static short    ora_mcst3;
+static short    ora_mcst3Zi;
+//Unit[10-1%]:Motor current 4 std.Limit:[-,-]
+static short    ora_mcst4;
+static short    ora_mcst4Zi;
+//Unit[10-1%]:Motor current 5 std.Limit:[-,-]
+static short    ora_mcst5;
+static short    ora_mcst5Zi;
+//Unit[¡æ]:Forward Slip 1std.Limit:[-,-]
+static short    ora_fslip1;
+static short    ora_fslip1Zi;
+//Unit[10-1%]:Forward Slip 2std.Limit:[-,-]
+static short    ora_fslip2;
+static short    ora_fslip2Zi;
+//Unit[10-1%]:Forward Slip 3std.Limit:[-,-]
+static short    ora_fslip3;
+static short    ora_fslip3Zi;
+//Unit[¡æ]:Forward Slip 4std.Limit:[-,-]
+static short    ora_fslip4;
+static short    ora_fslip4Zi;
+//Unit[10-1%]:Forward Slip 5std.Limit:[-,-]
+static short    ora_fslip5;
+static short    ora_fslip5Zi;
+//Unit[10-1%]:Motor voltage 1 std.Limit:[-,-]
+static short    ora_mvst1;
+static short    ora_mvst1Zi;
+//Unit[-]:Motor voltage 2 std.Limit:[-,-]
+static short    ora_mvst2;
+static short    ora_mvst2Zi;
+//Unit[KN]:Motor voltage 3 std.Limit:[-,-]
+static short    ora_mvst3;
+static short    ora_mvst3Zi;
+//Unit[KN]:Motor voltage 4 std.Limit:[-,-]
+static short    ora_mvst4;
+static short    ora_mvst4Zi;
+//Unit[10¦Ì]:Motor voltage 5 std.Limit:[-,-]
+static short    ora_mvst5;
+static short    ora_mvst5Zi;
+//Unit[11¦Ì]:Drooping 1 std.Limit:[-,-]
+static short    ora_drop1;
+static short    ora_drop1Zi;
+//Unit[10-1%]:Drooping 2 std.Limit:[-,-]
+static short    ora_drop2;
+static short    ora_drop2Zi;
+//Unit[10-1mpm]:Drooping 3 std.Limit:[-,-]
+static short    ora_drop3;
+static short    ora_drop3Zi;
+//Unit[-]:Drooping 4 std.Limit:[-,-]
+static short    ora_drop4;
+static short    ora_drop4Zi;
+//Unit[10-1mpm]:Drooping 5 std.Limit:[-,-]
+static short    ora_drop5;
+static short    ora_drop5Zi;
+//Unit[mm]:Def. Roll speed.Limit:[-,-]
+static short    ora_drspd;
+static short    ora_drspdZi;
+//Unit[mm]:Shape meter speed.Limit:[-,-]
+static short    ora_smspd;
+static short    ora_smspdZi;
+//Unit[-]:Motor current TR-1.Limit:[-,-]
+static short    ora_mctr1;
+static short    ora_mctr1Zi;
+//Unit[-]:Motor current TR-2.Limit:[-,-]
+static short    ora_mctr2;
+static short    ora_mctr2Zi;
+//Unit[-]:Motor voltage TR-1.Limit:[-,-]
+static short    ora_mvtr1;
+static short    ora_mvtr1Zi;
+//Unit[10¦Ì]:Motor voltage TR-2.Limit:[-,-]
+static short    ora_mvtr2;
+static short    ora_mvtr2Zi;
+//Unit[10¦Ì]:TR coiling length.Limit:[-,-]
+static short    ora_trlen;
+static short    ora_trlenZi;
+//Unit[10¦Ì]:Mill speed status.Limit:[-,-]
+static short    ora_msts;
+static short    ora_mstsZi;
+//Unit[-]:Acceleration Rate of mill entry.Limit:[-,-]
+static short    ora_accrat;
+static short    ora_accratZi;
+//Unit[-]:Deceleration Rate of mill entry.Limit:[-,-]
+static short    ora_decrat;
+static short    ora_decratZi;
+//Unit[-]:Master on/off.Limit:[-,-]
+static short    ora_mast;
+static short    ora_mastZi;
+//Unit[-]:X-RAY 1 status (No. 1E X-RAY).Limit:[-,-]
+static short    ora_xsts1;
+static short    ora_xsts1Zi;
+//Unit[-]:X-RAY 2 status (No. 1D X-RAY).Limit:[-,-]
+static short    ora_xsts2;
+static short    ora_xsts2Zi;
+//Unit[-]:X-RAY 3 status (No. 2D X-RAY).Limit:[-,-]
+static short    ora_xsts3;
+static short    ora_xsts3Zi;
+//Unit[-]:X-RAY 4 status (No. 3D X-RAY).Limit:[-,-]
+static short    ora_xsts4;
+static short    ora_xsts4Zi;
+//Unit[-]:X-RAY 5 status (No. 4D X-RAY).Limit:[-,-]
+static short    ora_xsts5;
+static short    ora_xsts5Zi;
+//Unit[-]:X-RAY 6 status (No. 5D X-RAY).Limit:[-,-]
+static short    ora_xsts6;
+static short    ora_xsts6Zi;
+//Unit[-]:Edge Drop meter status.Limit:[-,-]
+static short    ora_edsts;
+static short    ora_edstsZi;
+//Unit[-]:AGC mode agc master.Limit:[-,-]
+static short    ora_agmd1;
+static short    ora_agmd1Zi;
+//Unit[-]:AGC mode bisra.Limit:[-,-]
+static short    ora_agmd2;
+static short    ora_agmd2Zi;
+//Unit[-]:AGC mode FF1.Limit:[-,-]
+static short    ora_agmd3;
+static short    ora_agmd3Zi;
+//Unit[-]:AGC mode GMS1.Limit:[-,-]
+static short    ora_agmd4;
+static short    ora_agmd4Zi;
+//Unit[-]:AGC mode REC.Limit:[-,-]
+static short    ora_agmd5;
+static short    ora_agmd5Zi;
+//Unit[-]:AGC mode MF2.Limit:[-,-]
+static short    ora_agmd6;
+static short    ora_agmd6Zi;
+//Unit[-]:AGC mode MF3.Limit:[-,-]
+static short    ora_agmd7;
+static short    ora_agmd7Zi;
+//Unit[-]:AGC mode MF4.Limit:[-,-]
+static short    ora_agmd8;
+static short    ora_agmd8Zi;
+//Unit[-]:AGC mode MF5.Limit:[-,-]
+static short    ora_agmd9;
+static short    ora_agmd9Zi;
+//Unit[-]:AGC mode ACC/DEC.Limit:[-,-]
+static short    ora_agmd10;
+static short    ora_agmd10Zi;
+//Unit[-]:AGC mode FF2.Limit:[-,-]
+static short    ora_agmd11;
+static short    ora_agmd11Zi;
+//Unit[-]:AGC mode FB5.Limit:[-,-]
+static short    ora_agmd12;
+static short    ora_agmd12Zi;
+//Unit[-]:ASC mode ASC master.Limit:[-,-]
+static short    ora_asmd1;
+static short    ora_asmd1Zi;
+//Unit[-]:ASC mode wr-b.Limit:[-,-]
+static short    ora_asmd2;
+static short    ora_asmd2Zi;
+//Unit[-]:ASC mode imr-b.Limit:[-,-]
+static short    ora_asmd3;
+static short    ora_asmd3Zi;
+//Unit[-]:ASC mode levelling.Limit:[-,-]
+static short    ora_asmd4;
+static short    ora_asmd4Zi;
+//Unit[-]:ASC mode coolant.Limit:[-,-]
+static short    ora_asmd5;
+static short    ora_asmd5Zi;
+//Unit[-]:Collant pattern.Limit:[-,-]
+static short    ora_cltptn;
+static short    ora_cltptnZi;
+//Unit[-]:PH (Spray line #1 [1STD-4STD]).Limit:[-,-]
+static short    ora_ph_sp1;
+static short    ora_ph_sp1Zi;
+//Unit[-]:PH (Spray line #2 [5STD]).Limit:[-,-]
+static short    ora_ph_sp2;
+static short    ora_ph_sp2Zi;
+//Unit[-]:Concentration (Spray line #1).Limit:[-,-]
+static short    ora_conc_sp1;
+static short    ora_conc_sp1Zi;
+//Unit[-]:Concentration (Spray line #2).Limit:[-,-]
+static short    ora_conc_sp2;
+static short    ora_conc_sp2Zi;
+//Unit[-]:Temperature spray line #1.Limit:[-,-]
+static short    ora_temp_sp1;
+static short    ora_temp_sp1Zi;
+//Unit[-]:Temperature spray line #2.Limit:[-,-]
+static short    ora_temp_sp2;
+static short    ora_temp_sp2Zi;
+//Unit[-]:Coil Car position.Limit:[-,-]
+static short    ora_ccposi;
+static short    ora_ccposiZi;
+//Unit[-]:create time.Limit:[-,-]
+static VARCHAR  ora_toc[15];
+static short    ora_tocZi;
+//Unit[-]:modify time.Limit:[-,-]
+static VARCHAR  ora_tom[15];
+static short    ora_tomZi;
+//Unit[-]:creator or modifyer.Limit:[-,-]
+static VARCHAR  ora_mop[121];
+static short    ora_mopZi;
+// Host arguments for Primary key
+static short    k_ora_samp_no;   // Unit[-]:Sampling no..Limit:[-,500000]
+
+EXEC SQL END DECLARE SECTION;       
+             
+// 				             
+//C O N S T R U C T O R S    
+//=======================    
+//                           
+ACTDT_TCMACT::ACTDT_TCMACT()
+{
+	initial();                                             
+}
+
+//					
+//C O P Y  -  C O N S T R U C T O R 
+//==================================
+ACTDT_TCMACT::ACTDT_TCMACT(const ACTDT_TCMACT &inst)
+{
+//----------------------------------------------------------
+	this->set_datee(inst.datee());
+//----------------------------------------------------------
+	this->set_timee(inst.timee());
+//----------------------------------------------------------
+	this->set_samp_no(inst.samp_no());
+//----------------------------------------------------------
+	this->set_linsts(inst.linsts());
+	this->set_linstsZi(inst.linstsZi());
+//----------------------------------------------------------
+	this->set_rmd(inst.rmd());
+	this->set_rmdZi(inst.rmdZi());
+//----------------------------------------------------------
+	this->set_trno(inst.trno());
+	this->set_trnoZi(inst.trnoZi());
+//----------------------------------------------------------
+	this->set_dia(inst.dia());
+	this->set_diaZi(inst.diaZi());
+//----------------------------------------------------------
+	this->set_acd(inst.acd());
+	this->set_acdZi(inst.acdZi());
+//----------------------------------------------------------
+	this->set_mrh(inst.mrh());
+	this->set_mrhZi(inst.mrhZi());
+//----------------------------------------------------------
+	this->set_dstd(inst.dstd());
+	this->set_dstdZi(inst.dstdZi());
+//----------------------------------------------------------
+	this->set_xrys1(inst.xrys1());
+	this->set_xrys1Zi(inst.xrys1Zi());
+//----------------------------------------------------------
+	this->set_xrys2(inst.xrys2());
+	this->set_xrys2Zi(inst.xrys2Zi());
+//----------------------------------------------------------
+	this->set_xrys3(inst.xrys3());
+	this->set_xrys3Zi(inst.xrys3Zi());
+//----------------------------------------------------------
+	this->set_xrys4(inst.xrys4());
+	this->set_xrys4Zi(inst.xrys4Zi());
+//----------------------------------------------------------
+	this->set_xrys5(inst.xrys5());
+	this->set_xrys5Zi(inst.xrys5Zi());
+//----------------------------------------------------------
+	this->set_xrys6(inst.xrys6());
+	this->set_xrys6Zi(inst.xrys6Zi());
+//----------------------------------------------------------
+	this->set_xrya1(inst.xrya1());
+	this->set_xrya1Zi(inst.xrya1Zi());
+//----------------------------------------------------------
+	this->set_xrya2(inst.xrya2());
+	this->set_xrya2Zi(inst.xrya2Zi());
+//----------------------------------------------------------
+	this->set_xrya3(inst.xrya3());
+	this->set_xrya3Zi(inst.xrya3Zi());
+//----------------------------------------------------------
+	this->set_xrya4(inst.xrya4());
+	this->set_xrya4Zi(inst.xrya4Zi());
+//----------------------------------------------------------
+	this->set_xrya5(inst.xrya5());
+	this->set_xrya5Zi(inst.xrya5Zi());
+//----------------------------------------------------------
+	this->set_xrya6(inst.xrya6());
+	this->set_xrya6Zi(inst.xrya6Zi());
+//----------------------------------------------------------
+	this->set_sspd1(inst.sspd1());
+	this->set_sspd1Zi(inst.sspd1Zi());
+//----------------------------------------------------------
+	this->set_sspd2(inst.sspd2());
+	this->set_sspd2Zi(inst.sspd2Zi());
+//----------------------------------------------------------
+	this->set_sspd3(inst.sspd3());
+	this->set_sspd3Zi(inst.sspd3Zi());
+//----------------------------------------------------------
+	this->set_sspd4(inst.sspd4());
+	this->set_sspd4Zi(inst.sspd4Zi());
+//----------------------------------------------------------
+	this->set_sspd5(inst.sspd5());
+	this->set_sspd5Zi(inst.sspd5Zi());
+//----------------------------------------------------------
+	this->set_sspd6(inst.sspd6());
+	this->set_sspd6Zi(inst.sspd6Zi());
+//----------------------------------------------------------
+	this->set_rspd1(inst.rspd1());
+	this->set_rspd1Zi(inst.rspd1Zi());
+//----------------------------------------------------------
+	this->set_rspd2(inst.rspd2());
+	this->set_rspd2Zi(inst.rspd2Zi());
+//----------------------------------------------------------
+	this->set_rspd3(inst.rspd3());
+	this->set_rspd3Zi(inst.rspd3Zi());
+//----------------------------------------------------------
+	this->set_rspd4(inst.rspd4());
+	this->set_rspd4Zi(inst.rspd4Zi());
+//----------------------------------------------------------
+	this->set_rspd5(inst.rspd5());
+	this->set_rspd5Zi(inst.rspd5Zi());
+//----------------------------------------------------------
+	this->set_wrben1(inst.wrben1());
+	this->set_wrben1Zi(inst.wrben1Zi());
+//----------------------------------------------------------
+	this->set_wrben2(inst.wrben2());
+	this->set_wrben2Zi(inst.wrben2Zi());
+//----------------------------------------------------------
+	this->set_wrben3(inst.wrben3());
+	this->set_wrben3Zi(inst.wrben3Zi());
+//----------------------------------------------------------
+	this->set_wrben4(inst.wrben4());
+	this->set_wrben4Zi(inst.wrben4Zi());
+//----------------------------------------------------------
+	this->set_wrben5(inst.wrben5());
+	this->set_wrben5Zi(inst.wrben5Zi());
+//----------------------------------------------------------
+	this->set_imrben1(inst.imrben1());
+	this->set_imrben1Zi(inst.imrben1Zi());
+//----------------------------------------------------------
+	this->set_imrben2(inst.imrben2());
+	this->set_imrben2Zi(inst.imrben2Zi());
+//----------------------------------------------------------
+	this->set_imrben3(inst.imrben3());
+	this->set_imrben3Zi(inst.imrben3Zi());
+//----------------------------------------------------------
+	this->set_imrben4(inst.imrben4());
+	this->set_imrben4Zi(inst.imrben4Zi());
+//----------------------------------------------------------
+	this->set_imrben5(inst.imrben5());
+	this->set_imrben5Zi(inst.imrben5Zi());
+//----------------------------------------------------------
+	this->set_wrst1(inst.wrst1());
+	this->set_wrst1Zi(inst.wrst1Zi());
+//----------------------------------------------------------
+	this->set_wrsb1(inst.wrsb1());
+	this->set_wrsb1Zi(inst.wrsb1Zi());
+//----------------------------------------------------------
+	this->set_wrst2(inst.wrst2());
+	this->set_wrst2Zi(inst.wrst2Zi());
+//----------------------------------------------------------
+	this->set_wrsb2(inst.wrsb2());
+	this->set_wrsb2Zi(inst.wrsb2Zi());
+//----------------------------------------------------------
+	this->set_wrst3(inst.wrst3());
+	this->set_wrst3Zi(inst.wrst3Zi());
+//----------------------------------------------------------
+	this->set_wrsb3(inst.wrsb3());
+	this->set_wrsb3Zi(inst.wrsb3Zi());
+//----------------------------------------------------------
+	this->set_wrst4(inst.wrst4());
+	this->set_wrst4Zi(inst.wrst4Zi());
+//----------------------------------------------------------
+	this->set_wrsb4(inst.wrsb4());
+	this->set_wrsb4Zi(inst.wrsb4Zi());
+//----------------------------------------------------------
+	this->set_wrst5(inst.wrst5());
+	this->set_wrst5Zi(inst.wrst5Zi());
+//----------------------------------------------------------
+	this->set_wrsb5(inst.wrsb5());
+	this->set_wrsb5Zi(inst.wrsb5Zi());
+//----------------------------------------------------------
+	this->set_imsht1(inst.imsht1());
+	this->set_imsht1Zi(inst.imsht1Zi());
+//----------------------------------------------------------
+	this->set_imshb1(inst.imshb1());
+	this->set_imshb1Zi(inst.imshb1Zi());
+//----------------------------------------------------------
+	this->set_imsht2(inst.imsht2());
+	this->set_imsht2Zi(inst.imsht2Zi());
+//----------------------------------------------------------
+	this->set_imshb2(inst.imshb2());
+	this->set_imshb2Zi(inst.imshb2Zi());
+//----------------------------------------------------------
+	this->set_imsht3(inst.imsht3());
+	this->set_imsht3Zi(inst.imsht3Zi());
+//----------------------------------------------------------
+	this->set_imshb3(inst.imshb3());
+	this->set_imshb3Zi(inst.imshb3Zi());
+//----------------------------------------------------------
+	this->set_imsht4(inst.imsht4());
+	this->set_imsht4Zi(inst.imsht4Zi());
+//----------------------------------------------------------
+	this->set_imshb4(inst.imshb4());
+	this->set_imshb4Zi(inst.imshb4Zi());
+//----------------------------------------------------------
+	this->set_imsht5(inst.imsht5());
+	this->set_imsht5Zi(inst.imsht5Zi());
+//----------------------------------------------------------
+	this->set_imshb5(inst.imshb5());
+	this->set_imshb5Zi(inst.imshb5Zi());
+//----------------------------------------------------------
+	this->set_wgws1(inst.wgws1());
+	this->set_wgws1Zi(inst.wgws1Zi());
+//----------------------------------------------------------
+	this->set_wgws2(inst.wgws2());
+	this->set_wgws2Zi(inst.wgws2Zi());
+//----------------------------------------------------------
+	this->set_wgws3(inst.wgws3());
+	this->set_wgws3Zi(inst.wgws3Zi());
+//----------------------------------------------------------
+	this->set_wgws4(inst.wgws4());
+	this->set_wgws4Zi(inst.wgws4Zi());
+//----------------------------------------------------------
+	this->set_wgws5(inst.wgws5());
+	this->set_wgws5Zi(inst.wgws5Zi());
+//----------------------------------------------------------
+	this->set_wgds1(inst.wgds1());
+	this->set_wgds1Zi(inst.wgds1Zi());
+//----------------------------------------------------------
+	this->set_wgds2(inst.wgds2());
+	this->set_wgds2Zi(inst.wgds2Zi());
+//----------------------------------------------------------
+	this->set_wgds3(inst.wgds3());
+	this->set_wgds3Zi(inst.wgds3Zi());
+//----------------------------------------------------------
+	this->set_wgds4(inst.wgds4());
+	this->set_wgds4Zi(inst.wgds4Zi());
+//----------------------------------------------------------
+	this->set_wgds5(inst.wgds5());
+	this->set_wgds5Zi(inst.wgds5Zi());
+//----------------------------------------------------------
+	this->set_rttl1(inst.rttl1());
+	this->set_rttl1Zi(inst.rttl1Zi());
+//----------------------------------------------------------
+	this->set_rttl2(inst.rttl2());
+	this->set_rttl2Zi(inst.rttl2Zi());
+//----------------------------------------------------------
+	this->set_rttl3(inst.rttl3());
+	this->set_rttl3Zi(inst.rttl3Zi());
+//----------------------------------------------------------
+	this->set_rttl4(inst.rttl4());
+	this->set_rttl4Zi(inst.rttl4Zi());
+//----------------------------------------------------------
+	this->set_rttl5(inst.rttl5());
+	this->set_rttl5Zi(inst.rttl5Zi());
+//----------------------------------------------------------
+	this->set_rdf1(inst.rdf1());
+	this->set_rdf1Zi(inst.rdf1Zi());
+//----------------------------------------------------------
+	this->set_rdf2(inst.rdf2());
+	this->set_rdf2Zi(inst.rdf2Zi());
+//----------------------------------------------------------
+	this->set_rdf3(inst.rdf3());
+	this->set_rdf3Zi(inst.rdf3Zi());
+//----------------------------------------------------------
+	this->set_rdf4(inst.rdf4());
+	this->set_rdf4Zi(inst.rdf4Zi());
+//----------------------------------------------------------
+	this->set_rdf5(inst.rdf5());
+	this->set_rdf5Zi(inst.rdf5Zi());
+//----------------------------------------------------------
+	this->set_tens1(inst.tens1());
+	this->set_tens1Zi(inst.tens1Zi());
+//----------------------------------------------------------
+	this->set_tens2(inst.tens2());
+	this->set_tens2Zi(inst.tens2Zi());
+//----------------------------------------------------------
+	this->set_tens3(inst.tens3());
+	this->set_tens3Zi(inst.tens3Zi());
+//----------------------------------------------------------
+	this->set_tens4(inst.tens4());
+	this->set_tens4Zi(inst.tens4Zi());
+//----------------------------------------------------------
+	this->set_tens5(inst.tens5());
+	this->set_tens5Zi(inst.tens5Zi());
+//----------------------------------------------------------
+	this->set_tens6(inst.tens6());
+	this->set_tens6Zi(inst.tens6Zi());
+//----------------------------------------------------------
+	this->set_tendf1(inst.tendf1());
+	this->set_tendf1Zi(inst.tendf1Zi());
+//----------------------------------------------------------
+	this->set_tendf2(inst.tendf2());
+	this->set_tendf2Zi(inst.tendf2Zi());
+//----------------------------------------------------------
+	this->set_tendf3(inst.tendf3());
+	this->set_tendf3Zi(inst.tendf3Zi());
+//----------------------------------------------------------
+	this->set_tendf4(inst.tendf4());
+	this->set_tendf4Zi(inst.tendf4Zi());
+//----------------------------------------------------------
+	this->set_tendf5(inst.tendf5());
+	this->set_tendf5Zi(inst.tendf5Zi());
+//----------------------------------------------------------
+	this->set_tendf6(inst.tendf6());
+	this->set_tendf6Zi(inst.tendf6Zi());
+//----------------------------------------------------------
+	this->set_mcnb1(inst.mcnb1());
+	this->set_mcnb1Zi(inst.mcnb1Zi());
+//----------------------------------------------------------
+	this->set_mcnb2(inst.mcnb2());
+	this->set_mcnb2Zi(inst.mcnb2Zi());
+//----------------------------------------------------------
+	this->set_mcnb3(inst.mcnb3());
+	this->set_mcnb3Zi(inst.mcnb3Zi());
+//----------------------------------------------------------
+	this->set_mcnb4(inst.mcnb4());
+	this->set_mcnb4Zi(inst.mcnb4Zi());
+//----------------------------------------------------------
+	this->set_mcst1(inst.mcst1());
+	this->set_mcst1Zi(inst.mcst1Zi());
+//----------------------------------------------------------
+	this->set_mcst2(inst.mcst2());
+	this->set_mcst2Zi(inst.mcst2Zi());
+//----------------------------------------------------------
+	this->set_mcst3(inst.mcst3());
+	this->set_mcst3Zi(inst.mcst3Zi());
+//----------------------------------------------------------
+	this->set_mcst4(inst.mcst4());
+	this->set_mcst4Zi(inst.mcst4Zi());
+//----------------------------------------------------------
+	this->set_mcst5(inst.mcst5());
+	this->set_mcst5Zi(inst.mcst5Zi());
+//----------------------------------------------------------
+	this->set_fslip1(inst.fslip1());
+	this->set_fslip1Zi(inst.fslip1Zi());
+//----------------------------------------------------------
+	this->set_fslip2(inst.fslip2());
+	this->set_fslip2Zi(inst.fslip2Zi());
+//----------------------------------------------------------
+	this->set_fslip3(inst.fslip3());
+	this->set_fslip3Zi(inst.fslip3Zi());
+//----------------------------------------------------------
+	this->set_fslip4(inst.fslip4());
+	this->set_fslip4Zi(inst.fslip4Zi());
+//----------------------------------------------------------
+	this->set_fslip5(inst.fslip5());
+	this->set_fslip5Zi(inst.fslip5Zi());
+//----------------------------------------------------------
+	this->set_mvst1(inst.mvst1());
+	this->set_mvst1Zi(inst.mvst1Zi());
+//----------------------------------------------------------
+	this->set_mvst2(inst.mvst2());
+	this->set_mvst2Zi(inst.mvst2Zi());
+//----------------------------------------------------------
+	this->set_mvst3(inst.mvst3());
+	this->set_mvst3Zi(inst.mvst3Zi());
+//----------------------------------------------------------
+	this->set_mvst4(inst.mvst4());
+	this->set_mvst4Zi(inst.mvst4Zi());
+//----------------------------------------------------------
+	this->set_mvst5(inst.mvst5());
+	this->set_mvst5Zi(inst.mvst5Zi());
+//----------------------------------------------------------
+	this->set_drop1(inst.drop1());
+	this->set_drop1Zi(inst.drop1Zi());
+//----------------------------------------------------------
+	this->set_drop2(inst.drop2());
+	this->set_drop2Zi(inst.drop2Zi());
+//----------------------------------------------------------
+	this->set_drop3(inst.drop3());
+	this->set_drop3Zi(inst.drop3Zi());
+//----------------------------------------------------------
+	this->set_drop4(inst.drop4());
+	this->set_drop4Zi(inst.drop4Zi());
+//----------------------------------------------------------
+	this->set_drop5(inst.drop5());
+	this->set_drop5Zi(inst.drop5Zi());
+//----------------------------------------------------------
+	this->set_drspd(inst.drspd());
+	this->set_drspdZi(inst.drspdZi());
+//----------------------------------------------------------
+	this->set_smspd(inst.smspd());
+	this->set_smspdZi(inst.smspdZi());
+//----------------------------------------------------------
+	this->set_mctr1(inst.mctr1());
+	this->set_mctr1Zi(inst.mctr1Zi());
+//----------------------------------------------------------
+	this->set_mctr2(inst.mctr2());
+	this->set_mctr2Zi(inst.mctr2Zi());
+//----------------------------------------------------------
+	this->set_mvtr1(inst.mvtr1());
+	this->set_mvtr1Zi(inst.mvtr1Zi());
+//----------------------------------------------------------
+	this->set_mvtr2(inst.mvtr2());
+	this->set_mvtr2Zi(inst.mvtr2Zi());
+//----------------------------------------------------------
+	this->set_trlen(inst.trlen());
+	this->set_trlenZi(inst.trlenZi());
+//----------------------------------------------------------
+	this->set_msts(inst.msts());
+	this->set_mstsZi(inst.mstsZi());
+//----------------------------------------------------------
+	this->set_accrat(inst.accrat());
+	this->set_accratZi(inst.accratZi());
+//----------------------------------------------------------
+	this->set_decrat(inst.decrat());
+	this->set_decratZi(inst.decratZi());
+//----------------------------------------------------------
+	this->set_mast(inst.mast());
+	this->set_mastZi(inst.mastZi());
+//----------------------------------------------------------
+	this->set_xsts1(inst.xsts1());
+	this->set_xsts1Zi(inst.xsts1Zi());
+//----------------------------------------------------------
+	this->set_xsts2(inst.xsts2());
+	this->set_xsts2Zi(inst.xsts2Zi());
+//----------------------------------------------------------
+	this->set_xsts3(inst.xsts3());
+	this->set_xsts3Zi(inst.xsts3Zi());
+//----------------------------------------------------------
+	this->set_xsts4(inst.xsts4());
+	this->set_xsts4Zi(inst.xsts4Zi());
+//----------------------------------------------------------
+	this->set_xsts5(inst.xsts5());
+	this->set_xsts5Zi(inst.xsts5Zi());
+//----------------------------------------------------------
+	this->set_xsts6(inst.xsts6());
+	this->set_xsts6Zi(inst.xsts6Zi());
+//----------------------------------------------------------
+	this->set_edsts(inst.edsts());
+	this->set_edstsZi(inst.edstsZi());
+//----------------------------------------------------------
+	this->set_agmd1(inst.agmd1());
+	this->set_agmd1Zi(inst.agmd1Zi());
+//----------------------------------------------------------
+	this->set_agmd2(inst.agmd2());
+	this->set_agmd2Zi(inst.agmd2Zi());
+//----------------------------------------------------------
+	this->set_agmd3(inst.agmd3());
+	this->set_agmd3Zi(inst.agmd3Zi());
+//----------------------------------------------------------
+	this->set_agmd4(inst.agmd4());
+	this->set_agmd4Zi(inst.agmd4Zi());
+//----------------------------------------------------------
+	this->set_agmd5(inst.agmd5());
+	this->set_agmd5Zi(inst.agmd5Zi());
+//----------------------------------------------------------
+	this->set_agmd6(inst.agmd6());
+	this->set_agmd6Zi(inst.agmd6Zi());
+//----------------------------------------------------------
+	this->set_agmd7(inst.agmd7());
+	this->set_agmd7Zi(inst.agmd7Zi());
+//----------------------------------------------------------
+	this->set_agmd8(inst.agmd8());
+	this->set_agmd8Zi(inst.agmd8Zi());
+//----------------------------------------------------------
+	this->set_agmd9(inst.agmd9());
+	this->set_agmd9Zi(inst.agmd9Zi());
+//----------------------------------------------------------
+	this->set_agmd10(inst.agmd10());
+	this->set_agmd10Zi(inst.agmd10Zi());
+//----------------------------------------------------------
+	this->set_agmd11(inst.agmd11());
+	this->set_agmd11Zi(inst.agmd11Zi());
+//----------------------------------------------------------
+	this->set_agmd12(inst.agmd12());
+	this->set_agmd12Zi(inst.agmd12Zi());
+//----------------------------------------------------------
+	this->set_asmd1(inst.asmd1());
+	this->set_asmd1Zi(inst.asmd1Zi());
+//----------------------------------------------------------
+	this->set_asmd2(inst.asmd2());
+	this->set_asmd2Zi(inst.asmd2Zi());
+//----------------------------------------------------------
+	this->set_asmd3(inst.asmd3());
+	this->set_asmd3Zi(inst.asmd3Zi());
+//----------------------------------------------------------
+	this->set_asmd4(inst.asmd4());
+	this->set_asmd4Zi(inst.asmd4Zi());
+//----------------------------------------------------------
+	this->set_asmd5(inst.asmd5());
+	this->set_asmd5Zi(inst.asmd5Zi());
+//----------------------------------------------------------
+	this->set_cltptn(inst.cltptn());
+	this->set_cltptnZi(inst.cltptnZi());
+//----------------------------------------------------------
+	this->set_ph_sp1(inst.ph_sp1());
+	this->set_ph_sp1Zi(inst.ph_sp1Zi());
+//----------------------------------------------------------
+	this->set_ph_sp2(inst.ph_sp2());
+	this->set_ph_sp2Zi(inst.ph_sp2Zi());
+//----------------------------------------------------------
+	this->set_conc_sp1(inst.conc_sp1());
+	this->set_conc_sp1Zi(inst.conc_sp1Zi());
+//----------------------------------------------------------
+	this->set_conc_sp2(inst.conc_sp2());
+	this->set_conc_sp2Zi(inst.conc_sp2Zi());
+//----------------------------------------------------------
+	this->set_temp_sp1(inst.temp_sp1());
+	this->set_temp_sp1Zi(inst.temp_sp1Zi());
+//----------------------------------------------------------
+	this->set_temp_sp2(inst.temp_sp2());
+	this->set_temp_sp2Zi(inst.temp_sp2Zi());
+//----------------------------------------------------------
+	this->set_ccposi(inst.ccposi());
+	this->set_ccposiZi(inst.ccposiZi());
+//----------------------------------------------------------
+	this->set_toc(inst.toc());
+	this->set_tocZi(inst.tocZi());
+//----------------------------------------------------------
+	this->set_tom(inst.tom());
+	this->set_tomZi(inst.tomZi());
+//----------------------------------------------------------
+	this->set_mop(inst.mop());
+	this->set_mopZi(inst.mopZi());
+}
+
+//					
+//C O N S T R U C T O R -W I T H P A R A M E T E R S
+//===================================================
+//					
+ACTDT_TCMACT::ACTDT_TCMACT(short arg1)
+{
+	initial();					               
+	setPrimKey (arg1);    
+	//read DB record                           
+	dbAccess = true;                           
+	dbMessage = readDB();                      
+	if ( dbMessage != NULL ) dbAccess = false; 
+}
+
+//D E S T R U C T O R S  
+//=======================
+//                       
+ACTDT_TCMACT::~ACTDT_TCMACT()
+{
+}
+
+//initialise all member variables
+void ACTDT_TCMACT::initial()
+{
+	set_datee("");
+	set_timee("");
+	set_samp_no(0);
+	set_linsts(0);
+	set_linstsZi(-1);
+	set_rmd(0);
+	set_rmdZi(-1);
+	set_trno(0);
+	set_trnoZi(-1);
+	set_dia(0);
+	set_diaZi(-1);
+	set_acd(0);
+	set_acdZi(-1);
+	set_mrh(0);
+	set_mrhZi(-1);
+	set_dstd(0);
+	set_dstdZi(-1);
+	set_xrys1(0);
+	set_xrys1Zi(-1);
+	set_xrys2(0);
+	set_xrys2Zi(-1);
+	set_xrys3(0);
+	set_xrys3Zi(-1);
+	set_xrys4(0);
+	set_xrys4Zi(-1);
+	set_xrys5(0);
+	set_xrys5Zi(-1);
+	set_xrys6(0);
+	set_xrys6Zi(-1);
+	set_xrya1(0);
+	set_xrya1Zi(-1);
+	set_xrya2(0);
+	set_xrya2Zi(-1);
+	set_xrya3(0);
+	set_xrya3Zi(-1);
+	set_xrya4(0);
+	set_xrya4Zi(-1);
+	set_xrya5(0);
+	set_xrya5Zi(-1);
+	set_xrya6(0);
+	set_xrya6Zi(-1);
+	set_sspd1(0);
+	set_sspd1Zi(-1);
+	set_sspd2(0);
+	set_sspd2Zi(-1);
+	set_sspd3(0);
+	set_sspd3Zi(-1);
+	set_sspd4(0);
+	set_sspd4Zi(-1);
+	set_sspd5(0);
+	set_sspd5Zi(-1);
+	set_sspd6(0);
+	set_sspd6Zi(-1);
+	set_rspd1(0);
+	set_rspd1Zi(-1);
+	set_rspd2(0);
+	set_rspd2Zi(-1);
+	set_rspd3(0);
+	set_rspd3Zi(-1);
+	set_rspd4(0);
+	set_rspd4Zi(-1);
+	set_rspd5(0);
+	set_rspd5Zi(-1);
+	set_wrben1(0);
+	set_wrben1Zi(-1);
+	set_wrben2(0);
+	set_wrben2Zi(-1);
+	set_wrben3(0);
+	set_wrben3Zi(-1);
+	set_wrben4(0);
+	set_wrben4Zi(-1);
+	set_wrben5(0);
+	set_wrben5Zi(-1);
+	set_imrben1(0);
+	set_imrben1Zi(-1);
+	set_imrben2(0);
+	set_imrben2Zi(-1);
+	set_imrben3(0);
+	set_imrben3Zi(-1);
+	set_imrben4(0);
+	set_imrben4Zi(-1);
+	set_imrben5(0);
+	set_imrben5Zi(-1);
+	set_wrst1(0);
+	set_wrst1Zi(-1);
+	set_wrsb1(0);
+	set_wrsb1Zi(-1);
+	set_wrst2(0);
+	set_wrst2Zi(-1);
+	set_wrsb2(0);
+	set_wrsb2Zi(-1);
+	set_wrst3(0);
+	set_wrst3Zi(-1);
+	set_wrsb3(0);
+	set_wrsb3Zi(-1);
+	set_wrst4(0);
+	set_wrst4Zi(-1);
+	set_wrsb4(0);
+	set_wrsb4Zi(-1);
+	set_wrst5(0);
+	set_wrst5Zi(-1);
+	set_wrsb5(0);
+	set_wrsb5Zi(-1);
+	set_imsht1(0);
+	set_imsht1Zi(-1);
+	set_imshb1(0);
+	set_imshb1Zi(-1);
+	set_imsht2(0);
+	set_imsht2Zi(-1);
+	set_imshb2(0);
+	set_imshb2Zi(-1);
+	set_imsht3(0);
+	set_imsht3Zi(-1);
+	set_imshb3(0);
+	set_imshb3Zi(-1);
+	set_imsht4(0);
+	set_imsht4Zi(-1);
+	set_imshb4(0);
+	set_imshb4Zi(-1);
+	set_imsht5(0);
+	set_imsht5Zi(-1);
+	set_imshb5(0);
+	set_imshb5Zi(-1);
+	set_wgws1(0);
+	set_wgws1Zi(-1);
+	set_wgws2(0);
+	set_wgws2Zi(-1);
+	set_wgws3(0);
+	set_wgws3Zi(-1);
+	set_wgws4(0);
+	set_wgws4Zi(-1);
+	set_wgws5(0);
+	set_wgws5Zi(-1);
+	set_wgds1(0);
+	set_wgds1Zi(-1);
+	set_wgds2(0);
+	set_wgds2Zi(-1);
+	set_wgds3(0);
+	set_wgds3Zi(-1);
+	set_wgds4(0);
+	set_wgds4Zi(-1);
+	set_wgds5(0);
+	set_wgds5Zi(-1);
+	set_rttl1(0);
+	set_rttl1Zi(-1);
+	set_rttl2(0);
+	set_rttl2Zi(-1);
+	set_rttl3(0);
+	set_rttl3Zi(-1);
+	set_rttl4(0);
+	set_rttl4Zi(-1);
+	set_rttl5(0);
+	set_rttl5Zi(-1);
+	set_rdf1(0);
+	set_rdf1Zi(-1);
+	set_rdf2(0);
+	set_rdf2Zi(-1);
+	set_rdf3(0);
+	set_rdf3Zi(-1);
+	set_rdf4(0);
+	set_rdf4Zi(-1);
+	set_rdf5(0);
+	set_rdf5Zi(-1);
+	set_tens1(0);
+	set_tens1Zi(-1);
+	set_tens2(0);
+	set_tens2Zi(-1);
+	set_tens3(0);
+	set_tens3Zi(-1);
+	set_tens4(0);
+	set_tens4Zi(-1);
+	set_tens5(0);
+	set_tens5Zi(-1);
+	set_tens6(0);
+	set_tens6Zi(-1);
+	set_tendf1(0);
+	set_tendf1Zi(-1);
+	set_tendf2(0);
+	set_tendf2Zi(-1);
+	set_tendf3(0);
+	set_tendf3Zi(-1);
+	set_tendf4(0);
+	set_tendf4Zi(-1);
+	set_tendf5(0);
+	set_tendf5Zi(-1);
+	set_tendf6(0);
+	set_tendf6Zi(-1);
+	set_mcnb1(0);
+	set_mcnb1Zi(-1);
+	set_mcnb2(0);
+	set_mcnb2Zi(-1);
+	set_mcnb3(0);
+	set_mcnb3Zi(-1);
+	set_mcnb4(0);
+	set_mcnb4Zi(-1);
+	set_mcst1(0);
+	set_mcst1Zi(-1);
+	set_mcst2(0);
+	set_mcst2Zi(-1);
+	set_mcst3(0);
+	set_mcst3Zi(-1);
+	set_mcst4(0);
+	set_mcst4Zi(-1);
+	set_mcst5(0);
+	set_mcst5Zi(-1);
+	set_fslip1(0);
+	set_fslip1Zi(-1);
+	set_fslip2(0);
+	set_fslip2Zi(-1);
+	set_fslip3(0);
+	set_fslip3Zi(-1);
+	set_fslip4(0);
+	set_fslip4Zi(-1);
+	set_fslip5(0);
+	set_fslip5Zi(-1);
+	set_mvst1(0);
+	set_mvst1Zi(-1);
+	set_mvst2(0);
+	set_mvst2Zi(-1);
+	set_mvst3(0);
+	set_mvst3Zi(-1);
+	set_mvst4(0);
+	set_mvst4Zi(-1);
+	set_mvst5(0);
+	set_mvst5Zi(-1);
+	set_drop1(0);
+	set_drop1Zi(-1);
+	set_drop2(0);
+	set_drop2Zi(-1);
+	set_drop3(0);
+	set_drop3Zi(-1);
+	set_drop4(0);
+	set_drop4Zi(-1);
+	set_drop5(0);
+	set_drop5Zi(-1);
+	set_drspd(0);
+	set_drspdZi(-1);
+	set_smspd(0);
+	set_smspdZi(-1);
+	set_mctr1(0);
+	set_mctr1Zi(-1);
+	set_mctr2(0);
+	set_mctr2Zi(-1);
+	set_mvtr1(0);
+	set_mvtr1Zi(-1);
+	set_mvtr2(0);
+	set_mvtr2Zi(-1);
+	set_trlen(0);
+	set_trlenZi(-1);
+	set_msts(0);
+	set_mstsZi(-1);
+	set_accrat(0);
+	set_accratZi(-1);
+	set_decrat(0);
+	set_decratZi(-1);
+	set_mast(0);
+	set_mastZi(-1);
+	set_xsts1(0);
+	set_xsts1Zi(-1);
+	set_xsts2(0);
+	set_xsts2Zi(-1);
+	set_xsts3(0);
+	set_xsts3Zi(-1);
+	set_xsts4(0);
+	set_xsts4Zi(-1);
+	set_xsts5(0);
+	set_xsts5Zi(-1);
+	set_xsts6(0);
+	set_xsts6Zi(-1);
+	set_edsts(0);
+	set_edstsZi(-1);
+	set_agmd1(0);
+	set_agmd1Zi(-1);
+	set_agmd2(0);
+	set_agmd2Zi(-1);
+	set_agmd3(0);
+	set_agmd3Zi(-1);
+	set_agmd4(0);
+	set_agmd4Zi(-1);
+	set_agmd5(0);
+	set_agmd5Zi(-1);
+	set_agmd6(0);
+	set_agmd6Zi(-1);
+	set_agmd7(0);
+	set_agmd7Zi(-1);
+	set_agmd8(0);
+	set_agmd8Zi(-1);
+	set_agmd9(0);
+	set_agmd9Zi(-1);
+	set_agmd10(0);
+	set_agmd10Zi(-1);
+	set_agmd11(0);
+	set_agmd11Zi(-1);
+	set_agmd12(0);
+	set_agmd12Zi(-1);
+	set_asmd1(0);
+	set_asmd1Zi(-1);
+	set_asmd2(0);
+	set_asmd2Zi(-1);
+	set_asmd3(0);
+	set_asmd3Zi(-1);
+	set_asmd4(0);
+	set_asmd4Zi(-1);
+	set_asmd5(0);
+	set_asmd5Zi(-1);
+	set_cltptn(0);
+	set_cltptnZi(-1);
+	set_ph_sp1(0);
+	set_ph_sp1Zi(-1);
+	set_ph_sp2(0);
+	set_ph_sp2Zi(-1);
+	set_conc_sp1(0);
+	set_conc_sp1Zi(-1);
+	set_conc_sp2(0);
+	set_conc_sp2Zi(-1);
+	set_temp_sp1(0);
+	set_temp_sp1Zi(-1);
+	set_temp_sp2(0);
+	set_temp_sp2Zi(-1);
+	set_ccposi(0);
+	set_ccposiZi(-1);
+	set_toc("");
+	set_tocZi(-1);
+	set_tom("");
+	set_tomZi(-1);
+	set_mop("");
+	set_mopZi(-1);
+	//initialies Primary key members
+	set_k_samp_no(0);
+// Initial Oracle Options
+	oraca.oradbgf  = 1; // gather debug informations       
+	oraca.oracchf  = 1; // gather cursor cache informations
+	oraca.orahchf  = 1; // check heap                      
+	oraca.orastxtf = 3; // always save last sql-statement  
+	                                                       
+	EXEC ORACLE OPTION (ORACA=YES);                        
+	EXEC ORACLE OPTION (HOLD_CURSOR=YES);                  
+	EXEC ORACLE OPTION (RELEASE_CURSOR=NO);                
+	EXEC ORACLE OPTION (MAXOPENCURSORS=50);                
+	pCatch = CatchDbaxError::instance();                   
+	                                                       
+}
+
+//read a single entry from DB.
+char* ACTDT_TCMACT::readDB()
+{
+	//
+	//copy the host variables (k_...) to Oracle Host Keys (k_ora_..)
+	//
+		copyKeyToHost();
+	//
+	// Do SELECT
+	//
+	EXEC SQL SELECT 
+		datee,
+		timee,
+		samp_no,
+		linsts,
+		rmd,
+		trno,
+		dia,
+		acd,
+		mrh,
+		dstd,
+		xrys1,
+		xrys2,
+		xrys3,
+		xrys4,
+		xrys5,
+		xrys6,
+		xrya1,
+		xrya2,
+		xrya3,
+		xrya4,
+		xrya5,
+		xrya6,
+		sspd1,
+		sspd2,
+		sspd3,
+		sspd4,
+		sspd5,
+		sspd6,
+		rspd1,
+		rspd2,
+		rspd3,
+		rspd4,
+		rspd5,
+		wrben1,
+		wrben2,
+		wrben3,
+		wrben4,
+		wrben5,
+		imrben1,
+		imrben2,
+		imrben3,
+		imrben4,
+		imrben5,
+		wrst1,
+		wrsb1,
+		wrst2,
+		wrsb2,
+		wrst3,
+		wrsb3,
+		wrst4,
+		wrsb4,
+		wrst5,
+		wrsb5,
+		imsht1,
+		imshb1,
+		imsht2,
+		imshb2,
+		imsht3,
+		imshb3,
+		imsht4,
+		imshb4,
+		imsht5,
+		imshb5,
+		wgws1,
+		wgws2,
+		wgws3,
+		wgws4,
+		wgws5,
+		wgds1,
+		wgds2,
+		wgds3,
+		wgds4,
+		wgds5,
+		rttl1,
+		rttl2,
+		rttl3,
+		rttl4,
+		rttl5,
+		rdf1,
+		rdf2,
+		rdf3,
+		rdf4,
+		rdf5,
+		tens1,
+		tens2,
+		tens3,
+		tens4,
+		tens5,
+		tens6,
+		tendf1,
+		tendf2,
+		tendf3,
+		tendf4,
+		tendf5,
+		tendf6,
+		mcnb1,
+		mcnb2,
+		mcnb3,
+		mcnb4,
+		mcst1,
+		mcst2,
+		mcst3,
+		mcst4,
+		mcst5,
+		fslip1,
+		fslip2,
+		fslip3,
+		fslip4,
+		fslip5,
+		mvst1,
+		mvst2,
+		mvst3,
+		mvst4,
+		mvst5,
+		drop1,
+		drop2,
+		drop3,
+		drop4,
+		drop5,
+		drspd,
+		smspd,
+		mctr1,
+		mctr2,
+		mvtr1,
+		mvtr2,
+		trlen,
+		msts,
+		accrat,
+		decrat,
+		mast,
+		xsts1,
+		xsts2,
+		xsts3,
+		xsts4,
+		xsts5,
+		xsts6,
+		edsts,
+		agmd1,
+		agmd2,
+		agmd3,
+		agmd4,
+		agmd5,
+		agmd6,
+		agmd7,
+		agmd8,
+		agmd9,
+		agmd10,
+		agmd11,
+		agmd12,
+		asmd1,
+		asmd2,
+		asmd3,
+		asmd4,
+		asmd5,
+		cltptn,
+		ph_sp1,
+		ph_sp2,
+		conc_sp1,
+		conc_sp2,
+		temp_sp1,
+		temp_sp2,
+		ccposi,
+		TO_CHAR(toc , 'YYYYMMDDHH24MISS'),
+		TO_CHAR(tom , 'YYYYMMDDHH24MISS'),
+		mop
+	INTO
+		:ora_datee,
+		:ora_timee,
+		:ora_samp_no,
+		:ora_linsts:ora_linstsZi,
+		:ora_rmd:ora_rmdZi,
+		:ora_trno:ora_trnoZi,
+		:ora_dia:ora_diaZi,
+		:ora_acd:ora_acdZi,
+		:ora_mrh:ora_mrhZi,
+		:ora_dstd:ora_dstdZi,
+		:ora_xrys1:ora_xrys1Zi,
+		:ora_xrys2:ora_xrys2Zi,
+		:ora_xrys3:ora_xrys3Zi,
+		:ora_xrys4:ora_xrys4Zi,
+		:ora_xrys5:ora_xrys5Zi,
+		:ora_xrys6:ora_xrys6Zi,
+		:ora_xrya1:ora_xrya1Zi,
+		:ora_xrya2:ora_xrya2Zi,
+		:ora_xrya3:ora_xrya3Zi,
+		:ora_xrya4:ora_xrya4Zi,
+		:ora_xrya5:ora_xrya5Zi,
+		:ora_xrya6:ora_xrya6Zi,
+		:ora_sspd1:ora_sspd1Zi,
+		:ora_sspd2:ora_sspd2Zi,
+		:ora_sspd3:ora_sspd3Zi,
+		:ora_sspd4:ora_sspd4Zi,
+		:ora_sspd5:ora_sspd5Zi,
+		:ora_sspd6:ora_sspd6Zi,
+		:ora_rspd1:ora_rspd1Zi,
+		:ora_rspd2:ora_rspd2Zi,
+		:ora_rspd3:ora_rspd3Zi,
+		:ora_rspd4:ora_rspd4Zi,
+		:ora_rspd5:ora_rspd5Zi,
+		:ora_wrben1:ora_wrben1Zi,
+		:ora_wrben2:ora_wrben2Zi,
+		:ora_wrben3:ora_wrben3Zi,
+		:ora_wrben4:ora_wrben4Zi,
+		:ora_wrben5:ora_wrben5Zi,
+		:ora_imrben1:ora_imrben1Zi,
+		:ora_imrben2:ora_imrben2Zi,
+		:ora_imrben3:ora_imrben3Zi,
+		:ora_imrben4:ora_imrben4Zi,
+		:ora_imrben5:ora_imrben5Zi,
+		:ora_wrst1:ora_wrst1Zi,
+		:ora_wrsb1:ora_wrsb1Zi,
+		:ora_wrst2:ora_wrst2Zi,
+		:ora_wrsb2:ora_wrsb2Zi,
+		:ora_wrst3:ora_wrst3Zi,
+		:ora_wrsb3:ora_wrsb3Zi,
+		:ora_wrst4:ora_wrst4Zi,
+		:ora_wrsb4:ora_wrsb4Zi,
+		:ora_wrst5:ora_wrst5Zi,
+		:ora_wrsb5:ora_wrsb5Zi,
+		:ora_imsht1:ora_imsht1Zi,
+		:ora_imshb1:ora_imshb1Zi,
+		:ora_imsht2:ora_imsht2Zi,
+		:ora_imshb2:ora_imshb2Zi,
+		:ora_imsht3:ora_imsht3Zi,
+		:ora_imshb3:ora_imshb3Zi,
+		:ora_imsht4:ora_imsht4Zi,
+		:ora_imshb4:ora_imshb4Zi,
+		:ora_imsht5:ora_imsht5Zi,
+		:ora_imshb5:ora_imshb5Zi,
+		:ora_wgws1:ora_wgws1Zi,
+		:ora_wgws2:ora_wgws2Zi,
+		:ora_wgws3:ora_wgws3Zi,
+		:ora_wgws4:ora_wgws4Zi,
+		:ora_wgws5:ora_wgws5Zi,
+		:ora_wgds1:ora_wgds1Zi,
+		:ora_wgds2:ora_wgds2Zi,
+		:ora_wgds3:ora_wgds3Zi,
+		:ora_wgds4:ora_wgds4Zi,
+		:ora_wgds5:ora_wgds5Zi,
+		:ora_rttl1:ora_rttl1Zi,
+		:ora_rttl2:ora_rttl2Zi,
+		:ora_rttl3:ora_rttl3Zi,
+		:ora_rttl4:ora_rttl4Zi,
+		:ora_rttl5:ora_rttl5Zi,
+		:ora_rdf1:ora_rdf1Zi,
+		:ora_rdf2:ora_rdf2Zi,
+		:ora_rdf3:ora_rdf3Zi,
+		:ora_rdf4:ora_rdf4Zi,
+		:ora_rdf5:ora_rdf5Zi,
+		:ora_tens1:ora_tens1Zi,
+		:ora_tens2:ora_tens2Zi,
+		:ora_tens3:ora_tens3Zi,
+		:ora_tens4:ora_tens4Zi,
+		:ora_tens5:ora_tens5Zi,
+		:ora_tens6:ora_tens6Zi,
+		:ora_tendf1:ora_tendf1Zi,
+		:ora_tendf2:ora_tendf2Zi,
+		:ora_tendf3:ora_tendf3Zi,
+		:ora_tendf4:ora_tendf4Zi,
+		:ora_tendf5:ora_tendf5Zi,
+		:ora_tendf6:ora_tendf6Zi,
+		:ora_mcnb1:ora_mcnb1Zi,
+		:ora_mcnb2:ora_mcnb2Zi,
+		:ora_mcnb3:ora_mcnb3Zi,
+		:ora_mcnb4:ora_mcnb4Zi,
+		:ora_mcst1:ora_mcst1Zi,
+		:ora_mcst2:ora_mcst2Zi,
+		:ora_mcst3:ora_mcst3Zi,
+		:ora_mcst4:ora_mcst4Zi,
+		:ora_mcst5:ora_mcst5Zi,
+		:ora_fslip1:ora_fslip1Zi,
+		:ora_fslip2:ora_fslip2Zi,
+		:ora_fslip3:ora_fslip3Zi,
+		:ora_fslip4:ora_fslip4Zi,
+		:ora_fslip5:ora_fslip5Zi,
+		:ora_mvst1:ora_mvst1Zi,
+		:ora_mvst2:ora_mvst2Zi,
+		:ora_mvst3:ora_mvst3Zi,
+		:ora_mvst4:ora_mvst4Zi,
+		:ora_mvst5:ora_mvst5Zi,
+		:ora_drop1:ora_drop1Zi,
+		:ora_drop2:ora_drop2Zi,
+		:ora_drop3:ora_drop3Zi,
+		:ora_drop4:ora_drop4Zi,
+		:ora_drop5:ora_drop5Zi,
+		:ora_drspd:ora_drspdZi,
+		:ora_smspd:ora_smspdZi,
+		:ora_mctr1:ora_mctr1Zi,
+		:ora_mctr2:ora_mctr2Zi,
+		:ora_mvtr1:ora_mvtr1Zi,
+		:ora_mvtr2:ora_mvtr2Zi,
+		:ora_trlen:ora_trlenZi,
+		:ora_msts:ora_mstsZi,
+		:ora_accrat:ora_accratZi,
+		:ora_decrat:ora_decratZi,
+		:ora_mast:ora_mastZi,
+		:ora_xsts1:ora_xsts1Zi,
+		:ora_xsts2:ora_xsts2Zi,
+		:ora_xsts3:ora_xsts3Zi,
+		:ora_xsts4:ora_xsts4Zi,
+		:ora_xsts5:ora_xsts5Zi,
+		:ora_xsts6:ora_xsts6Zi,
+		:ora_edsts:ora_edstsZi,
+		:ora_agmd1:ora_agmd1Zi,
+		:ora_agmd2:ora_agmd2Zi,
+		:ora_agmd3:ora_agmd3Zi,
+		:ora_agmd4:ora_agmd4Zi,
+		:ora_agmd5:ora_agmd5Zi,
+		:ora_agmd6:ora_agmd6Zi,
+		:ora_agmd7:ora_agmd7Zi,
+		:ora_agmd8:ora_agmd8Zi,
+		:ora_agmd9:ora_agmd9Zi,
+		:ora_agmd10:ora_agmd10Zi,
+		:ora_agmd11:ora_agmd11Zi,
+		:ora_agmd12:ora_agmd12Zi,
+		:ora_asmd1:ora_asmd1Zi,
+		:ora_asmd2:ora_asmd2Zi,
+		:ora_asmd3:ora_asmd3Zi,
+		:ora_asmd4:ora_asmd4Zi,
+		:ora_asmd5:ora_asmd5Zi,
+		:ora_cltptn:ora_cltptnZi,
+		:ora_ph_sp1:ora_ph_sp1Zi,
+		:ora_ph_sp2:ora_ph_sp2Zi,
+		:ora_conc_sp1:ora_conc_sp1Zi,
+		:ora_conc_sp2:ora_conc_sp2Zi,
+		:ora_temp_sp1:ora_temp_sp1Zi,
+		:ora_temp_sp2:ora_temp_sp2Zi,
+		:ora_ccposi:ora_ccposiZi,
+		:ora_toc:ora_tocZi,
+		:ora_tom:ora_tomZi,
+		:ora_mop:ora_mopZi
+	FROM ACTDT_TCMACT
+	WHERE
+				samp_no         = :k_ora_samp_no ;
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	//
+	// copy host variables into Class attributes
+	//
+	copyOracleToAttribute();
+	return ( NULL );
+}
+
+//updates a single entry from DB
+char* ACTDT_TCMACT::updateDB()
+{
+	//
+	//copy the host variables (k_...) to Oracle Host Keys (k_ora_..)
+	//
+		copyKeyToHost();
+	//copy the attributes ( ...) to Oracle Hosts( ora_..)
+	//
+		copyAttributeToOracle();
+	//
+	// Do UPDATE
+	//
+	EXEC SQL UPDATE ACTDT_TCMACT
+	SET 
+		datee               =:ora_datee,
+		timee               =:ora_timee,
+		samp_no             =:ora_samp_no,
+		linsts              =:ora_linsts:ora_linstsZi,
+		rmd                 =:ora_rmd:ora_rmdZi,
+		trno                =:ora_trno:ora_trnoZi,
+		dia                 =:ora_dia:ora_diaZi,
+		acd                 =:ora_acd:ora_acdZi,
+		mrh                 =:ora_mrh:ora_mrhZi,
+		dstd                =:ora_dstd:ora_dstdZi,
+		xrys1               =:ora_xrys1:ora_xrys1Zi,
+		xrys2               =:ora_xrys2:ora_xrys2Zi,
+		xrys3               =:ora_xrys3:ora_xrys3Zi,
+		xrys4               =:ora_xrys4:ora_xrys4Zi,
+		xrys5               =:ora_xrys5:ora_xrys5Zi,
+		xrys6               =:ora_xrys6:ora_xrys6Zi,
+		xrya1               =:ora_xrya1:ora_xrya1Zi,
+		xrya2               =:ora_xrya2:ora_xrya2Zi,
+		xrya3               =:ora_xrya3:ora_xrya3Zi,
+		xrya4               =:ora_xrya4:ora_xrya4Zi,
+		xrya5               =:ora_xrya5:ora_xrya5Zi,
+		xrya6               =:ora_xrya6:ora_xrya6Zi,
+		sspd1               =:ora_sspd1:ora_sspd1Zi,
+		sspd2               =:ora_sspd2:ora_sspd2Zi,
+		sspd3               =:ora_sspd3:ora_sspd3Zi,
+		sspd4               =:ora_sspd4:ora_sspd4Zi,
+		sspd5               =:ora_sspd5:ora_sspd5Zi,
+		sspd6               =:ora_sspd6:ora_sspd6Zi,
+		rspd1               =:ora_rspd1:ora_rspd1Zi,
+		rspd2               =:ora_rspd2:ora_rspd2Zi,
+		rspd3               =:ora_rspd3:ora_rspd3Zi,
+		rspd4               =:ora_rspd4:ora_rspd4Zi,
+		rspd5               =:ora_rspd5:ora_rspd5Zi,
+		wrben1              =:ora_wrben1:ora_wrben1Zi,
+		wrben2              =:ora_wrben2:ora_wrben2Zi,
+		wrben3              =:ora_wrben3:ora_wrben3Zi,
+		wrben4              =:ora_wrben4:ora_wrben4Zi,
+		wrben5              =:ora_wrben5:ora_wrben5Zi,
+		imrben1             =:ora_imrben1:ora_imrben1Zi,
+		imrben2             =:ora_imrben2:ora_imrben2Zi,
+		imrben3             =:ora_imrben3:ora_imrben3Zi,
+		imrben4             =:ora_imrben4:ora_imrben4Zi,
+		imrben5             =:ora_imrben5:ora_imrben5Zi,
+		wrst1               =:ora_wrst1:ora_wrst1Zi,
+		wrsb1               =:ora_wrsb1:ora_wrsb1Zi,
+		wrst2               =:ora_wrst2:ora_wrst2Zi,
+		wrsb2               =:ora_wrsb2:ora_wrsb2Zi,
+		wrst3               =:ora_wrst3:ora_wrst3Zi,
+		wrsb3               =:ora_wrsb3:ora_wrsb3Zi,
+		wrst4               =:ora_wrst4:ora_wrst4Zi,
+		wrsb4               =:ora_wrsb4:ora_wrsb4Zi,
+		wrst5               =:ora_wrst5:ora_wrst5Zi,
+		wrsb5               =:ora_wrsb5:ora_wrsb5Zi,
+		imsht1              =:ora_imsht1:ora_imsht1Zi,
+		imshb1              =:ora_imshb1:ora_imshb1Zi,
+		imsht2              =:ora_imsht2:ora_imsht2Zi,
+		imshb2              =:ora_imshb2:ora_imshb2Zi,
+		imsht3              =:ora_imsht3:ora_imsht3Zi,
+		imshb3              =:ora_imshb3:ora_imshb3Zi,
+		imsht4              =:ora_imsht4:ora_imsht4Zi,
+		imshb4              =:ora_imshb4:ora_imshb4Zi,
+		imsht5              =:ora_imsht5:ora_imsht5Zi,
+		imshb5              =:ora_imshb5:ora_imshb5Zi,
+		wgws1               =:ora_wgws1:ora_wgws1Zi,
+		wgws2               =:ora_wgws2:ora_wgws2Zi,
+		wgws3               =:ora_wgws3:ora_wgws3Zi,
+		wgws4               =:ora_wgws4:ora_wgws4Zi,
+		wgws5               =:ora_wgws5:ora_wgws5Zi,
+		wgds1               =:ora_wgds1:ora_wgds1Zi,
+		wgds2               =:ora_wgds2:ora_wgds2Zi,
+		wgds3               =:ora_wgds3:ora_wgds3Zi,
+		wgds4               =:ora_wgds4:ora_wgds4Zi,
+		wgds5               =:ora_wgds5:ora_wgds5Zi,
+		rttl1               =:ora_rttl1:ora_rttl1Zi,
+		rttl2               =:ora_rttl2:ora_rttl2Zi,
+		rttl3               =:ora_rttl3:ora_rttl3Zi,
+		rttl4               =:ora_rttl4:ora_rttl4Zi,
+		rttl5               =:ora_rttl5:ora_rttl5Zi,
+		rdf1                =:ora_rdf1:ora_rdf1Zi,
+		rdf2                =:ora_rdf2:ora_rdf2Zi,
+		rdf3                =:ora_rdf3:ora_rdf3Zi,
+		rdf4                =:ora_rdf4:ora_rdf4Zi,
+		rdf5                =:ora_rdf5:ora_rdf5Zi,
+		tens1               =:ora_tens1:ora_tens1Zi,
+		tens2               =:ora_tens2:ora_tens2Zi,
+		tens3               =:ora_tens3:ora_tens3Zi,
+		tens4               =:ora_tens4:ora_tens4Zi,
+		tens5               =:ora_tens5:ora_tens5Zi,
+		tens6               =:ora_tens6:ora_tens6Zi,
+		tendf1              =:ora_tendf1:ora_tendf1Zi,
+		tendf2              =:ora_tendf2:ora_tendf2Zi,
+		tendf3              =:ora_tendf3:ora_tendf3Zi,
+		tendf4              =:ora_tendf4:ora_tendf4Zi,
+		tendf5              =:ora_tendf5:ora_tendf5Zi,
+		tendf6              =:ora_tendf6:ora_tendf6Zi,
+		mcnb1               =:ora_mcnb1:ora_mcnb1Zi,
+		mcnb2               =:ora_mcnb2:ora_mcnb2Zi,
+		mcnb3               =:ora_mcnb3:ora_mcnb3Zi,
+		mcnb4               =:ora_mcnb4:ora_mcnb4Zi,
+		mcst1               =:ora_mcst1:ora_mcst1Zi,
+		mcst2               =:ora_mcst2:ora_mcst2Zi,
+		mcst3               =:ora_mcst3:ora_mcst3Zi,
+		mcst4               =:ora_mcst4:ora_mcst4Zi,
+		mcst5               =:ora_mcst5:ora_mcst5Zi,
+		fslip1              =:ora_fslip1:ora_fslip1Zi,
+		fslip2              =:ora_fslip2:ora_fslip2Zi,
+		fslip3              =:ora_fslip3:ora_fslip3Zi,
+		fslip4              =:ora_fslip4:ora_fslip4Zi,
+		fslip5              =:ora_fslip5:ora_fslip5Zi,
+		mvst1               =:ora_mvst1:ora_mvst1Zi,
+		mvst2               =:ora_mvst2:ora_mvst2Zi,
+		mvst3               =:ora_mvst3:ora_mvst3Zi,
+		mvst4               =:ora_mvst4:ora_mvst4Zi,
+		mvst5               =:ora_mvst5:ora_mvst5Zi,
+		drop1               =:ora_drop1:ora_drop1Zi,
+		drop2               =:ora_drop2:ora_drop2Zi,
+		drop3               =:ora_drop3:ora_drop3Zi,
+		drop4               =:ora_drop4:ora_drop4Zi,
+		drop5               =:ora_drop5:ora_drop5Zi,
+		drspd               =:ora_drspd:ora_drspdZi,
+		smspd               =:ora_smspd:ora_smspdZi,
+		mctr1               =:ora_mctr1:ora_mctr1Zi,
+		mctr2               =:ora_mctr2:ora_mctr2Zi,
+		mvtr1               =:ora_mvtr1:ora_mvtr1Zi,
+		mvtr2               =:ora_mvtr2:ora_mvtr2Zi,
+		trlen               =:ora_trlen:ora_trlenZi,
+		msts                =:ora_msts:ora_mstsZi,
+		accrat              =:ora_accrat:ora_accratZi,
+		decrat              =:ora_decrat:ora_decratZi,
+		mast                =:ora_mast:ora_mastZi,
+		xsts1               =:ora_xsts1:ora_xsts1Zi,
+		xsts2               =:ora_xsts2:ora_xsts2Zi,
+		xsts3               =:ora_xsts3:ora_xsts3Zi,
+		xsts4               =:ora_xsts4:ora_xsts4Zi,
+		xsts5               =:ora_xsts5:ora_xsts5Zi,
+		xsts6               =:ora_xsts6:ora_xsts6Zi,
+		edsts               =:ora_edsts:ora_edstsZi,
+		agmd1               =:ora_agmd1:ora_agmd1Zi,
+		agmd2               =:ora_agmd2:ora_agmd2Zi,
+		agmd3               =:ora_agmd3:ora_agmd3Zi,
+		agmd4               =:ora_agmd4:ora_agmd4Zi,
+		agmd5               =:ora_agmd5:ora_agmd5Zi,
+		agmd6               =:ora_agmd6:ora_agmd6Zi,
+		agmd7               =:ora_agmd7:ora_agmd7Zi,
+		agmd8               =:ora_agmd8:ora_agmd8Zi,
+		agmd9               =:ora_agmd9:ora_agmd9Zi,
+		agmd10              =:ora_agmd10:ora_agmd10Zi,
+		agmd11              =:ora_agmd11:ora_agmd11Zi,
+		agmd12              =:ora_agmd12:ora_agmd12Zi,
+		asmd1               =:ora_asmd1:ora_asmd1Zi,
+		asmd2               =:ora_asmd2:ora_asmd2Zi,
+		asmd3               =:ora_asmd3:ora_asmd3Zi,
+		asmd4               =:ora_asmd4:ora_asmd4Zi,
+		asmd5               =:ora_asmd5:ora_asmd5Zi,
+		cltptn              =:ora_cltptn:ora_cltptnZi,
+		ph_sp1              =:ora_ph_sp1:ora_ph_sp1Zi,
+		ph_sp2              =:ora_ph_sp2:ora_ph_sp2Zi,
+		conc_sp1            =:ora_conc_sp1:ora_conc_sp1Zi,
+		conc_sp2            =:ora_conc_sp2:ora_conc_sp2Zi,
+		temp_sp1            =:ora_temp_sp1:ora_temp_sp1Zi,
+		temp_sp2            =:ora_temp_sp2:ora_temp_sp2Zi,
+		ccposi              =:ora_ccposi:ora_ccposiZi,
+		toc                 =TO_DATE( :ora_toc:ora_tocZi,'YYYYMMDDHH24MISS'),
+		tom                 =TO_DATE( :ora_tom:ora_tomZi,'YYYYMMDDHH24MISS'),
+		mop                 =:ora_mop:ora_mopZi
+	WHERE
+		samp_no         = :k_ora_samp_no ;
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//inserts a single entry from DB
+char* ACTDT_TCMACT::insertDB()
+{
+	//
+	//copy the attributes ( ...) to Oracle Hosts( ora_..) 
+	//
+		copyAttributeToOracle();
+	//
+	// Do INSERT
+	//
+	EXEC SQL INSERT INTO ACTDT_TCMACT
+	(
+		datee,
+		timee,
+		samp_no,
+		linsts,
+		rmd,
+		trno,
+		dia,
+		acd,
+		mrh,
+		dstd,
+		xrys1,
+		xrys2,
+		xrys3,
+		xrys4,
+		xrys5,
+		xrys6,
+		xrya1,
+		xrya2,
+		xrya3,
+		xrya4,
+		xrya5,
+		xrya6,
+		sspd1,
+		sspd2,
+		sspd3,
+		sspd4,
+		sspd5,
+		sspd6,
+		rspd1,
+		rspd2,
+		rspd3,
+		rspd4,
+		rspd5,
+		wrben1,
+		wrben2,
+		wrben3,
+		wrben4,
+		wrben5,
+		imrben1,
+		imrben2,
+		imrben3,
+		imrben4,
+		imrben5,
+		wrst1,
+		wrsb1,
+		wrst2,
+		wrsb2,
+		wrst3,
+		wrsb3,
+		wrst4,
+		wrsb4,
+		wrst5,
+		wrsb5,
+		imsht1,
+		imshb1,
+		imsht2,
+		imshb2,
+		imsht3,
+		imshb3,
+		imsht4,
+		imshb4,
+		imsht5,
+		imshb5,
+		wgws1,
+		wgws2,
+		wgws3,
+		wgws4,
+		wgws5,
+		wgds1,
+		wgds2,
+		wgds3,
+		wgds4,
+		wgds5,
+		rttl1,
+		rttl2,
+		rttl3,
+		rttl4,
+		rttl5,
+		rdf1,
+		rdf2,
+		rdf3,
+		rdf4,
+		rdf5,
+		tens1,
+		tens2,
+		tens3,
+		tens4,
+		tens5,
+		tens6,
+		tendf1,
+		tendf2,
+		tendf3,
+		tendf4,
+		tendf5,
+		tendf6,
+		mcnb1,
+		mcnb2,
+		mcnb3,
+		mcnb4,
+		mcst1,
+		mcst2,
+		mcst3,
+		mcst4,
+		mcst5,
+		fslip1,
+		fslip2,
+		fslip3,
+		fslip4,
+		fslip5,
+		mvst1,
+		mvst2,
+		mvst3,
+		mvst4,
+		mvst5,
+		drop1,
+		drop2,
+		drop3,
+		drop4,
+		drop5,
+		drspd,
+		smspd,
+		mctr1,
+		mctr2,
+		mvtr1,
+		mvtr2,
+		trlen,
+		msts,
+		accrat,
+		decrat,
+		mast,
+		xsts1,
+		xsts2,
+		xsts3,
+		xsts4,
+		xsts5,
+		xsts6,
+		edsts,
+		agmd1,
+		agmd2,
+		agmd3,
+		agmd4,
+		agmd5,
+		agmd6,
+		agmd7,
+		agmd8,
+		agmd9,
+		agmd10,
+		agmd11,
+		agmd12,
+		asmd1,
+		asmd2,
+		asmd3,
+		asmd4,
+		asmd5,
+		cltptn,
+		ph_sp1,
+		ph_sp2,
+		conc_sp1,
+		conc_sp2,
+		temp_sp1,
+		temp_sp2,
+		ccposi,
+		toc,
+		tom,
+		mop
+	)
+
+	VALUES
+	(
+		:ora_datee,
+		:ora_timee,
+		:ora_samp_no,
+		:ora_linsts:ora_linstsZi,
+		:ora_rmd:ora_rmdZi,
+		:ora_trno:ora_trnoZi,
+		:ora_dia:ora_diaZi,
+		:ora_acd:ora_acdZi,
+		:ora_mrh:ora_mrhZi,
+		:ora_dstd:ora_dstdZi,
+		:ora_xrys1:ora_xrys1Zi,
+		:ora_xrys2:ora_xrys2Zi,
+		:ora_xrys3:ora_xrys3Zi,
+		:ora_xrys4:ora_xrys4Zi,
+		:ora_xrys5:ora_xrys5Zi,
+		:ora_xrys6:ora_xrys6Zi,
+		:ora_xrya1:ora_xrya1Zi,
+		:ora_xrya2:ora_xrya2Zi,
+		:ora_xrya3:ora_xrya3Zi,
+		:ora_xrya4:ora_xrya4Zi,
+		:ora_xrya5:ora_xrya5Zi,
+		:ora_xrya6:ora_xrya6Zi,
+		:ora_sspd1:ora_sspd1Zi,
+		:ora_sspd2:ora_sspd2Zi,
+		:ora_sspd3:ora_sspd3Zi,
+		:ora_sspd4:ora_sspd4Zi,
+		:ora_sspd5:ora_sspd5Zi,
+		:ora_sspd6:ora_sspd6Zi,
+		:ora_rspd1:ora_rspd1Zi,
+		:ora_rspd2:ora_rspd2Zi,
+		:ora_rspd3:ora_rspd3Zi,
+		:ora_rspd4:ora_rspd4Zi,
+		:ora_rspd5:ora_rspd5Zi,
+		:ora_wrben1:ora_wrben1Zi,
+		:ora_wrben2:ora_wrben2Zi,
+		:ora_wrben3:ora_wrben3Zi,
+		:ora_wrben4:ora_wrben4Zi,
+		:ora_wrben5:ora_wrben5Zi,
+		:ora_imrben1:ora_imrben1Zi,
+		:ora_imrben2:ora_imrben2Zi,
+		:ora_imrben3:ora_imrben3Zi,
+		:ora_imrben4:ora_imrben4Zi,
+		:ora_imrben5:ora_imrben5Zi,
+		:ora_wrst1:ora_wrst1Zi,
+		:ora_wrsb1:ora_wrsb1Zi,
+		:ora_wrst2:ora_wrst2Zi,
+		:ora_wrsb2:ora_wrsb2Zi,
+		:ora_wrst3:ora_wrst3Zi,
+		:ora_wrsb3:ora_wrsb3Zi,
+		:ora_wrst4:ora_wrst4Zi,
+		:ora_wrsb4:ora_wrsb4Zi,
+		:ora_wrst5:ora_wrst5Zi,
+		:ora_wrsb5:ora_wrsb5Zi,
+		:ora_imsht1:ora_imsht1Zi,
+		:ora_imshb1:ora_imshb1Zi,
+		:ora_imsht2:ora_imsht2Zi,
+		:ora_imshb2:ora_imshb2Zi,
+		:ora_imsht3:ora_imsht3Zi,
+		:ora_imshb3:ora_imshb3Zi,
+		:ora_imsht4:ora_imsht4Zi,
+		:ora_imshb4:ora_imshb4Zi,
+		:ora_imsht5:ora_imsht5Zi,
+		:ora_imshb5:ora_imshb5Zi,
+		:ora_wgws1:ora_wgws1Zi,
+		:ora_wgws2:ora_wgws2Zi,
+		:ora_wgws3:ora_wgws3Zi,
+		:ora_wgws4:ora_wgws4Zi,
+		:ora_wgws5:ora_wgws5Zi,
+		:ora_wgds1:ora_wgds1Zi,
+		:ora_wgds2:ora_wgds2Zi,
+		:ora_wgds3:ora_wgds3Zi,
+		:ora_wgds4:ora_wgds4Zi,
+		:ora_wgds5:ora_wgds5Zi,
+		:ora_rttl1:ora_rttl1Zi,
+		:ora_rttl2:ora_rttl2Zi,
+		:ora_rttl3:ora_rttl3Zi,
+		:ora_rttl4:ora_rttl4Zi,
+		:ora_rttl5:ora_rttl5Zi,
+		:ora_rdf1:ora_rdf1Zi,
+		:ora_rdf2:ora_rdf2Zi,
+		:ora_rdf3:ora_rdf3Zi,
+		:ora_rdf4:ora_rdf4Zi,
+		:ora_rdf5:ora_rdf5Zi,
+		:ora_tens1:ora_tens1Zi,
+		:ora_tens2:ora_tens2Zi,
+		:ora_tens3:ora_tens3Zi,
+		:ora_tens4:ora_tens4Zi,
+		:ora_tens5:ora_tens5Zi,
+		:ora_tens6:ora_tens6Zi,
+		:ora_tendf1:ora_tendf1Zi,
+		:ora_tendf2:ora_tendf2Zi,
+		:ora_tendf3:ora_tendf3Zi,
+		:ora_tendf4:ora_tendf4Zi,
+		:ora_tendf5:ora_tendf5Zi,
+		:ora_tendf6:ora_tendf6Zi,
+		:ora_mcnb1:ora_mcnb1Zi,
+		:ora_mcnb2:ora_mcnb2Zi,
+		:ora_mcnb3:ora_mcnb3Zi,
+		:ora_mcnb4:ora_mcnb4Zi,
+		:ora_mcst1:ora_mcst1Zi,
+		:ora_mcst2:ora_mcst2Zi,
+		:ora_mcst3:ora_mcst3Zi,
+		:ora_mcst4:ora_mcst4Zi,
+		:ora_mcst5:ora_mcst5Zi,
+		:ora_fslip1:ora_fslip1Zi,
+		:ora_fslip2:ora_fslip2Zi,
+		:ora_fslip3:ora_fslip3Zi,
+		:ora_fslip4:ora_fslip4Zi,
+		:ora_fslip5:ora_fslip5Zi,
+		:ora_mvst1:ora_mvst1Zi,
+		:ora_mvst2:ora_mvst2Zi,
+		:ora_mvst3:ora_mvst3Zi,
+		:ora_mvst4:ora_mvst4Zi,
+		:ora_mvst5:ora_mvst5Zi,
+		:ora_drop1:ora_drop1Zi,
+		:ora_drop2:ora_drop2Zi,
+		:ora_drop3:ora_drop3Zi,
+		:ora_drop4:ora_drop4Zi,
+		:ora_drop5:ora_drop5Zi,
+		:ora_drspd:ora_drspdZi,
+		:ora_smspd:ora_smspdZi,
+		:ora_mctr1:ora_mctr1Zi,
+		:ora_mctr2:ora_mctr2Zi,
+		:ora_mvtr1:ora_mvtr1Zi,
+		:ora_mvtr2:ora_mvtr2Zi,
+		:ora_trlen:ora_trlenZi,
+		:ora_msts:ora_mstsZi,
+		:ora_accrat:ora_accratZi,
+		:ora_decrat:ora_decratZi,
+		:ora_mast:ora_mastZi,
+		:ora_xsts1:ora_xsts1Zi,
+		:ora_xsts2:ora_xsts2Zi,
+		:ora_xsts3:ora_xsts3Zi,
+		:ora_xsts4:ora_xsts4Zi,
+		:ora_xsts5:ora_xsts5Zi,
+		:ora_xsts6:ora_xsts6Zi,
+		:ora_edsts:ora_edstsZi,
+		:ora_agmd1:ora_agmd1Zi,
+		:ora_agmd2:ora_agmd2Zi,
+		:ora_agmd3:ora_agmd3Zi,
+		:ora_agmd4:ora_agmd4Zi,
+		:ora_agmd5:ora_agmd5Zi,
+		:ora_agmd6:ora_agmd6Zi,
+		:ora_agmd7:ora_agmd7Zi,
+		:ora_agmd8:ora_agmd8Zi,
+		:ora_agmd9:ora_agmd9Zi,
+		:ora_agmd10:ora_agmd10Zi,
+		:ora_agmd11:ora_agmd11Zi,
+		:ora_agmd12:ora_agmd12Zi,
+		:ora_asmd1:ora_asmd1Zi,
+		:ora_asmd2:ora_asmd2Zi,
+		:ora_asmd3:ora_asmd3Zi,
+		:ora_asmd4:ora_asmd4Zi,
+		:ora_asmd5:ora_asmd5Zi,
+		:ora_cltptn:ora_cltptnZi,
+		:ora_ph_sp1:ora_ph_sp1Zi,
+		:ora_ph_sp2:ora_ph_sp2Zi,
+		:ora_conc_sp1:ora_conc_sp1Zi,
+		:ora_conc_sp2:ora_conc_sp2Zi,
+		:ora_temp_sp1:ora_temp_sp1Zi,
+		:ora_temp_sp2:ora_temp_sp2Zi,
+		:ora_ccposi:ora_ccposiZi,
+		TO_DATE( :ora_toc:ora_tocZi,'YYYYMMDDHH24MISS'),
+		TO_DATE( :ora_tom:ora_tomZi,'YYYYMMDDHH24MISS'),
+		:ora_mop:ora_mopZi
+	);
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//this methode tries to update a DB record,when the update fails.
+char* ACTDT_TCMACT::storeDB()
+{
+	char* ret = NULL;
+	setKeysFromRecord();
+	ret=updateDB();
+	if(ret != NULL)
+	{
+		ret=insertDB();
+		if(ret != NULL)
+		{
+			dbAccess = false;
+			return(ret);
+		}
+	}
+	return(ret);
+}
+
+//deletes a single entry from DB
+char* ACTDT_TCMACT::deleteDB()
+{
+//
+//copy the host variables (k_...) to Oracle Host Keys (k_ora_..)
+//
+	copyKeyToHost();
+
+//
+// Do Delete 
+//
+	EXEC SQL DELETE FROM ACTDT_TCMACT
+	WHERE
+				samp_no         = :k_ora_samp_no ;
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+// Executes the SQL DELETE with a where clause
+char* ACTDT_TCMACT::deleteDB(const char* where,long* count)
+{
+	*(count) = -1L;
+// Create dynamic statement.
+//
+	strcpy((char*)dynstr.arr,"DELETE");
+	strcat((char*)dynstr.arr," FROM ACTDT_TCMACT");
+	if ( where != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, where );
+	}
+
+	dynstr.len = strlen( (char*) dynstr.arr);
+	EXEC SQL EXECUTE IMMEDIATE :dynstr;
+	oracleSqlCode = sqlca.sqlcode;
+		oracleRowsProcessed = sqlca.sqlerrd[2];
+	if (sqlca.sqlcode == 0 )
+		*(count) = sqlca.sqlerrd[2];
+	else 
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//openSetDB data with where condition and sort order.
+char* ACTDT_TCMACT::openSetDB(const char* where,char* order)
+{
+//
+// Create dynamic statement.
+//
+	strcpy((char*)dynstr.arr,"SELECT ");
+	strcat((char*)dynstr.arr,"datee,");
+	strcat((char*)dynstr.arr,"timee,");
+	strcat((char*)dynstr.arr,"samp_no,");
+	strcat((char*)dynstr.arr,"linsts,");
+	strcat((char*)dynstr.arr,"rmd,");
+	strcat((char*)dynstr.arr,"trno,");
+	strcat((char*)dynstr.arr,"dia,");
+	strcat((char*)dynstr.arr,"acd,");
+	strcat((char*)dynstr.arr,"mrh,");
+	strcat((char*)dynstr.arr,"dstd,");
+	strcat((char*)dynstr.arr,"xrys1,");
+	strcat((char*)dynstr.arr,"xrys2,");
+	strcat((char*)dynstr.arr,"xrys3,");
+	strcat((char*)dynstr.arr,"xrys4,");
+	strcat((char*)dynstr.arr,"xrys5,");
+	strcat((char*)dynstr.arr,"xrys6,");
+	strcat((char*)dynstr.arr,"xrya1,");
+	strcat((char*)dynstr.arr,"xrya2,");
+	strcat((char*)dynstr.arr,"xrya3,");
+	strcat((char*)dynstr.arr,"xrya4,");
+	strcat((char*)dynstr.arr,"xrya5,");
+	strcat((char*)dynstr.arr,"xrya6,");
+	strcat((char*)dynstr.arr,"sspd1,");
+	strcat((char*)dynstr.arr,"sspd2,");
+	strcat((char*)dynstr.arr,"sspd3,");
+	strcat((char*)dynstr.arr,"sspd4,");
+	strcat((char*)dynstr.arr,"sspd5,");
+	strcat((char*)dynstr.arr,"sspd6,");
+	strcat((char*)dynstr.arr,"rspd1,");
+	strcat((char*)dynstr.arr,"rspd2,");
+	strcat((char*)dynstr.arr,"rspd3,");
+	strcat((char*)dynstr.arr,"rspd4,");
+	strcat((char*)dynstr.arr,"rspd5,");
+	strcat((char*)dynstr.arr,"wrben1,");
+	strcat((char*)dynstr.arr,"wrben2,");
+	strcat((char*)dynstr.arr,"wrben3,");
+	strcat((char*)dynstr.arr,"wrben4,");
+	strcat((char*)dynstr.arr,"wrben5,");
+	strcat((char*)dynstr.arr,"imrben1,");
+	strcat((char*)dynstr.arr,"imrben2,");
+	strcat((char*)dynstr.arr,"imrben3,");
+	strcat((char*)dynstr.arr,"imrben4,");
+	strcat((char*)dynstr.arr,"imrben5,");
+	strcat((char*)dynstr.arr,"wrst1,");
+	strcat((char*)dynstr.arr,"wrsb1,");
+	strcat((char*)dynstr.arr,"wrst2,");
+	strcat((char*)dynstr.arr,"wrsb2,");
+	strcat((char*)dynstr.arr,"wrst3,");
+	strcat((char*)dynstr.arr,"wrsb3,");
+	strcat((char*)dynstr.arr,"wrst4,");
+	strcat((char*)dynstr.arr,"wrsb4,");
+	strcat((char*)dynstr.arr,"wrst5,");
+	strcat((char*)dynstr.arr,"wrsb5,");
+	strcat((char*)dynstr.arr,"imsht1,");
+	strcat((char*)dynstr.arr,"imshb1,");
+	strcat((char*)dynstr.arr,"imsht2,");
+	strcat((char*)dynstr.arr,"imshb2,");
+	strcat((char*)dynstr.arr,"imsht3,");
+	strcat((char*)dynstr.arr,"imshb3,");
+	strcat((char*)dynstr.arr,"imsht4,");
+	strcat((char*)dynstr.arr,"imshb4,");
+	strcat((char*)dynstr.arr,"imsht5,");
+	strcat((char*)dynstr.arr,"imshb5,");
+	strcat((char*)dynstr.arr,"wgws1,");
+	strcat((char*)dynstr.arr,"wgws2,");
+	strcat((char*)dynstr.arr,"wgws3,");
+	strcat((char*)dynstr.arr,"wgws4,");
+	strcat((char*)dynstr.arr,"wgws5,");
+	strcat((char*)dynstr.arr,"wgds1,");
+	strcat((char*)dynstr.arr,"wgds2,");
+	strcat((char*)dynstr.arr,"wgds3,");
+	strcat((char*)dynstr.arr,"wgds4,");
+	strcat((char*)dynstr.arr,"wgds5,");
+	strcat((char*)dynstr.arr,"rttl1,");
+	strcat((char*)dynstr.arr,"rttl2,");
+	strcat((char*)dynstr.arr,"rttl3,");
+	strcat((char*)dynstr.arr,"rttl4,");
+	strcat((char*)dynstr.arr,"rttl5,");
+	strcat((char*)dynstr.arr,"rdf1,");
+	strcat((char*)dynstr.arr,"rdf2,");
+	strcat((char*)dynstr.arr,"rdf3,");
+	strcat((char*)dynstr.arr,"rdf4,");
+	strcat((char*)dynstr.arr,"rdf5,");
+	strcat((char*)dynstr.arr,"tens1,");
+	strcat((char*)dynstr.arr,"tens2,");
+	strcat((char*)dynstr.arr,"tens3,");
+	strcat((char*)dynstr.arr,"tens4,");
+	strcat((char*)dynstr.arr,"tens5,");
+	strcat((char*)dynstr.arr,"tens6,");
+	strcat((char*)dynstr.arr,"tendf1,");
+	strcat((char*)dynstr.arr,"tendf2,");
+	strcat((char*)dynstr.arr,"tendf3,");
+	strcat((char*)dynstr.arr,"tendf4,");
+	strcat((char*)dynstr.arr,"tendf5,");
+	strcat((char*)dynstr.arr,"tendf6,");
+	strcat((char*)dynstr.arr,"mcnb1,");
+	strcat((char*)dynstr.arr,"mcnb2,");
+	strcat((char*)dynstr.arr,"mcnb3,");
+	strcat((char*)dynstr.arr,"mcnb4,");
+	strcat((char*)dynstr.arr,"mcst1,");
+	strcat((char*)dynstr.arr,"mcst2,");
+	strcat((char*)dynstr.arr,"mcst3,");
+	strcat((char*)dynstr.arr,"mcst4,");
+	strcat((char*)dynstr.arr,"mcst5,");
+	strcat((char*)dynstr.arr,"fslip1,");
+	strcat((char*)dynstr.arr,"fslip2,");
+	strcat((char*)dynstr.arr,"fslip3,");
+	strcat((char*)dynstr.arr,"fslip4,");
+	strcat((char*)dynstr.arr,"fslip5,");
+	strcat((char*)dynstr.arr,"mvst1,");
+	strcat((char*)dynstr.arr,"mvst2,");
+	strcat((char*)dynstr.arr,"mvst3,");
+	strcat((char*)dynstr.arr,"mvst4,");
+	strcat((char*)dynstr.arr,"mvst5,");
+	strcat((char*)dynstr.arr,"drop1,");
+	strcat((char*)dynstr.arr,"drop2,");
+	strcat((char*)dynstr.arr,"drop3,");
+	strcat((char*)dynstr.arr,"drop4,");
+	strcat((char*)dynstr.arr,"drop5,");
+	strcat((char*)dynstr.arr,"drspd,");
+	strcat((char*)dynstr.arr,"smspd,");
+	strcat((char*)dynstr.arr,"mctr1,");
+	strcat((char*)dynstr.arr,"mctr2,");
+	strcat((char*)dynstr.arr,"mvtr1,");
+	strcat((char*)dynstr.arr,"mvtr2,");
+	strcat((char*)dynstr.arr,"trlen,");
+	strcat((char*)dynstr.arr,"msts,");
+	strcat((char*)dynstr.arr,"accrat,");
+	strcat((char*)dynstr.arr,"decrat,");
+	strcat((char*)dynstr.arr,"mast,");
+	strcat((char*)dynstr.arr,"xsts1,");
+	strcat((char*)dynstr.arr,"xsts2,");
+	strcat((char*)dynstr.arr,"xsts3,");
+	strcat((char*)dynstr.arr,"xsts4,");
+	strcat((char*)dynstr.arr,"xsts5,");
+	strcat((char*)dynstr.arr,"xsts6,");
+	strcat((char*)dynstr.arr,"edsts,");
+	strcat((char*)dynstr.arr,"agmd1,");
+	strcat((char*)dynstr.arr,"agmd2,");
+	strcat((char*)dynstr.arr,"agmd3,");
+	strcat((char*)dynstr.arr,"agmd4,");
+	strcat((char*)dynstr.arr,"agmd5,");
+	strcat((char*)dynstr.arr,"agmd6,");
+	strcat((char*)dynstr.arr,"agmd7,");
+	strcat((char*)dynstr.arr,"agmd8,");
+	strcat((char*)dynstr.arr,"agmd9,");
+	strcat((char*)dynstr.arr,"agmd10,");
+	strcat((char*)dynstr.arr,"agmd11,");
+	strcat((char*)dynstr.arr,"agmd12,");
+	strcat((char*)dynstr.arr,"asmd1,");
+	strcat((char*)dynstr.arr,"asmd2,");
+	strcat((char*)dynstr.arr,"asmd3,");
+	strcat((char*)dynstr.arr,"asmd4,");
+	strcat((char*)dynstr.arr,"asmd5,");
+	strcat((char*)dynstr.arr,"cltptn,");
+	strcat((char*)dynstr.arr,"ph_sp1,");
+	strcat((char*)dynstr.arr,"ph_sp2,");
+	strcat((char*)dynstr.arr,"conc_sp1,");
+	strcat((char*)dynstr.arr,"conc_sp2,");
+	strcat((char*)dynstr.arr,"temp_sp1,");
+	strcat((char*)dynstr.arr,"temp_sp2,");
+	strcat((char*)dynstr.arr,"ccposi,");
+	strcat((char*)dynstr.arr,"TO_CHAR(toc , 'YYYYMMDDHH24MISS'),");
+	strcat((char*)dynstr.arr,"TO_CHAR(tom , 'YYYYMMDDHH24MISS'),");
+	strcat((char*)dynstr.arr,"mop");
+
+	strcat((char*)dynstr.arr," FROM ACTDT_TCMACT ");
+	if ( where != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, where);
+	}
+	if ( order != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, order);
+	}
+
+	dynstr.len = strlen( (char*) dynstr.arr);
+	EXEC SQL PREPARE set_ACTDT_TCMACT FROM :dynstr;
+	if (sqlca.sqlcode == 0 )
+	{
+		EXEC SQL DECLARE cu_ACTDT_TCMACT CURSOR FOR set_ACTDT_TCMACT;
+		if (sqlca.sqlcode == 0 )
+			EXEC SQL OPEN cu_ACTDT_TCMACT;
+	}
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	cuFl = OPENED;
+	return ( NULL );
+}
+
+//Executes the SQL FETCH Statement .
+char* ACTDT_TCMACT::getSetDB()
+{
+	if ( cuFl != OPENED ) return ("No open Cursor Table:Me");
+	EXEC SQL FETCH cu_ACTDT_TCMACT INTO
+		:ora_datee,
+		:ora_timee,
+		:ora_samp_no,
+		:ora_linsts:ora_linstsZi,
+		:ora_rmd:ora_rmdZi,
+		:ora_trno:ora_trnoZi,
+		:ora_dia:ora_diaZi,
+		:ora_acd:ora_acdZi,
+		:ora_mrh:ora_mrhZi,
+		:ora_dstd:ora_dstdZi,
+		:ora_xrys1:ora_xrys1Zi,
+		:ora_xrys2:ora_xrys2Zi,
+		:ora_xrys3:ora_xrys3Zi,
+		:ora_xrys4:ora_xrys4Zi,
+		:ora_xrys5:ora_xrys5Zi,
+		:ora_xrys6:ora_xrys6Zi,
+		:ora_xrya1:ora_xrya1Zi,
+		:ora_xrya2:ora_xrya2Zi,
+		:ora_xrya3:ora_xrya3Zi,
+		:ora_xrya4:ora_xrya4Zi,
+		:ora_xrya5:ora_xrya5Zi,
+		:ora_xrya6:ora_xrya6Zi,
+		:ora_sspd1:ora_sspd1Zi,
+		:ora_sspd2:ora_sspd2Zi,
+		:ora_sspd3:ora_sspd3Zi,
+		:ora_sspd4:ora_sspd4Zi,
+		:ora_sspd5:ora_sspd5Zi,
+		:ora_sspd6:ora_sspd6Zi,
+		:ora_rspd1:ora_rspd1Zi,
+		:ora_rspd2:ora_rspd2Zi,
+		:ora_rspd3:ora_rspd3Zi,
+		:ora_rspd4:ora_rspd4Zi,
+		:ora_rspd5:ora_rspd5Zi,
+		:ora_wrben1:ora_wrben1Zi,
+		:ora_wrben2:ora_wrben2Zi,
+		:ora_wrben3:ora_wrben3Zi,
+		:ora_wrben4:ora_wrben4Zi,
+		:ora_wrben5:ora_wrben5Zi,
+		:ora_imrben1:ora_imrben1Zi,
+		:ora_imrben2:ora_imrben2Zi,
+		:ora_imrben3:ora_imrben3Zi,
+		:ora_imrben4:ora_imrben4Zi,
+		:ora_imrben5:ora_imrben5Zi,
+		:ora_wrst1:ora_wrst1Zi,
+		:ora_wrsb1:ora_wrsb1Zi,
+		:ora_wrst2:ora_wrst2Zi,
+		:ora_wrsb2:ora_wrsb2Zi,
+		:ora_wrst3:ora_wrst3Zi,
+		:ora_wrsb3:ora_wrsb3Zi,
+		:ora_wrst4:ora_wrst4Zi,
+		:ora_wrsb4:ora_wrsb4Zi,
+		:ora_wrst5:ora_wrst5Zi,
+		:ora_wrsb5:ora_wrsb5Zi,
+		:ora_imsht1:ora_imsht1Zi,
+		:ora_imshb1:ora_imshb1Zi,
+		:ora_imsht2:ora_imsht2Zi,
+		:ora_imshb2:ora_imshb2Zi,
+		:ora_imsht3:ora_imsht3Zi,
+		:ora_imshb3:ora_imshb3Zi,
+		:ora_imsht4:ora_imsht4Zi,
+		:ora_imshb4:ora_imshb4Zi,
+		:ora_imsht5:ora_imsht5Zi,
+		:ora_imshb5:ora_imshb5Zi,
+		:ora_wgws1:ora_wgws1Zi,
+		:ora_wgws2:ora_wgws2Zi,
+		:ora_wgws3:ora_wgws3Zi,
+		:ora_wgws4:ora_wgws4Zi,
+		:ora_wgws5:ora_wgws5Zi,
+		:ora_wgds1:ora_wgds1Zi,
+		:ora_wgds2:ora_wgds2Zi,
+		:ora_wgds3:ora_wgds3Zi,
+		:ora_wgds4:ora_wgds4Zi,
+		:ora_wgds5:ora_wgds5Zi,
+		:ora_rttl1:ora_rttl1Zi,
+		:ora_rttl2:ora_rttl2Zi,
+		:ora_rttl3:ora_rttl3Zi,
+		:ora_rttl4:ora_rttl4Zi,
+		:ora_rttl5:ora_rttl5Zi,
+		:ora_rdf1:ora_rdf1Zi,
+		:ora_rdf2:ora_rdf2Zi,
+		:ora_rdf3:ora_rdf3Zi,
+		:ora_rdf4:ora_rdf4Zi,
+		:ora_rdf5:ora_rdf5Zi,
+		:ora_tens1:ora_tens1Zi,
+		:ora_tens2:ora_tens2Zi,
+		:ora_tens3:ora_tens3Zi,
+		:ora_tens4:ora_tens4Zi,
+		:ora_tens5:ora_tens5Zi,
+		:ora_tens6:ora_tens6Zi,
+		:ora_tendf1:ora_tendf1Zi,
+		:ora_tendf2:ora_tendf2Zi,
+		:ora_tendf3:ora_tendf3Zi,
+		:ora_tendf4:ora_tendf4Zi,
+		:ora_tendf5:ora_tendf5Zi,
+		:ora_tendf6:ora_tendf6Zi,
+		:ora_mcnb1:ora_mcnb1Zi,
+		:ora_mcnb2:ora_mcnb2Zi,
+		:ora_mcnb3:ora_mcnb3Zi,
+		:ora_mcnb4:ora_mcnb4Zi,
+		:ora_mcst1:ora_mcst1Zi,
+		:ora_mcst2:ora_mcst2Zi,
+		:ora_mcst3:ora_mcst3Zi,
+		:ora_mcst4:ora_mcst4Zi,
+		:ora_mcst5:ora_mcst5Zi,
+		:ora_fslip1:ora_fslip1Zi,
+		:ora_fslip2:ora_fslip2Zi,
+		:ora_fslip3:ora_fslip3Zi,
+		:ora_fslip4:ora_fslip4Zi,
+		:ora_fslip5:ora_fslip5Zi,
+		:ora_mvst1:ora_mvst1Zi,
+		:ora_mvst2:ora_mvst2Zi,
+		:ora_mvst3:ora_mvst3Zi,
+		:ora_mvst4:ora_mvst4Zi,
+		:ora_mvst5:ora_mvst5Zi,
+		:ora_drop1:ora_drop1Zi,
+		:ora_drop2:ora_drop2Zi,
+		:ora_drop3:ora_drop3Zi,
+		:ora_drop4:ora_drop4Zi,
+		:ora_drop5:ora_drop5Zi,
+		:ora_drspd:ora_drspdZi,
+		:ora_smspd:ora_smspdZi,
+		:ora_mctr1:ora_mctr1Zi,
+		:ora_mctr2:ora_mctr2Zi,
+		:ora_mvtr1:ora_mvtr1Zi,
+		:ora_mvtr2:ora_mvtr2Zi,
+		:ora_trlen:ora_trlenZi,
+		:ora_msts:ora_mstsZi,
+		:ora_accrat:ora_accratZi,
+		:ora_decrat:ora_decratZi,
+		:ora_mast:ora_mastZi,
+		:ora_xsts1:ora_xsts1Zi,
+		:ora_xsts2:ora_xsts2Zi,
+		:ora_xsts3:ora_xsts3Zi,
+		:ora_xsts4:ora_xsts4Zi,
+		:ora_xsts5:ora_xsts5Zi,
+		:ora_xsts6:ora_xsts6Zi,
+		:ora_edsts:ora_edstsZi,
+		:ora_agmd1:ora_agmd1Zi,
+		:ora_agmd2:ora_agmd2Zi,
+		:ora_agmd3:ora_agmd3Zi,
+		:ora_agmd4:ora_agmd4Zi,
+		:ora_agmd5:ora_agmd5Zi,
+		:ora_agmd6:ora_agmd6Zi,
+		:ora_agmd7:ora_agmd7Zi,
+		:ora_agmd8:ora_agmd8Zi,
+		:ora_agmd9:ora_agmd9Zi,
+		:ora_agmd10:ora_agmd10Zi,
+		:ora_agmd11:ora_agmd11Zi,
+		:ora_agmd12:ora_agmd12Zi,
+		:ora_asmd1:ora_asmd1Zi,
+		:ora_asmd2:ora_asmd2Zi,
+		:ora_asmd3:ora_asmd3Zi,
+		:ora_asmd4:ora_asmd4Zi,
+		:ora_asmd5:ora_asmd5Zi,
+		:ora_cltptn:ora_cltptnZi,
+		:ora_ph_sp1:ora_ph_sp1Zi,
+		:ora_ph_sp2:ora_ph_sp2Zi,
+		:ora_conc_sp1:ora_conc_sp1Zi,
+		:ora_conc_sp2:ora_conc_sp2Zi,
+		:ora_temp_sp1:ora_temp_sp1Zi,
+		:ora_temp_sp2:ora_temp_sp2Zi,
+		:ora_ccposi:ora_ccposiZi,
+		:ora_toc:ora_tocZi,
+		:ora_tom:ora_tomZi,
+		:ora_mop:ora_mopZi;
+
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		pCatch->catchError(sqlca.sqlcode);
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		return (char*) sqlca.sqlerrm.sqlerrmc ;
+	}
+	//
+	// copy host variables into Class attributes
+	//
+	copyOracleToAttribute();
+	copyHostToKey();
+	return ( NULL );
+}
+
+//Close a Oracle Cursor
+char* ACTDT_TCMACT::closeSetDB()
+{
+	EXEC SQL CLOSE cu_ACTDT_TCMACT;
+	oracleSqlCode = sqlca.sqlcode;         
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		pCatch->catchError(sqlca.sqlcode);
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		return (char*) sqlca.sqlerrm.sqlerrmc ;
+	}
+	cuFl = CLOSED;
+	return ( NULL );
+}
+
+//Executes the SQL count(key) for a where clause
+char* ACTDT_TCMACT::countDB(const char* where,long* count)
+{
+	*(count) = -1L;
+//
+// Create dynamic statement. 
+//
+	strncpy((char*)dynstr.arr,"SELECT count(samp_no)", sizeof(dynstr.arr));
+	strcat((char*)dynstr.arr," FROM ACTDT_TCMACT");
+	if ( where != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, where );
+	}
+	dynstr.len = strlen( (char*) dynstr.arr);
+	EXEC SQL PREPARE c_ACTDT_TCMACT FROM :dynstr;
+	
+	if (sqlca.sqlcode == 0 )
+	{
+		EXEC SQL DECLARE ct_ACTDT_TCMACT CURSOR FOR c_ACTDT_TCMACT;
+		if (sqlca.sqlcode == 0 )
+		{
+			EXEC SQL OPEN ct_ACTDT_TCMACT;
+			if (sqlca.sqlcode == 0 )			{
+				EXEC SQL FETCH ct_ACTDT_TCMACT INTO :rowCnt;
+				if (sqlca.sqlcode == 0 )
+				*(count) = rowCnt;
+			}
+			EXEC SQL CLOSE ct_ACTDT_TCMACT;
+		}
+	}
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//private methode copy Attribute to Oracle
+//copys Object attributes into Oracle Host variables.
+void ACTDT_TCMACT::copyAttributeToOracle()
+{
+	char* ptrStr;
+	ptrStr = this->datee();
+	if( strlen(ptrStr)< sizeof(ora_datee.arr))
+	{
+		strncpy((char*)ora_datee.arr, ptrStr, sizeof(ora_datee.arr));
+		ora_datee.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_datee.len = 0;
+	ptrStr = this->timee();
+	if( strlen(ptrStr)< sizeof(ora_timee.arr))
+	{
+		strncpy((char*)ora_timee.arr, ptrStr, sizeof(ora_timee.arr));
+		ora_timee.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_timee.len = 0;
+	ora_samp_no = this->samp_no();
+	ora_linsts = this->linsts();
+	ora_linstsZi = this->linstsZi();
+	ora_rmd = this->rmd();
+	ora_rmdZi = this->rmdZi();
+	ora_trno = this->trno();
+	ora_trnoZi = this->trnoZi();
+	ora_dia = this->dia();
+	ora_diaZi = this->diaZi();
+	ora_acd = this->acd();
+	ora_acdZi = this->acdZi();
+	ora_mrh = this->mrh();
+	ora_mrhZi = this->mrhZi();
+	ora_dstd = this->dstd();
+	ora_dstdZi = this->dstdZi();
+	ora_xrys1 = this->xrys1();
+	ora_xrys1Zi = this->xrys1Zi();
+	ora_xrys2 = this->xrys2();
+	ora_xrys2Zi = this->xrys2Zi();
+	ora_xrys3 = this->xrys3();
+	ora_xrys3Zi = this->xrys3Zi();
+	ora_xrys4 = this->xrys4();
+	ora_xrys4Zi = this->xrys4Zi();
+	ora_xrys5 = this->xrys5();
+	ora_xrys5Zi = this->xrys5Zi();
+	ora_xrys6 = this->xrys6();
+	ora_xrys6Zi = this->xrys6Zi();
+	ora_xrya1 = this->xrya1();
+	ora_xrya1Zi = this->xrya1Zi();
+	ora_xrya2 = this->xrya2();
+	ora_xrya2Zi = this->xrya2Zi();
+	ora_xrya3 = this->xrya3();
+	ora_xrya3Zi = this->xrya3Zi();
+	ora_xrya4 = this->xrya4();
+	ora_xrya4Zi = this->xrya4Zi();
+	ora_xrya5 = this->xrya5();
+	ora_xrya5Zi = this->xrya5Zi();
+	ora_xrya6 = this->xrya6();
+	ora_xrya6Zi = this->xrya6Zi();
+	ora_sspd1 = this->sspd1();
+	ora_sspd1Zi = this->sspd1Zi();
+	ora_sspd2 = this->sspd2();
+	ora_sspd2Zi = this->sspd2Zi();
+	ora_sspd3 = this->sspd3();
+	ora_sspd3Zi = this->sspd3Zi();
+	ora_sspd4 = this->sspd4();
+	ora_sspd4Zi = this->sspd4Zi();
+	ora_sspd5 = this->sspd5();
+	ora_sspd5Zi = this->sspd5Zi();
+	ora_sspd6 = this->sspd6();
+	ora_sspd6Zi = this->sspd6Zi();
+	ora_rspd1 = this->rspd1();
+	ora_rspd1Zi = this->rspd1Zi();
+	ora_rspd2 = this->rspd2();
+	ora_rspd2Zi = this->rspd2Zi();
+	ora_rspd3 = this->rspd3();
+	ora_rspd3Zi = this->rspd3Zi();
+	ora_rspd4 = this->rspd4();
+	ora_rspd4Zi = this->rspd4Zi();
+	ora_rspd5 = this->rspd5();
+	ora_rspd5Zi = this->rspd5Zi();
+	ora_wrben1 = this->wrben1();
+	ora_wrben1Zi = this->wrben1Zi();
+	ora_wrben2 = this->wrben2();
+	ora_wrben2Zi = this->wrben2Zi();
+	ora_wrben3 = this->wrben3();
+	ora_wrben3Zi = this->wrben3Zi();
+	ora_wrben4 = this->wrben4();
+	ora_wrben4Zi = this->wrben4Zi();
+	ora_wrben5 = this->wrben5();
+	ora_wrben5Zi = this->wrben5Zi();
+	ora_imrben1 = this->imrben1();
+	ora_imrben1Zi = this->imrben1Zi();
+	ora_imrben2 = this->imrben2();
+	ora_imrben2Zi = this->imrben2Zi();
+	ora_imrben3 = this->imrben3();
+	ora_imrben3Zi = this->imrben3Zi();
+	ora_imrben4 = this->imrben4();
+	ora_imrben4Zi = this->imrben4Zi();
+	ora_imrben5 = this->imrben5();
+	ora_imrben5Zi = this->imrben5Zi();
+	ora_wrst1 = this->wrst1();
+	ora_wrst1Zi = this->wrst1Zi();
+	ora_wrsb1 = this->wrsb1();
+	ora_wrsb1Zi = this->wrsb1Zi();
+	ora_wrst2 = this->wrst2();
+	ora_wrst2Zi = this->wrst2Zi();
+	ora_wrsb2 = this->wrsb2();
+	ora_wrsb2Zi = this->wrsb2Zi();
+	ora_wrst3 = this->wrst3();
+	ora_wrst3Zi = this->wrst3Zi();
+	ora_wrsb3 = this->wrsb3();
+	ora_wrsb3Zi = this->wrsb3Zi();
+	ora_wrst4 = this->wrst4();
+	ora_wrst4Zi = this->wrst4Zi();
+	ora_wrsb4 = this->wrsb4();
+	ora_wrsb4Zi = this->wrsb4Zi();
+	ora_wrst5 = this->wrst5();
+	ora_wrst5Zi = this->wrst5Zi();
+	ora_wrsb5 = this->wrsb5();
+	ora_wrsb5Zi = this->wrsb5Zi();
+	ora_imsht1 = this->imsht1();
+	ora_imsht1Zi = this->imsht1Zi();
+	ora_imshb1 = this->imshb1();
+	ora_imshb1Zi = this->imshb1Zi();
+	ora_imsht2 = this->imsht2();
+	ora_imsht2Zi = this->imsht2Zi();
+	ora_imshb2 = this->imshb2();
+	ora_imshb2Zi = this->imshb2Zi();
+	ora_imsht3 = this->imsht3();
+	ora_imsht3Zi = this->imsht3Zi();
+	ora_imshb3 = this->imshb3();
+	ora_imshb3Zi = this->imshb3Zi();
+	ora_imsht4 = this->imsht4();
+	ora_imsht4Zi = this->imsht4Zi();
+	ora_imshb4 = this->imshb4();
+	ora_imshb4Zi = this->imshb4Zi();
+	ora_imsht5 = this->imsht5();
+	ora_imsht5Zi = this->imsht5Zi();
+	ora_imshb5 = this->imshb5();
+	ora_imshb5Zi = this->imshb5Zi();
+	ora_wgws1 = this->wgws1();
+	ora_wgws1Zi = this->wgws1Zi();
+	ora_wgws2 = this->wgws2();
+	ora_wgws2Zi = this->wgws2Zi();
+	ora_wgws3 = this->wgws3();
+	ora_wgws3Zi = this->wgws3Zi();
+	ora_wgws4 = this->wgws4();
+	ora_wgws4Zi = this->wgws4Zi();
+	ora_wgws5 = this->wgws5();
+	ora_wgws5Zi = this->wgws5Zi();
+	ora_wgds1 = this->wgds1();
+	ora_wgds1Zi = this->wgds1Zi();
+	ora_wgds2 = this->wgds2();
+	ora_wgds2Zi = this->wgds2Zi();
+	ora_wgds3 = this->wgds3();
+	ora_wgds3Zi = this->wgds3Zi();
+	ora_wgds4 = this->wgds4();
+	ora_wgds4Zi = this->wgds4Zi();
+	ora_wgds5 = this->wgds5();
+	ora_wgds5Zi = this->wgds5Zi();
+	ora_rttl1 = this->rttl1();
+	ora_rttl1Zi = this->rttl1Zi();
+	ora_rttl2 = this->rttl2();
+	ora_rttl2Zi = this->rttl2Zi();
+	ora_rttl3 = this->rttl3();
+	ora_rttl3Zi = this->rttl3Zi();
+	ora_rttl4 = this->rttl4();
+	ora_rttl4Zi = this->rttl4Zi();
+	ora_rttl5 = this->rttl5();
+	ora_rttl5Zi = this->rttl5Zi();
+	ora_rdf1 = this->rdf1();
+	ora_rdf1Zi = this->rdf1Zi();
+	ora_rdf2 = this->rdf2();
+	ora_rdf2Zi = this->rdf2Zi();
+	ora_rdf3 = this->rdf3();
+	ora_rdf3Zi = this->rdf3Zi();
+	ora_rdf4 = this->rdf4();
+	ora_rdf4Zi = this->rdf4Zi();
+	ora_rdf5 = this->rdf5();
+	ora_rdf5Zi = this->rdf5Zi();
+	ora_tens1 = this->tens1();
+	ora_tens1Zi = this->tens1Zi();
+	ora_tens2 = this->tens2();
+	ora_tens2Zi = this->tens2Zi();
+	ora_tens3 = this->tens3();
+	ora_tens3Zi = this->tens3Zi();
+	ora_tens4 = this->tens4();
+	ora_tens4Zi = this->tens4Zi();
+	ora_tens5 = this->tens5();
+	ora_tens5Zi = this->tens5Zi();
+	ora_tens6 = this->tens6();
+	ora_tens6Zi = this->tens6Zi();
+	ora_tendf1 = this->tendf1();
+	ora_tendf1Zi = this->tendf1Zi();
+	ora_tendf2 = this->tendf2();
+	ora_tendf2Zi = this->tendf2Zi();
+	ora_tendf3 = this->tendf3();
+	ora_tendf3Zi = this->tendf3Zi();
+	ora_tendf4 = this->tendf4();
+	ora_tendf4Zi = this->tendf4Zi();
+	ora_tendf5 = this->tendf5();
+	ora_tendf5Zi = this->tendf5Zi();
+	ora_tendf6 = this->tendf6();
+	ora_tendf6Zi = this->tendf6Zi();
+	ora_mcnb1 = this->mcnb1();
+	ora_mcnb1Zi = this->mcnb1Zi();
+	ora_mcnb2 = this->mcnb2();
+	ora_mcnb2Zi = this->mcnb2Zi();
+	ora_mcnb3 = this->mcnb3();
+	ora_mcnb3Zi = this->mcnb3Zi();
+	ora_mcnb4 = this->mcnb4();
+	ora_mcnb4Zi = this->mcnb4Zi();
+	ora_mcst1 = this->mcst1();
+	ora_mcst1Zi = this->mcst1Zi();
+	ora_mcst2 = this->mcst2();
+	ora_mcst2Zi = this->mcst2Zi();
+	ora_mcst3 = this->mcst3();
+	ora_mcst3Zi = this->mcst3Zi();
+	ora_mcst4 = this->mcst4();
+	ora_mcst4Zi = this->mcst4Zi();
+	ora_mcst5 = this->mcst5();
+	ora_mcst5Zi = this->mcst5Zi();
+	ora_fslip1 = this->fslip1();
+	ora_fslip1Zi = this->fslip1Zi();
+	ora_fslip2 = this->fslip2();
+	ora_fslip2Zi = this->fslip2Zi();
+	ora_fslip3 = this->fslip3();
+	ora_fslip3Zi = this->fslip3Zi();
+	ora_fslip4 = this->fslip4();
+	ora_fslip4Zi = this->fslip4Zi();
+	ora_fslip5 = this->fslip5();
+	ora_fslip5Zi = this->fslip5Zi();
+	ora_mvst1 = this->mvst1();
+	ora_mvst1Zi = this->mvst1Zi();
+	ora_mvst2 = this->mvst2();
+	ora_mvst2Zi = this->mvst2Zi();
+	ora_mvst3 = this->mvst3();
+	ora_mvst3Zi = this->mvst3Zi();
+	ora_mvst4 = this->mvst4();
+	ora_mvst4Zi = this->mvst4Zi();
+	ora_mvst5 = this->mvst5();
+	ora_mvst5Zi = this->mvst5Zi();
+	ora_drop1 = this->drop1();
+	ora_drop1Zi = this->drop1Zi();
+	ora_drop2 = this->drop2();
+	ora_drop2Zi = this->drop2Zi();
+	ora_drop3 = this->drop3();
+	ora_drop3Zi = this->drop3Zi();
+	ora_drop4 = this->drop4();
+	ora_drop4Zi = this->drop4Zi();
+	ora_drop5 = this->drop5();
+	ora_drop5Zi = this->drop5Zi();
+	ora_drspd = this->drspd();
+	ora_drspdZi = this->drspdZi();
+	ora_smspd = this->smspd();
+	ora_smspdZi = this->smspdZi();
+	ora_mctr1 = this->mctr1();
+	ora_mctr1Zi = this->mctr1Zi();
+	ora_mctr2 = this->mctr2();
+	ora_mctr2Zi = this->mctr2Zi();
+	ora_mvtr1 = this->mvtr1();
+	ora_mvtr1Zi = this->mvtr1Zi();
+	ora_mvtr2 = this->mvtr2();
+	ora_mvtr2Zi = this->mvtr2Zi();
+	ora_trlen = this->trlen();
+	ora_trlenZi = this->trlenZi();
+	ora_msts = this->msts();
+	ora_mstsZi = this->mstsZi();
+	ora_accrat = this->accrat();
+	ora_accratZi = this->accratZi();
+	ora_decrat = this->decrat();
+	ora_decratZi = this->decratZi();
+	ora_mast = this->mast();
+	ora_mastZi = this->mastZi();
+	ora_xsts1 = this->xsts1();
+	ora_xsts1Zi = this->xsts1Zi();
+	ora_xsts2 = this->xsts2();
+	ora_xsts2Zi = this->xsts2Zi();
+	ora_xsts3 = this->xsts3();
+	ora_xsts3Zi = this->xsts3Zi();
+	ora_xsts4 = this->xsts4();
+	ora_xsts4Zi = this->xsts4Zi();
+	ora_xsts5 = this->xsts5();
+	ora_xsts5Zi = this->xsts5Zi();
+	ora_xsts6 = this->xsts6();
+	ora_xsts6Zi = this->xsts6Zi();
+	ora_edsts = this->edsts();
+	ora_edstsZi = this->edstsZi();
+	ora_agmd1 = this->agmd1();
+	ora_agmd1Zi = this->agmd1Zi();
+	ora_agmd2 = this->agmd2();
+	ora_agmd2Zi = this->agmd2Zi();
+	ora_agmd3 = this->agmd3();
+	ora_agmd3Zi = this->agmd3Zi();
+	ora_agmd4 = this->agmd4();
+	ora_agmd4Zi = this->agmd4Zi();
+	ora_agmd5 = this->agmd5();
+	ora_agmd5Zi = this->agmd5Zi();
+	ora_agmd6 = this->agmd6();
+	ora_agmd6Zi = this->agmd6Zi();
+	ora_agmd7 = this->agmd7();
+	ora_agmd7Zi = this->agmd7Zi();
+	ora_agmd8 = this->agmd8();
+	ora_agmd8Zi = this->agmd8Zi();
+	ora_agmd9 = this->agmd9();
+	ora_agmd9Zi = this->agmd9Zi();
+	ora_agmd10 = this->agmd10();
+	ora_agmd10Zi = this->agmd10Zi();
+	ora_agmd11 = this->agmd11();
+	ora_agmd11Zi = this->agmd11Zi();
+	ora_agmd12 = this->agmd12();
+	ora_agmd12Zi = this->agmd12Zi();
+	ora_asmd1 = this->asmd1();
+	ora_asmd1Zi = this->asmd1Zi();
+	ora_asmd2 = this->asmd2();
+	ora_asmd2Zi = this->asmd2Zi();
+	ora_asmd3 = this->asmd3();
+	ora_asmd3Zi = this->asmd3Zi();
+	ora_asmd4 = this->asmd4();
+	ora_asmd4Zi = this->asmd4Zi();
+	ora_asmd5 = this->asmd5();
+	ora_asmd5Zi = this->asmd5Zi();
+	ora_cltptn = this->cltptn();
+	ora_cltptnZi = this->cltptnZi();
+	ora_ph_sp1 = this->ph_sp1();
+	ora_ph_sp1Zi = this->ph_sp1Zi();
+	ora_ph_sp2 = this->ph_sp2();
+	ora_ph_sp2Zi = this->ph_sp2Zi();
+	ora_conc_sp1 = this->conc_sp1();
+	ora_conc_sp1Zi = this->conc_sp1Zi();
+	ora_conc_sp2 = this->conc_sp2();
+	ora_conc_sp2Zi = this->conc_sp2Zi();
+	ora_temp_sp1 = this->temp_sp1();
+	ora_temp_sp1Zi = this->temp_sp1Zi();
+	ora_temp_sp2 = this->temp_sp2();
+	ora_temp_sp2Zi = this->temp_sp2Zi();
+	ora_ccposi = this->ccposi();
+	ora_ccposiZi = this->ccposiZi();
+	ptrStr = this->toc();
+	if( strlen(ptrStr)< sizeof(ora_toc.arr))
+	{
+		strncpy((char*)ora_toc.arr, ptrStr, sizeof(ora_toc.arr));
+		ora_toc.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_toc.len = 0;
+	ora_tocZi = this->tocZi();
+	ptrStr = this->tom();
+	if( strlen(ptrStr)< sizeof(ora_tom.arr))
+	{
+		strncpy((char*)ora_tom.arr, ptrStr, sizeof(ora_tom.arr));
+		ora_tom.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_tom.len = 0;
+	ora_tomZi = this->tomZi();
+	ptrStr = this->mop();
+	if( strlen(ptrStr)< sizeof(ora_mop.arr))
+	{
+		strncpy((char*)ora_mop.arr, ptrStr, sizeof(ora_mop.arr));
+		ora_mop.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_mop.len = 0;
+	ora_mopZi = this->mopZi();
+}
+
+//private methode copy Oracle to Attribute
+//copys Oracle Host variables into Object attributes.
+void ACTDT_TCMACT::copyOracleToAttribute()
+{
+	ora_datee.arr[ora_datee.len] = '\0';
+	this->set_datee((char*) ora_datee.arr);
+	ora_timee.arr[ora_timee.len] = '\0';
+	this->set_timee((char*) ora_timee.arr);
+	this->set_samp_no((short)ora_samp_no);
+	this->set_linsts((short)ora_linsts);
+	this->set_linstsZi((short)ora_linstsZi);
+	this->set_rmd((short)ora_rmd);
+	this->set_rmdZi((short)ora_rmdZi);
+	this->set_trno((short)ora_trno);
+	this->set_trnoZi((short)ora_trnoZi);
+	this->set_dia((short)ora_dia);
+	this->set_diaZi((short)ora_diaZi);
+	this->set_acd((short)ora_acd);
+	this->set_acdZi((short)ora_acdZi);
+	this->set_mrh((short)ora_mrh);
+	this->set_mrhZi((short)ora_mrhZi);
+	this->set_dstd((short)ora_dstd);
+	this->set_dstdZi((short)ora_dstdZi);
+	this->set_xrys1((short)ora_xrys1);
+	this->set_xrys1Zi((short)ora_xrys1Zi);
+	this->set_xrys2((short)ora_xrys2);
+	this->set_xrys2Zi((short)ora_xrys2Zi);
+	this->set_xrys3((short)ora_xrys3);
+	this->set_xrys3Zi((short)ora_xrys3Zi);
+	this->set_xrys4((short)ora_xrys4);
+	this->set_xrys4Zi((short)ora_xrys4Zi);
+	this->set_xrys5((short)ora_xrys5);
+	this->set_xrys5Zi((short)ora_xrys5Zi);
+	this->set_xrys6((short)ora_xrys6);
+	this->set_xrys6Zi((short)ora_xrys6Zi);
+	this->set_xrya1((short)ora_xrya1);
+	this->set_xrya1Zi((short)ora_xrya1Zi);
+	this->set_xrya2((short)ora_xrya2);
+	this->set_xrya2Zi((short)ora_xrya2Zi);
+	this->set_xrya3((short)ora_xrya3);
+	this->set_xrya3Zi((short)ora_xrya3Zi);
+	this->set_xrya4((short)ora_xrya4);
+	this->set_xrya4Zi((short)ora_xrya4Zi);
+	this->set_xrya5((short)ora_xrya5);
+	this->set_xrya5Zi((short)ora_xrya5Zi);
+	this->set_xrya6((short)ora_xrya6);
+	this->set_xrya6Zi((short)ora_xrya6Zi);
+	this->set_sspd1((short)ora_sspd1);
+	this->set_sspd1Zi((short)ora_sspd1Zi);
+	this->set_sspd2((short)ora_sspd2);
+	this->set_sspd2Zi((short)ora_sspd2Zi);
+	this->set_sspd3((short)ora_sspd3);
+	this->set_sspd3Zi((short)ora_sspd3Zi);
+	this->set_sspd4((short)ora_sspd4);
+	this->set_sspd4Zi((short)ora_sspd4Zi);
+	this->set_sspd5((short)ora_sspd5);
+	this->set_sspd5Zi((short)ora_sspd5Zi);
+	this->set_sspd6((short)ora_sspd6);
+	this->set_sspd6Zi((short)ora_sspd6Zi);
+	this->set_rspd1((short)ora_rspd1);
+	this->set_rspd1Zi((short)ora_rspd1Zi);
+	this->set_rspd2((short)ora_rspd2);
+	this->set_rspd2Zi((short)ora_rspd2Zi);
+	this->set_rspd3((short)ora_rspd3);
+	this->set_rspd3Zi((short)ora_rspd3Zi);
+	this->set_rspd4((short)ora_rspd4);
+	this->set_rspd4Zi((short)ora_rspd4Zi);
+	this->set_rspd5((short)ora_rspd5);
+	this->set_rspd5Zi((short)ora_rspd5Zi);
+	this->set_wrben1((short)ora_wrben1);
+	this->set_wrben1Zi((short)ora_wrben1Zi);
+	this->set_wrben2((short)ora_wrben2);
+	this->set_wrben2Zi((short)ora_wrben2Zi);
+	this->set_wrben3((short)ora_wrben3);
+	this->set_wrben3Zi((short)ora_wrben3Zi);
+	this->set_wrben4((short)ora_wrben4);
+	this->set_wrben4Zi((short)ora_wrben4Zi);
+	this->set_wrben5((short)ora_wrben5);
+	this->set_wrben5Zi((short)ora_wrben5Zi);
+	this->set_imrben1((short)ora_imrben1);
+	this->set_imrben1Zi((short)ora_imrben1Zi);
+	this->set_imrben2((short)ora_imrben2);
+	this->set_imrben2Zi((short)ora_imrben2Zi);
+	this->set_imrben3((short)ora_imrben3);
+	this->set_imrben3Zi((short)ora_imrben3Zi);
+	this->set_imrben4((short)ora_imrben4);
+	this->set_imrben4Zi((short)ora_imrben4Zi);
+	this->set_imrben5((short)ora_imrben5);
+	this->set_imrben5Zi((short)ora_imrben5Zi);
+	this->set_wrst1((short)ora_wrst1);
+	this->set_wrst1Zi((short)ora_wrst1Zi);
+	this->set_wrsb1((short)ora_wrsb1);
+	this->set_wrsb1Zi((short)ora_wrsb1Zi);
+	this->set_wrst2((short)ora_wrst2);
+	this->set_wrst2Zi((short)ora_wrst2Zi);
+	this->set_wrsb2((short)ora_wrsb2);
+	this->set_wrsb2Zi((short)ora_wrsb2Zi);
+	this->set_wrst3((short)ora_wrst3);
+	this->set_wrst3Zi((short)ora_wrst3Zi);
+	this->set_wrsb3((short)ora_wrsb3);
+	this->set_wrsb3Zi((short)ora_wrsb3Zi);
+	this->set_wrst4((short)ora_wrst4);
+	this->set_wrst4Zi((short)ora_wrst4Zi);
+	this->set_wrsb4((short)ora_wrsb4);
+	this->set_wrsb4Zi((short)ora_wrsb4Zi);
+	this->set_wrst5((short)ora_wrst5);
+	this->set_wrst5Zi((short)ora_wrst5Zi);
+	this->set_wrsb5((short)ora_wrsb5);
+	this->set_wrsb5Zi((short)ora_wrsb5Zi);
+	this->set_imsht1((short)ora_imsht1);
+	this->set_imsht1Zi((short)ora_imsht1Zi);
+	this->set_imshb1((short)ora_imshb1);
+	this->set_imshb1Zi((short)ora_imshb1Zi);
+	this->set_imsht2((short)ora_imsht2);
+	this->set_imsht2Zi((short)ora_imsht2Zi);
+	this->set_imshb2((short)ora_imshb2);
+	this->set_imshb2Zi((short)ora_imshb2Zi);
+	this->set_imsht3((short)ora_imsht3);
+	this->set_imsht3Zi((short)ora_imsht3Zi);
+	this->set_imshb3((short)ora_imshb3);
+	this->set_imshb3Zi((short)ora_imshb3Zi);
+	this->set_imsht4((short)ora_imsht4);
+	this->set_imsht4Zi((short)ora_imsht4Zi);
+	this->set_imshb4((short)ora_imshb4);
+	this->set_imshb4Zi((short)ora_imshb4Zi);
+	this->set_imsht5((short)ora_imsht5);
+	this->set_imsht5Zi((short)ora_imsht5Zi);
+	this->set_imshb5((short)ora_imshb5);
+	this->set_imshb5Zi((short)ora_imshb5Zi);
+	this->set_wgws1((short)ora_wgws1);
+	this->set_wgws1Zi((short)ora_wgws1Zi);
+	this->set_wgws2((short)ora_wgws2);
+	this->set_wgws2Zi((short)ora_wgws2Zi);
+	this->set_wgws3((short)ora_wgws3);
+	this->set_wgws3Zi((short)ora_wgws3Zi);
+	this->set_wgws4((short)ora_wgws4);
+	this->set_wgws4Zi((short)ora_wgws4Zi);
+	this->set_wgws5((short)ora_wgws5);
+	this->set_wgws5Zi((short)ora_wgws5Zi);
+	this->set_wgds1((short)ora_wgds1);
+	this->set_wgds1Zi((short)ora_wgds1Zi);
+	this->set_wgds2((short)ora_wgds2);
+	this->set_wgds2Zi((short)ora_wgds2Zi);
+	this->set_wgds3((short)ora_wgds3);
+	this->set_wgds3Zi((short)ora_wgds3Zi);
+	this->set_wgds4((short)ora_wgds4);
+	this->set_wgds4Zi((short)ora_wgds4Zi);
+	this->set_wgds5((short)ora_wgds5);
+	this->set_wgds5Zi((short)ora_wgds5Zi);
+	this->set_rttl1((short)ora_rttl1);
+	this->set_rttl1Zi((short)ora_rttl1Zi);
+	this->set_rttl2((short)ora_rttl2);
+	this->set_rttl2Zi((short)ora_rttl2Zi);
+	this->set_rttl3((short)ora_rttl3);
+	this->set_rttl3Zi((short)ora_rttl3Zi);
+	this->set_rttl4((short)ora_rttl4);
+	this->set_rttl4Zi((short)ora_rttl4Zi);
+	this->set_rttl5((short)ora_rttl5);
+	this->set_rttl5Zi((short)ora_rttl5Zi);
+	this->set_rdf1((short)ora_rdf1);
+	this->set_rdf1Zi((short)ora_rdf1Zi);
+	this->set_rdf2((short)ora_rdf2);
+	this->set_rdf2Zi((short)ora_rdf2Zi);
+	this->set_rdf3((short)ora_rdf3);
+	this->set_rdf3Zi((short)ora_rdf3Zi);
+	this->set_rdf4((short)ora_rdf4);
+	this->set_rdf4Zi((short)ora_rdf4Zi);
+	this->set_rdf5((short)ora_rdf5);
+	this->set_rdf5Zi((short)ora_rdf5Zi);
+	this->set_tens1((short)ora_tens1);
+	this->set_tens1Zi((short)ora_tens1Zi);
+	this->set_tens2((short)ora_tens2);
+	this->set_tens2Zi((short)ora_tens2Zi);
+	this->set_tens3((short)ora_tens3);
+	this->set_tens3Zi((short)ora_tens3Zi);
+	this->set_tens4((short)ora_tens4);
+	this->set_tens4Zi((short)ora_tens4Zi);
+	this->set_tens5((short)ora_tens5);
+	this->set_tens5Zi((short)ora_tens5Zi);
+	this->set_tens6((short)ora_tens6);
+	this->set_tens6Zi((short)ora_tens6Zi);
+	this->set_tendf1((short)ora_tendf1);
+	this->set_tendf1Zi((short)ora_tendf1Zi);
+	this->set_tendf2((short)ora_tendf2);
+	this->set_tendf2Zi((short)ora_tendf2Zi);
+	this->set_tendf3((short)ora_tendf3);
+	this->set_tendf3Zi((short)ora_tendf3Zi);
+	this->set_tendf4((short)ora_tendf4);
+	this->set_tendf4Zi((short)ora_tendf4Zi);
+	this->set_tendf5((short)ora_tendf5);
+	this->set_tendf5Zi((short)ora_tendf5Zi);
+	this->set_tendf6((short)ora_tendf6);
+	this->set_tendf6Zi((short)ora_tendf6Zi);
+	this->set_mcnb1((short)ora_mcnb1);
+	this->set_mcnb1Zi((short)ora_mcnb1Zi);
+	this->set_mcnb2((short)ora_mcnb2);
+	this->set_mcnb2Zi((short)ora_mcnb2Zi);
+	this->set_mcnb3((short)ora_mcnb3);
+	this->set_mcnb3Zi((short)ora_mcnb3Zi);
+	this->set_mcnb4((short)ora_mcnb4);
+	this->set_mcnb4Zi((short)ora_mcnb4Zi);
+	this->set_mcst1((short)ora_mcst1);
+	this->set_mcst1Zi((short)ora_mcst1Zi);
+	this->set_mcst2((short)ora_mcst2);
+	this->set_mcst2Zi((short)ora_mcst2Zi);
+	this->set_mcst3((short)ora_mcst3);
+	this->set_mcst3Zi((short)ora_mcst3Zi);
+	this->set_mcst4((short)ora_mcst4);
+	this->set_mcst4Zi((short)ora_mcst4Zi);
+	this->set_mcst5((short)ora_mcst5);
+	this->set_mcst5Zi((short)ora_mcst5Zi);
+	this->set_fslip1((short)ora_fslip1);
+	this->set_fslip1Zi((short)ora_fslip1Zi);
+	this->set_fslip2((short)ora_fslip2);
+	this->set_fslip2Zi((short)ora_fslip2Zi);
+	this->set_fslip3((short)ora_fslip3);
+	this->set_fslip3Zi((short)ora_fslip3Zi);
+	this->set_fslip4((short)ora_fslip4);
+	this->set_fslip4Zi((short)ora_fslip4Zi);
+	this->set_fslip5((short)ora_fslip5);
+	this->set_fslip5Zi((short)ora_fslip5Zi);
+	this->set_mvst1((short)ora_mvst1);
+	this->set_mvst1Zi((short)ora_mvst1Zi);
+	this->set_mvst2((short)ora_mvst2);
+	this->set_mvst2Zi((short)ora_mvst2Zi);
+	this->set_mvst3((short)ora_mvst3);
+	this->set_mvst3Zi((short)ora_mvst3Zi);
+	this->set_mvst4((short)ora_mvst4);
+	this->set_mvst4Zi((short)ora_mvst4Zi);
+	this->set_mvst5((short)ora_mvst5);
+	this->set_mvst5Zi((short)ora_mvst5Zi);
+	this->set_drop1((short)ora_drop1);
+	this->set_drop1Zi((short)ora_drop1Zi);
+	this->set_drop2((short)ora_drop2);
+	this->set_drop2Zi((short)ora_drop2Zi);
+	this->set_drop3((short)ora_drop3);
+	this->set_drop3Zi((short)ora_drop3Zi);
+	this->set_drop4((short)ora_drop4);
+	this->set_drop4Zi((short)ora_drop4Zi);
+	this->set_drop5((short)ora_drop5);
+	this->set_drop5Zi((short)ora_drop5Zi);
+	this->set_drspd((short)ora_drspd);
+	this->set_drspdZi((short)ora_drspdZi);
+	this->set_smspd((short)ora_smspd);
+	this->set_smspdZi((short)ora_smspdZi);
+	this->set_mctr1((short)ora_mctr1);
+	this->set_mctr1Zi((short)ora_mctr1Zi);
+	this->set_mctr2((short)ora_mctr2);
+	this->set_mctr2Zi((short)ora_mctr2Zi);
+	this->set_mvtr1((short)ora_mvtr1);
+	this->set_mvtr1Zi((short)ora_mvtr1Zi);
+	this->set_mvtr2((short)ora_mvtr2);
+	this->set_mvtr2Zi((short)ora_mvtr2Zi);
+	this->set_trlen((short)ora_trlen);
+	this->set_trlenZi((short)ora_trlenZi);
+	this->set_msts((short)ora_msts);
+	this->set_mstsZi((short)ora_mstsZi);
+	this->set_accrat((short)ora_accrat);
+	this->set_accratZi((short)ora_accratZi);
+	this->set_decrat((short)ora_decrat);
+	this->set_decratZi((short)ora_decratZi);
+	this->set_mast((short)ora_mast);
+	this->set_mastZi((short)ora_mastZi);
+	this->set_xsts1((short)ora_xsts1);
+	this->set_xsts1Zi((short)ora_xsts1Zi);
+	this->set_xsts2((short)ora_xsts2);
+	this->set_xsts2Zi((short)ora_xsts2Zi);
+	this->set_xsts3((short)ora_xsts3);
+	this->set_xsts3Zi((short)ora_xsts3Zi);
+	this->set_xsts4((short)ora_xsts4);
+	this->set_xsts4Zi((short)ora_xsts4Zi);
+	this->set_xsts5((short)ora_xsts5);
+	this->set_xsts5Zi((short)ora_xsts5Zi);
+	this->set_xsts6((short)ora_xsts6);
+	this->set_xsts6Zi((short)ora_xsts6Zi);
+	this->set_edsts((short)ora_edsts);
+	this->set_edstsZi((short)ora_edstsZi);
+	this->set_agmd1((short)ora_agmd1);
+	this->set_agmd1Zi((short)ora_agmd1Zi);
+	this->set_agmd2((short)ora_agmd2);
+	this->set_agmd2Zi((short)ora_agmd2Zi);
+	this->set_agmd3((short)ora_agmd3);
+	this->set_agmd3Zi((short)ora_agmd3Zi);
+	this->set_agmd4((short)ora_agmd4);
+	this->set_agmd4Zi((short)ora_agmd4Zi);
+	this->set_agmd5((short)ora_agmd5);
+	this->set_agmd5Zi((short)ora_agmd5Zi);
+	this->set_agmd6((short)ora_agmd6);
+	this->set_agmd6Zi((short)ora_agmd6Zi);
+	this->set_agmd7((short)ora_agmd7);
+	this->set_agmd7Zi((short)ora_agmd7Zi);
+	this->set_agmd8((short)ora_agmd8);
+	this->set_agmd8Zi((short)ora_agmd8Zi);
+	this->set_agmd9((short)ora_agmd9);
+	this->set_agmd9Zi((short)ora_agmd9Zi);
+	this->set_agmd10((short)ora_agmd10);
+	this->set_agmd10Zi((short)ora_agmd10Zi);
+	this->set_agmd11((short)ora_agmd11);
+	this->set_agmd11Zi((short)ora_agmd11Zi);
+	this->set_agmd12((short)ora_agmd12);
+	this->set_agmd12Zi((short)ora_agmd12Zi);
+	this->set_asmd1((short)ora_asmd1);
+	this->set_asmd1Zi((short)ora_asmd1Zi);
+	this->set_asmd2((short)ora_asmd2);
+	this->set_asmd2Zi((short)ora_asmd2Zi);
+	this->set_asmd3((short)ora_asmd3);
+	this->set_asmd3Zi((short)ora_asmd3Zi);
+	this->set_asmd4((short)ora_asmd4);
+	this->set_asmd4Zi((short)ora_asmd4Zi);
+	this->set_asmd5((short)ora_asmd5);
+	this->set_asmd5Zi((short)ora_asmd5Zi);
+	this->set_cltptn((short)ora_cltptn);
+	this->set_cltptnZi((short)ora_cltptnZi);
+	this->set_ph_sp1((short)ora_ph_sp1);
+	this->set_ph_sp1Zi((short)ora_ph_sp1Zi);
+	this->set_ph_sp2((short)ora_ph_sp2);
+	this->set_ph_sp2Zi((short)ora_ph_sp2Zi);
+	this->set_conc_sp1((short)ora_conc_sp1);
+	this->set_conc_sp1Zi((short)ora_conc_sp1Zi);
+	this->set_conc_sp2((short)ora_conc_sp2);
+	this->set_conc_sp2Zi((short)ora_conc_sp2Zi);
+	this->set_temp_sp1((short)ora_temp_sp1);
+	this->set_temp_sp1Zi((short)ora_temp_sp1Zi);
+	this->set_temp_sp2((short)ora_temp_sp2);
+	this->set_temp_sp2Zi((short)ora_temp_sp2Zi);
+	this->set_ccposi((short)ora_ccposi);
+	this->set_ccposiZi((short)ora_ccposiZi);
+	ora_toc.arr[ora_toc.len] = '\0';
+	this->set_toc((char*) ora_toc.arr);
+	this->set_tocZi((short)ora_tocZi);
+	ora_tom.arr[ora_tom.len] = '\0';
+	this->set_tom((char*) ora_tom.arr);
+	this->set_tomZi((short)ora_tomZi);
+	ora_mop.arr[ora_mop.len] = '\0';
+	this->set_mop((char*) ora_mop.arr);
+	this->set_mopZi((short)ora_mopZi);
+}
+
+//private methode copy Key to host
+//copys Object attributes into Oralce Key variables.
+void ACTDT_TCMACT::copyKeyToHost()
+{
+	char* ptrStr;
+	k_ora_samp_no = this->k_samp_no();
+}
+
+//private methode copy Host to Key
+// copys Oracle Host Key variables into Object Key attributes.
+void ACTDT_TCMACT::copyHostToKey()
+{
+	this->set_k_samp_no((short)ora_samp_no);
+}
+
+//private methode log Oracle message information
+void ACTDT_TCMACT::logOraMessageInfo()
+{
+	LOG d("ACTDT_TCMACT::logOraMessageInfo()");
+	sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+	oraca.orastxt.orastxtc[oraca.orastxt.orastxtl] = '\0';
+	oraca.orasfnm.orasfnmc[oraca.orasfnm.orasfnml] = '\0';
+	
+	//* negating a error code submitted perhaps positively.
+	if (sqlca.sqlcode > 0) sqlca.sqlcode *= -1;
+	
+	//* Distribute fault text, SQL statement and file in the Debug System.
+	d << "ORA-Error: "<< sqlca.sqlerrm.sqlerrmc; d.Info();
+	d << "OracaText: "<< oraca.orastxt.orastxtc; d.Info();
+	d << "in line " << oraca.oraslnr << " in file " << oraca.orasfnm.orasfnmc; d.Info();
+}
+
+//this methode stores the unique key attributes
+void ACTDT_TCMACT::setPrimKey(short arg1)
+{
+	s_k_samp_no = arg1;
+}
+
+//this methode stores the unique key attributes
+void ACTDT_TCMACT::initInsertKeys(short arg1)
+{
+	setPrimKey(arg1);
+	s_samp_no = arg1;
+}
+
+//this methode set the unique key attributes from the DB Record Attributes
+void ACTDT_TCMACT::setKeysFromRecord()
+{
+	set_k_samp_no( samp_no() );
+}
+
+//			         
+//O P E R A T O R  + 
+//===================
+//                   
+ACTDT_TCMACT ACTDT_TCMACT::operator+(const ACTDT_TCMACT &inst) const
+{
+	ACTDT_TCMACT ptrACTDT_TCMACT(*this);
+//----------------------------------------------------------
+	ptrACTDT_TCMACT.set_datee(inst.datee());
+//----------------------------------------------------------
+	ptrACTDT_TCMACT.set_timee(inst.timee());
+//----------------------------------------------------------
+	ptrACTDT_TCMACT.set_samp_no(inst.samp_no());
+//----------------------------------------------------------
+	if(inst.linstsZi() != -1)
+	{
+		ptrACTDT_TCMACT.set_linsts(inst.linsts());
+		ptrACTDT_TCMACT.set_linstsZi(inst.linstsZi());
+	}
+//----------------------------------------------------------
+	if(inst.rmdZi() != -1)
+	{
+		ptrACTDT_TCMACT.set_rmd(inst.rmd());
+		ptrACTDT_TCMACT.set_rmdZi(inst.rmdZi());
+	}
+//----------------------------------------------------------
+	if(inst.trnoZi() != -1)
+	{
+		ptrACTDT_TCMACT.set_trno(inst.trno());
+		ptrACTDT_TCMACT.set_trnoZi(inst.trnoZi());
+	}
+//----------------------------------------------------------
+	if(inst.diaZi() != -1)
+	{
+		ptrACTDT_TCMACT.set_dia(inst.dia());
+		ptrACTDT_TCMACT.set_diaZi(inst.diaZi());
+	}
+//----------------------------------------------------------
+	if(inst.acdZi() != -1)
+	{
+		ptrACTDT_TCMACT.set_acd(inst.acd());
+		ptrACTDT_TCMACT.set_acdZi(inst.acdZi());
+	}
+//----------------------------------------------------------
+	if(inst.mrhZi() != -1)
+	{
+		ptrACTDT_TCMACT.set_mrh(inst.mrh());
+		ptrACTDT_TCMACT.set_mrhZi(inst.mrhZi());
+	}
+//----------------------------------------------------------
+	if(inst.dstdZi() != -1)
+	{
+		ptrACTDT_TCMACT.set_dstd(inst.dstd());
+		ptrACTDT_TCMACT.set_dstdZi(inst.dstdZi());
+	}
+//----------------------------------------------------------
+	if(inst.xrys1Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_xrys1(inst.xrys1());
+		ptrACTDT_TCMACT.set_xrys1Zi(inst.xrys1Zi());
+	}
+//----------------------------------------------------------
+	if(inst.xrys2Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_xrys2(inst.xrys2());
+		ptrACTDT_TCMACT.set_xrys2Zi(inst.xrys2Zi());
+	}
+//----------------------------------------------------------
+	if(inst.xrys3Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_xrys3(inst.xrys3());
+		ptrACTDT_TCMACT.set_xrys3Zi(inst.xrys3Zi());
+	}
+//----------------------------------------------------------
+	if(inst.xrys4Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_xrys4(inst.xrys4());
+		ptrACTDT_TCMACT.set_xrys4Zi(inst.xrys4Zi());
+	}
+//----------------------------------------------------------
+	if(inst.xrys5Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_xrys5(inst.xrys5());
+		ptrACTDT_TCMACT.set_xrys5Zi(inst.xrys5Zi());
+	}
+//----------------------------------------------------------
+	if(inst.xrys6Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_xrys6(inst.xrys6());
+		ptrACTDT_TCMACT.set_xrys6Zi(inst.xrys6Zi());
+	}
+//----------------------------------------------------------
+	if(inst.xrya1Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_xrya1(inst.xrya1());
+		ptrACTDT_TCMACT.set_xrya1Zi(inst.xrya1Zi());
+	}
+//----------------------------------------------------------
+	if(inst.xrya2Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_xrya2(inst.xrya2());
+		ptrACTDT_TCMACT.set_xrya2Zi(inst.xrya2Zi());
+	}
+//----------------------------------------------------------
+	if(inst.xrya3Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_xrya3(inst.xrya3());
+		ptrACTDT_TCMACT.set_xrya3Zi(inst.xrya3Zi());
+	}
+//----------------------------------------------------------
+	if(inst.xrya4Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_xrya4(inst.xrya4());
+		ptrACTDT_TCMACT.set_xrya4Zi(inst.xrya4Zi());
+	}
+//----------------------------------------------------------
+	if(inst.xrya5Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_xrya5(inst.xrya5());
+		ptrACTDT_TCMACT.set_xrya5Zi(inst.xrya5Zi());
+	}
+//----------------------------------------------------------
+	if(inst.xrya6Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_xrya6(inst.xrya6());
+		ptrACTDT_TCMACT.set_xrya6Zi(inst.xrya6Zi());
+	}
+//----------------------------------------------------------
+	if(inst.sspd1Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_sspd1(inst.sspd1());
+		ptrACTDT_TCMACT.set_sspd1Zi(inst.sspd1Zi());
+	}
+//----------------------------------------------------------
+	if(inst.sspd2Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_sspd2(inst.sspd2());
+		ptrACTDT_TCMACT.set_sspd2Zi(inst.sspd2Zi());
+	}
+//----------------------------------------------------------
+	if(inst.sspd3Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_sspd3(inst.sspd3());
+		ptrACTDT_TCMACT.set_sspd3Zi(inst.sspd3Zi());
+	}
+//----------------------------------------------------------
+	if(inst.sspd4Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_sspd4(inst.sspd4());
+		ptrACTDT_TCMACT.set_sspd4Zi(inst.sspd4Zi());
+	}
+//----------------------------------------------------------
+	if(inst.sspd5Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_sspd5(inst.sspd5());
+		ptrACTDT_TCMACT.set_sspd5Zi(inst.sspd5Zi());
+	}
+//----------------------------------------------------------
+	if(inst.sspd6Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_sspd6(inst.sspd6());
+		ptrACTDT_TCMACT.set_sspd6Zi(inst.sspd6Zi());
+	}
+//----------------------------------------------------------
+	if(inst.rspd1Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_rspd1(inst.rspd1());
+		ptrACTDT_TCMACT.set_rspd1Zi(inst.rspd1Zi());
+	}
+//----------------------------------------------------------
+	if(inst.rspd2Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_rspd2(inst.rspd2());
+		ptrACTDT_TCMACT.set_rspd2Zi(inst.rspd2Zi());
+	}
+//----------------------------------------------------------
+	if(inst.rspd3Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_rspd3(inst.rspd3());
+		ptrACTDT_TCMACT.set_rspd3Zi(inst.rspd3Zi());
+	}
+//----------------------------------------------------------
+	if(inst.rspd4Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_rspd4(inst.rspd4());
+		ptrACTDT_TCMACT.set_rspd4Zi(inst.rspd4Zi());
+	}
+//----------------------------------------------------------
+	if(inst.rspd5Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_rspd5(inst.rspd5());
+		ptrACTDT_TCMACT.set_rspd5Zi(inst.rspd5Zi());
+	}
+//----------------------------------------------------------
+	if(inst.wrben1Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_wrben1(inst.wrben1());
+		ptrACTDT_TCMACT.set_wrben1Zi(inst.wrben1Zi());
+	}
+//----------------------------------------------------------
+	if(inst.wrben2Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_wrben2(inst.wrben2());
+		ptrACTDT_TCMACT.set_wrben2Zi(inst.wrben2Zi());
+	}
+//----------------------------------------------------------
+	if(inst.wrben3Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_wrben3(inst.wrben3());
+		ptrACTDT_TCMACT.set_wrben3Zi(inst.wrben3Zi());
+	}
+//----------------------------------------------------------
+	if(inst.wrben4Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_wrben4(inst.wrben4());
+		ptrACTDT_TCMACT.set_wrben4Zi(inst.wrben4Zi());
+	}
+//----------------------------------------------------------
+	if(inst.wrben5Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_wrben5(inst.wrben5());
+		ptrACTDT_TCMACT.set_wrben5Zi(inst.wrben5Zi());
+	}
+//----------------------------------------------------------
+	if(inst.imrben1Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_imrben1(inst.imrben1());
+		ptrACTDT_TCMACT.set_imrben1Zi(inst.imrben1Zi());
+	}
+//----------------------------------------------------------
+	if(inst.imrben2Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_imrben2(inst.imrben2());
+		ptrACTDT_TCMACT.set_imrben2Zi(inst.imrben2Zi());
+	}
+//----------------------------------------------------------
+	if(inst.imrben3Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_imrben3(inst.imrben3());
+		ptrACTDT_TCMACT.set_imrben3Zi(inst.imrben3Zi());
+	}
+//----------------------------------------------------------
+	if(inst.imrben4Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_imrben4(inst.imrben4());
+		ptrACTDT_TCMACT.set_imrben4Zi(inst.imrben4Zi());
+	}
+//----------------------------------------------------------
+	if(inst.imrben5Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_imrben5(inst.imrben5());
+		ptrACTDT_TCMACT.set_imrben5Zi(inst.imrben5Zi());
+	}
+//----------------------------------------------------------
+	if(inst.wrst1Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_wrst1(inst.wrst1());
+		ptrACTDT_TCMACT.set_wrst1Zi(inst.wrst1Zi());
+	}
+//----------------------------------------------------------
+	if(inst.wrsb1Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_wrsb1(inst.wrsb1());
+		ptrACTDT_TCMACT.set_wrsb1Zi(inst.wrsb1Zi());
+	}
+//----------------------------------------------------------
+	if(inst.wrst2Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_wrst2(inst.wrst2());
+		ptrACTDT_TCMACT.set_wrst2Zi(inst.wrst2Zi());
+	}
+//----------------------------------------------------------
+	if(inst.wrsb2Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_wrsb2(inst.wrsb2());
+		ptrACTDT_TCMACT.set_wrsb2Zi(inst.wrsb2Zi());
+	}
+//----------------------------------------------------------
+	if(inst.wrst3Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_wrst3(inst.wrst3());
+		ptrACTDT_TCMACT.set_wrst3Zi(inst.wrst3Zi());
+	}
+//----------------------------------------------------------
+	if(inst.wrsb3Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_wrsb3(inst.wrsb3());
+		ptrACTDT_TCMACT.set_wrsb3Zi(inst.wrsb3Zi());
+	}
+//----------------------------------------------------------
+	if(inst.wrst4Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_wrst4(inst.wrst4());
+		ptrACTDT_TCMACT.set_wrst4Zi(inst.wrst4Zi());
+	}
+//----------------------------------------------------------
+	if(inst.wrsb4Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_wrsb4(inst.wrsb4());
+		ptrACTDT_TCMACT.set_wrsb4Zi(inst.wrsb4Zi());
+	}
+//----------------------------------------------------------
+	if(inst.wrst5Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_wrst5(inst.wrst5());
+		ptrACTDT_TCMACT.set_wrst5Zi(inst.wrst5Zi());
+	}
+//----------------------------------------------------------
+	if(inst.wrsb5Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_wrsb5(inst.wrsb5());
+		ptrACTDT_TCMACT.set_wrsb5Zi(inst.wrsb5Zi());
+	}
+//----------------------------------------------------------
+	if(inst.imsht1Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_imsht1(inst.imsht1());
+		ptrACTDT_TCMACT.set_imsht1Zi(inst.imsht1Zi());
+	}
+//----------------------------------------------------------
+	if(inst.imshb1Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_imshb1(inst.imshb1());
+		ptrACTDT_TCMACT.set_imshb1Zi(inst.imshb1Zi());
+	}
+//----------------------------------------------------------
+	if(inst.imsht2Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_imsht2(inst.imsht2());
+		ptrACTDT_TCMACT.set_imsht2Zi(inst.imsht2Zi());
+	}
+//----------------------------------------------------------
+	if(inst.imshb2Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_imshb2(inst.imshb2());
+		ptrACTDT_TCMACT.set_imshb2Zi(inst.imshb2Zi());
+	}
+//----------------------------------------------------------
+	if(inst.imsht3Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_imsht3(inst.imsht3());
+		ptrACTDT_TCMACT.set_imsht3Zi(inst.imsht3Zi());
+	}
+//----------------------------------------------------------
+	if(inst.imshb3Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_imshb3(inst.imshb3());
+		ptrACTDT_TCMACT.set_imshb3Zi(inst.imshb3Zi());
+	}
+//----------------------------------------------------------
+	if(inst.imsht4Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_imsht4(inst.imsht4());
+		ptrACTDT_TCMACT.set_imsht4Zi(inst.imsht4Zi());
+	}
+//----------------------------------------------------------
+	if(inst.imshb4Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_imshb4(inst.imshb4());
+		ptrACTDT_TCMACT.set_imshb4Zi(inst.imshb4Zi());
+	}
+//----------------------------------------------------------
+	if(inst.imsht5Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_imsht5(inst.imsht5());
+		ptrACTDT_TCMACT.set_imsht5Zi(inst.imsht5Zi());
+	}
+//----------------------------------------------------------
+	if(inst.imshb5Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_imshb5(inst.imshb5());
+		ptrACTDT_TCMACT.set_imshb5Zi(inst.imshb5Zi());
+	}
+//----------------------------------------------------------
+	if(inst.wgws1Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_wgws1(inst.wgws1());
+		ptrACTDT_TCMACT.set_wgws1Zi(inst.wgws1Zi());
+	}
+//----------------------------------------------------------
+	if(inst.wgws2Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_wgws2(inst.wgws2());
+		ptrACTDT_TCMACT.set_wgws2Zi(inst.wgws2Zi());
+	}
+//----------------------------------------------------------
+	if(inst.wgws3Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_wgws3(inst.wgws3());
+		ptrACTDT_TCMACT.set_wgws3Zi(inst.wgws3Zi());
+	}
+//----------------------------------------------------------
+	if(inst.wgws4Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_wgws4(inst.wgws4());
+		ptrACTDT_TCMACT.set_wgws4Zi(inst.wgws4Zi());
+	}
+//----------------------------------------------------------
+	if(inst.wgws5Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_wgws5(inst.wgws5());
+		ptrACTDT_TCMACT.set_wgws5Zi(inst.wgws5Zi());
+	}
+//----------------------------------------------------------
+	if(inst.wgds1Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_wgds1(inst.wgds1());
+		ptrACTDT_TCMACT.set_wgds1Zi(inst.wgds1Zi());
+	}
+//----------------------------------------------------------
+	if(inst.wgds2Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_wgds2(inst.wgds2());
+		ptrACTDT_TCMACT.set_wgds2Zi(inst.wgds2Zi());
+	}
+//----------------------------------------------------------
+	if(inst.wgds3Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_wgds3(inst.wgds3());
+		ptrACTDT_TCMACT.set_wgds3Zi(inst.wgds3Zi());
+	}
+//----------------------------------------------------------
+	if(inst.wgds4Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_wgds4(inst.wgds4());
+		ptrACTDT_TCMACT.set_wgds4Zi(inst.wgds4Zi());
+	}
+//----------------------------------------------------------
+	if(inst.wgds5Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_wgds5(inst.wgds5());
+		ptrACTDT_TCMACT.set_wgds5Zi(inst.wgds5Zi());
+	}
+//----------------------------------------------------------
+	if(inst.rttl1Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_rttl1(inst.rttl1());
+		ptrACTDT_TCMACT.set_rttl1Zi(inst.rttl1Zi());
+	}
+//----------------------------------------------------------
+	if(inst.rttl2Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_rttl2(inst.rttl2());
+		ptrACTDT_TCMACT.set_rttl2Zi(inst.rttl2Zi());
+	}
+//----------------------------------------------------------
+	if(inst.rttl3Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_rttl3(inst.rttl3());
+		ptrACTDT_TCMACT.set_rttl3Zi(inst.rttl3Zi());
+	}
+//----------------------------------------------------------
+	if(inst.rttl4Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_rttl4(inst.rttl4());
+		ptrACTDT_TCMACT.set_rttl4Zi(inst.rttl4Zi());
+	}
+//----------------------------------------------------------
+	if(inst.rttl5Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_rttl5(inst.rttl5());
+		ptrACTDT_TCMACT.set_rttl5Zi(inst.rttl5Zi());
+	}
+//----------------------------------------------------------
+	if(inst.rdf1Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_rdf1(inst.rdf1());
+		ptrACTDT_TCMACT.set_rdf1Zi(inst.rdf1Zi());
+	}
+//----------------------------------------------------------
+	if(inst.rdf2Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_rdf2(inst.rdf2());
+		ptrACTDT_TCMACT.set_rdf2Zi(inst.rdf2Zi());
+	}
+//----------------------------------------------------------
+	if(inst.rdf3Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_rdf3(inst.rdf3());
+		ptrACTDT_TCMACT.set_rdf3Zi(inst.rdf3Zi());
+	}
+//----------------------------------------------------------
+	if(inst.rdf4Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_rdf4(inst.rdf4());
+		ptrACTDT_TCMACT.set_rdf4Zi(inst.rdf4Zi());
+	}
+//----------------------------------------------------------
+	if(inst.rdf5Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_rdf5(inst.rdf5());
+		ptrACTDT_TCMACT.set_rdf5Zi(inst.rdf5Zi());
+	}
+//----------------------------------------------------------
+	if(inst.tens1Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_tens1(inst.tens1());
+		ptrACTDT_TCMACT.set_tens1Zi(inst.tens1Zi());
+	}
+//----------------------------------------------------------
+	if(inst.tens2Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_tens2(inst.tens2());
+		ptrACTDT_TCMACT.set_tens2Zi(inst.tens2Zi());
+	}
+//----------------------------------------------------------
+	if(inst.tens3Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_tens3(inst.tens3());
+		ptrACTDT_TCMACT.set_tens3Zi(inst.tens3Zi());
+	}
+//----------------------------------------------------------
+	if(inst.tens4Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_tens4(inst.tens4());
+		ptrACTDT_TCMACT.set_tens4Zi(inst.tens4Zi());
+	}
+//----------------------------------------------------------
+	if(inst.tens5Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_tens5(inst.tens5());
+		ptrACTDT_TCMACT.set_tens5Zi(inst.tens5Zi());
+	}
+//----------------------------------------------------------
+	if(inst.tens6Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_tens6(inst.tens6());
+		ptrACTDT_TCMACT.set_tens6Zi(inst.tens6Zi());
+	}
+//----------------------------------------------------------
+	if(inst.tendf1Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_tendf1(inst.tendf1());
+		ptrACTDT_TCMACT.set_tendf1Zi(inst.tendf1Zi());
+	}
+//----------------------------------------------------------
+	if(inst.tendf2Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_tendf2(inst.tendf2());
+		ptrACTDT_TCMACT.set_tendf2Zi(inst.tendf2Zi());
+	}
+//----------------------------------------------------------
+	if(inst.tendf3Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_tendf3(inst.tendf3());
+		ptrACTDT_TCMACT.set_tendf3Zi(inst.tendf3Zi());
+	}
+//----------------------------------------------------------
+	if(inst.tendf4Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_tendf4(inst.tendf4());
+		ptrACTDT_TCMACT.set_tendf4Zi(inst.tendf4Zi());
+	}
+//----------------------------------------------------------
+	if(inst.tendf5Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_tendf5(inst.tendf5());
+		ptrACTDT_TCMACT.set_tendf5Zi(inst.tendf5Zi());
+	}
+//----------------------------------------------------------
+	if(inst.tendf6Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_tendf6(inst.tendf6());
+		ptrACTDT_TCMACT.set_tendf6Zi(inst.tendf6Zi());
+	}
+//----------------------------------------------------------
+	if(inst.mcnb1Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_mcnb1(inst.mcnb1());
+		ptrACTDT_TCMACT.set_mcnb1Zi(inst.mcnb1Zi());
+	}
+//----------------------------------------------------------
+	if(inst.mcnb2Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_mcnb2(inst.mcnb2());
+		ptrACTDT_TCMACT.set_mcnb2Zi(inst.mcnb2Zi());
+	}
+//----------------------------------------------------------
+	if(inst.mcnb3Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_mcnb3(inst.mcnb3());
+		ptrACTDT_TCMACT.set_mcnb3Zi(inst.mcnb3Zi());
+	}
+//----------------------------------------------------------
+	if(inst.mcnb4Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_mcnb4(inst.mcnb4());
+		ptrACTDT_TCMACT.set_mcnb4Zi(inst.mcnb4Zi());
+	}
+//----------------------------------------------------------
+	if(inst.mcst1Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_mcst1(inst.mcst1());
+		ptrACTDT_TCMACT.set_mcst1Zi(inst.mcst1Zi());
+	}
+//----------------------------------------------------------
+	if(inst.mcst2Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_mcst2(inst.mcst2());
+		ptrACTDT_TCMACT.set_mcst2Zi(inst.mcst2Zi());
+	}
+//----------------------------------------------------------
+	if(inst.mcst3Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_mcst3(inst.mcst3());
+		ptrACTDT_TCMACT.set_mcst3Zi(inst.mcst3Zi());
+	}
+//----------------------------------------------------------
+	if(inst.mcst4Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_mcst4(inst.mcst4());
+		ptrACTDT_TCMACT.set_mcst4Zi(inst.mcst4Zi());
+	}
+//----------------------------------------------------------
+	if(inst.mcst5Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_mcst5(inst.mcst5());
+		ptrACTDT_TCMACT.set_mcst5Zi(inst.mcst5Zi());
+	}
+//----------------------------------------------------------
+	if(inst.fslip1Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_fslip1(inst.fslip1());
+		ptrACTDT_TCMACT.set_fslip1Zi(inst.fslip1Zi());
+	}
+//----------------------------------------------------------
+	if(inst.fslip2Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_fslip2(inst.fslip2());
+		ptrACTDT_TCMACT.set_fslip2Zi(inst.fslip2Zi());
+	}
+//----------------------------------------------------------
+	if(inst.fslip3Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_fslip3(inst.fslip3());
+		ptrACTDT_TCMACT.set_fslip3Zi(inst.fslip3Zi());
+	}
+//----------------------------------------------------------
+	if(inst.fslip4Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_fslip4(inst.fslip4());
+		ptrACTDT_TCMACT.set_fslip4Zi(inst.fslip4Zi());
+	}
+//----------------------------------------------------------
+	if(inst.fslip5Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_fslip5(inst.fslip5());
+		ptrACTDT_TCMACT.set_fslip5Zi(inst.fslip5Zi());
+	}
+//----------------------------------------------------------
+	if(inst.mvst1Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_mvst1(inst.mvst1());
+		ptrACTDT_TCMACT.set_mvst1Zi(inst.mvst1Zi());
+	}
+//----------------------------------------------------------
+	if(inst.mvst2Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_mvst2(inst.mvst2());
+		ptrACTDT_TCMACT.set_mvst2Zi(inst.mvst2Zi());
+	}
+//----------------------------------------------------------
+	if(inst.mvst3Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_mvst3(inst.mvst3());
+		ptrACTDT_TCMACT.set_mvst3Zi(inst.mvst3Zi());
+	}
+//----------------------------------------------------------
+	if(inst.mvst4Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_mvst4(inst.mvst4());
+		ptrACTDT_TCMACT.set_mvst4Zi(inst.mvst4Zi());
+	}
+//----------------------------------------------------------
+	if(inst.mvst5Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_mvst5(inst.mvst5());
+		ptrACTDT_TCMACT.set_mvst5Zi(inst.mvst5Zi());
+	}
+//----------------------------------------------------------
+	if(inst.drop1Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_drop1(inst.drop1());
+		ptrACTDT_TCMACT.set_drop1Zi(inst.drop1Zi());
+	}
+//----------------------------------------------------------
+	if(inst.drop2Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_drop2(inst.drop2());
+		ptrACTDT_TCMACT.set_drop2Zi(inst.drop2Zi());
+	}
+//----------------------------------------------------------
+	if(inst.drop3Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_drop3(inst.drop3());
+		ptrACTDT_TCMACT.set_drop3Zi(inst.drop3Zi());
+	}
+//----------------------------------------------------------
+	if(inst.drop4Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_drop4(inst.drop4());
+		ptrACTDT_TCMACT.set_drop4Zi(inst.drop4Zi());
+	}
+//----------------------------------------------------------
+	if(inst.drop5Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_drop5(inst.drop5());
+		ptrACTDT_TCMACT.set_drop5Zi(inst.drop5Zi());
+	}
+//----------------------------------------------------------
+	if(inst.drspdZi() != -1)
+	{
+		ptrACTDT_TCMACT.set_drspd(inst.drspd());
+		ptrACTDT_TCMACT.set_drspdZi(inst.drspdZi());
+	}
+//----------------------------------------------------------
+	if(inst.smspdZi() != -1)
+	{
+		ptrACTDT_TCMACT.set_smspd(inst.smspd());
+		ptrACTDT_TCMACT.set_smspdZi(inst.smspdZi());
+	}
+//----------------------------------------------------------
+	if(inst.mctr1Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_mctr1(inst.mctr1());
+		ptrACTDT_TCMACT.set_mctr1Zi(inst.mctr1Zi());
+	}
+//----------------------------------------------------------
+	if(inst.mctr2Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_mctr2(inst.mctr2());
+		ptrACTDT_TCMACT.set_mctr2Zi(inst.mctr2Zi());
+	}
+//----------------------------------------------------------
+	if(inst.mvtr1Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_mvtr1(inst.mvtr1());
+		ptrACTDT_TCMACT.set_mvtr1Zi(inst.mvtr1Zi());
+	}
+//----------------------------------------------------------
+	if(inst.mvtr2Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_mvtr2(inst.mvtr2());
+		ptrACTDT_TCMACT.set_mvtr2Zi(inst.mvtr2Zi());
+	}
+//----------------------------------------------------------
+	if(inst.trlenZi() != -1)
+	{
+		ptrACTDT_TCMACT.set_trlen(inst.trlen());
+		ptrACTDT_TCMACT.set_trlenZi(inst.trlenZi());
+	}
+//----------------------------------------------------------
+	if(inst.mstsZi() != -1)
+	{
+		ptrACTDT_TCMACT.set_msts(inst.msts());
+		ptrACTDT_TCMACT.set_mstsZi(inst.mstsZi());
+	}
+//----------------------------------------------------------
+	if(inst.accratZi() != -1)
+	{
+		ptrACTDT_TCMACT.set_accrat(inst.accrat());
+		ptrACTDT_TCMACT.set_accratZi(inst.accratZi());
+	}
+//----------------------------------------------------------
+	if(inst.decratZi() != -1)
+	{
+		ptrACTDT_TCMACT.set_decrat(inst.decrat());
+		ptrACTDT_TCMACT.set_decratZi(inst.decratZi());
+	}
+//----------------------------------------------------------
+	if(inst.mastZi() != -1)
+	{
+		ptrACTDT_TCMACT.set_mast(inst.mast());
+		ptrACTDT_TCMACT.set_mastZi(inst.mastZi());
+	}
+//----------------------------------------------------------
+	if(inst.xsts1Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_xsts1(inst.xsts1());
+		ptrACTDT_TCMACT.set_xsts1Zi(inst.xsts1Zi());
+	}
+//----------------------------------------------------------
+	if(inst.xsts2Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_xsts2(inst.xsts2());
+		ptrACTDT_TCMACT.set_xsts2Zi(inst.xsts2Zi());
+	}
+//----------------------------------------------------------
+	if(inst.xsts3Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_xsts3(inst.xsts3());
+		ptrACTDT_TCMACT.set_xsts3Zi(inst.xsts3Zi());
+	}
+//----------------------------------------------------------
+	if(inst.xsts4Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_xsts4(inst.xsts4());
+		ptrACTDT_TCMACT.set_xsts4Zi(inst.xsts4Zi());
+	}
+//----------------------------------------------------------
+	if(inst.xsts5Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_xsts5(inst.xsts5());
+		ptrACTDT_TCMACT.set_xsts5Zi(inst.xsts5Zi());
+	}
+//----------------------------------------------------------
+	if(inst.xsts6Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_xsts6(inst.xsts6());
+		ptrACTDT_TCMACT.set_xsts6Zi(inst.xsts6Zi());
+	}
+//----------------------------------------------------------
+	if(inst.edstsZi() != -1)
+	{
+		ptrACTDT_TCMACT.set_edsts(inst.edsts());
+		ptrACTDT_TCMACT.set_edstsZi(inst.edstsZi());
+	}
+//----------------------------------------------------------
+	if(inst.agmd1Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_agmd1(inst.agmd1());
+		ptrACTDT_TCMACT.set_agmd1Zi(inst.agmd1Zi());
+	}
+//----------------------------------------------------------
+	if(inst.agmd2Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_agmd2(inst.agmd2());
+		ptrACTDT_TCMACT.set_agmd2Zi(inst.agmd2Zi());
+	}
+//----------------------------------------------------------
+	if(inst.agmd3Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_agmd3(inst.agmd3());
+		ptrACTDT_TCMACT.set_agmd3Zi(inst.agmd3Zi());
+	}
+//----------------------------------------------------------
+	if(inst.agmd4Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_agmd4(inst.agmd4());
+		ptrACTDT_TCMACT.set_agmd4Zi(inst.agmd4Zi());
+	}
+//----------------------------------------------------------
+	if(inst.agmd5Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_agmd5(inst.agmd5());
+		ptrACTDT_TCMACT.set_agmd5Zi(inst.agmd5Zi());
+	}
+//----------------------------------------------------------
+	if(inst.agmd6Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_agmd6(inst.agmd6());
+		ptrACTDT_TCMACT.set_agmd6Zi(inst.agmd6Zi());
+	}
+//----------------------------------------------------------
+	if(inst.agmd7Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_agmd7(inst.agmd7());
+		ptrACTDT_TCMACT.set_agmd7Zi(inst.agmd7Zi());
+	}
+//----------------------------------------------------------
+	if(inst.agmd8Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_agmd8(inst.agmd8());
+		ptrACTDT_TCMACT.set_agmd8Zi(inst.agmd8Zi());
+	}
+//----------------------------------------------------------
+	if(inst.agmd9Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_agmd9(inst.agmd9());
+		ptrACTDT_TCMACT.set_agmd9Zi(inst.agmd9Zi());
+	}
+//----------------------------------------------------------
+	if(inst.agmd10Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_agmd10(inst.agmd10());
+		ptrACTDT_TCMACT.set_agmd10Zi(inst.agmd10Zi());
+	}
+//----------------------------------------------------------
+	if(inst.agmd11Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_agmd11(inst.agmd11());
+		ptrACTDT_TCMACT.set_agmd11Zi(inst.agmd11Zi());
+	}
+//----------------------------------------------------------
+	if(inst.agmd12Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_agmd12(inst.agmd12());
+		ptrACTDT_TCMACT.set_agmd12Zi(inst.agmd12Zi());
+	}
+//----------------------------------------------------------
+	if(inst.asmd1Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_asmd1(inst.asmd1());
+		ptrACTDT_TCMACT.set_asmd1Zi(inst.asmd1Zi());
+	}
+//----------------------------------------------------------
+	if(inst.asmd2Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_asmd2(inst.asmd2());
+		ptrACTDT_TCMACT.set_asmd2Zi(inst.asmd2Zi());
+	}
+//----------------------------------------------------------
+	if(inst.asmd3Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_asmd3(inst.asmd3());
+		ptrACTDT_TCMACT.set_asmd3Zi(inst.asmd3Zi());
+	}
+//----------------------------------------------------------
+	if(inst.asmd4Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_asmd4(inst.asmd4());
+		ptrACTDT_TCMACT.set_asmd4Zi(inst.asmd4Zi());
+	}
+//----------------------------------------------------------
+	if(inst.asmd5Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_asmd5(inst.asmd5());
+		ptrACTDT_TCMACT.set_asmd5Zi(inst.asmd5Zi());
+	}
+//----------------------------------------------------------
+	if(inst.cltptnZi() != -1)
+	{
+		ptrACTDT_TCMACT.set_cltptn(inst.cltptn());
+		ptrACTDT_TCMACT.set_cltptnZi(inst.cltptnZi());
+	}
+//----------------------------------------------------------
+	if(inst.ph_sp1Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_ph_sp1(inst.ph_sp1());
+		ptrACTDT_TCMACT.set_ph_sp1Zi(inst.ph_sp1Zi());
+	}
+//----------------------------------------------------------
+	if(inst.ph_sp2Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_ph_sp2(inst.ph_sp2());
+		ptrACTDT_TCMACT.set_ph_sp2Zi(inst.ph_sp2Zi());
+	}
+//----------------------------------------------------------
+	if(inst.conc_sp1Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_conc_sp1(inst.conc_sp1());
+		ptrACTDT_TCMACT.set_conc_sp1Zi(inst.conc_sp1Zi());
+	}
+//----------------------------------------------------------
+	if(inst.conc_sp2Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_conc_sp2(inst.conc_sp2());
+		ptrACTDT_TCMACT.set_conc_sp2Zi(inst.conc_sp2Zi());
+	}
+//----------------------------------------------------------
+	if(inst.temp_sp1Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_temp_sp1(inst.temp_sp1());
+		ptrACTDT_TCMACT.set_temp_sp1Zi(inst.temp_sp1Zi());
+	}
+//----------------------------------------------------------
+	if(inst.temp_sp2Zi() != -1)
+	{
+		ptrACTDT_TCMACT.set_temp_sp2(inst.temp_sp2());
+		ptrACTDT_TCMACT.set_temp_sp2Zi(inst.temp_sp2Zi());
+	}
+//----------------------------------------------------------
+	if(inst.ccposiZi() != -1)
+	{
+		ptrACTDT_TCMACT.set_ccposi(inst.ccposi());
+		ptrACTDT_TCMACT.set_ccposiZi(inst.ccposiZi());
+	}
+//----------------------------------------------------------
+	if(inst.tocZi() != -1)
+	{
+		ptrACTDT_TCMACT.set_toc(inst.toc());
+		ptrACTDT_TCMACT.set_tocZi(inst.tocZi());
+	}
+//----------------------------------------------------------
+	if(inst.tomZi() != -1)
+	{
+		ptrACTDT_TCMACT.set_tom(inst.tom());
+		ptrACTDT_TCMACT.set_tomZi(inst.tomZi());
+	}
+//----------------------------------------------------------
+	if(inst.mopZi() != -1)
+	{
+		ptrACTDT_TCMACT.set_mop(inst.mop());
+		ptrACTDT_TCMACT.set_mopZi(inst.mopZi());
+	}
+	return( ptrACTDT_TCMACT );
+}
+
+//			         
+//O P E R A T O R  = 
+//===================
+//                   
+const ACTDT_TCMACT& ACTDT_TCMACT::operator=(const ACTDT_TCMACT &inst)
+{
+//----------------------------------------------------------
+	this->set_datee(inst.datee());
+//----------------------------------------------------------
+	this->set_timee(inst.timee());
+//----------------------------------------------------------
+	this->set_samp_no(inst.samp_no());
+//----------------------------------------------------------
+	this->set_linsts(inst.linsts());
+	this->set_linstsZi(inst.linstsZi());
+//----------------------------------------------------------
+	this->set_rmd(inst.rmd());
+	this->set_rmdZi(inst.rmdZi());
+//----------------------------------------------------------
+	this->set_trno(inst.trno());
+	this->set_trnoZi(inst.trnoZi());
+//----------------------------------------------------------
+	this->set_dia(inst.dia());
+	this->set_diaZi(inst.diaZi());
+//----------------------------------------------------------
+	this->set_acd(inst.acd());
+	this->set_acdZi(inst.acdZi());
+//----------------------------------------------------------
+	this->set_mrh(inst.mrh());
+	this->set_mrhZi(inst.mrhZi());
+//----------------------------------------------------------
+	this->set_dstd(inst.dstd());
+	this->set_dstdZi(inst.dstdZi());
+//----------------------------------------------------------
+	this->set_xrys1(inst.xrys1());
+	this->set_xrys1Zi(inst.xrys1Zi());
+//----------------------------------------------------------
+	this->set_xrys2(inst.xrys2());
+	this->set_xrys2Zi(inst.xrys2Zi());
+//----------------------------------------------------------
+	this->set_xrys3(inst.xrys3());
+	this->set_xrys3Zi(inst.xrys3Zi());
+//----------------------------------------------------------
+	this->set_xrys4(inst.xrys4());
+	this->set_xrys4Zi(inst.xrys4Zi());
+//----------------------------------------------------------
+	this->set_xrys5(inst.xrys5());
+	this->set_xrys5Zi(inst.xrys5Zi());
+//----------------------------------------------------------
+	this->set_xrys6(inst.xrys6());
+	this->set_xrys6Zi(inst.xrys6Zi());
+//----------------------------------------------------------
+	this->set_xrya1(inst.xrya1());
+	this->set_xrya1Zi(inst.xrya1Zi());
+//----------------------------------------------------------
+	this->set_xrya2(inst.xrya2());
+	this->set_xrya2Zi(inst.xrya2Zi());
+//----------------------------------------------------------
+	this->set_xrya3(inst.xrya3());
+	this->set_xrya3Zi(inst.xrya3Zi());
+//----------------------------------------------------------
+	this->set_xrya4(inst.xrya4());
+	this->set_xrya4Zi(inst.xrya4Zi());
+//----------------------------------------------------------
+	this->set_xrya5(inst.xrya5());
+	this->set_xrya5Zi(inst.xrya5Zi());
+//----------------------------------------------------------
+	this->set_xrya6(inst.xrya6());
+	this->set_xrya6Zi(inst.xrya6Zi());
+//----------------------------------------------------------
+	this->set_sspd1(inst.sspd1());
+	this->set_sspd1Zi(inst.sspd1Zi());
+//----------------------------------------------------------
+	this->set_sspd2(inst.sspd2());
+	this->set_sspd2Zi(inst.sspd2Zi());
+//----------------------------------------------------------
+	this->set_sspd3(inst.sspd3());
+	this->set_sspd3Zi(inst.sspd3Zi());
+//----------------------------------------------------------
+	this->set_sspd4(inst.sspd4());
+	this->set_sspd4Zi(inst.sspd4Zi());
+//----------------------------------------------------------
+	this->set_sspd5(inst.sspd5());
+	this->set_sspd5Zi(inst.sspd5Zi());
+//----------------------------------------------------------
+	this->set_sspd6(inst.sspd6());
+	this->set_sspd6Zi(inst.sspd6Zi());
+//----------------------------------------------------------
+	this->set_rspd1(inst.rspd1());
+	this->set_rspd1Zi(inst.rspd1Zi());
+//----------------------------------------------------------
+	this->set_rspd2(inst.rspd2());
+	this->set_rspd2Zi(inst.rspd2Zi());
+//----------------------------------------------------------
+	this->set_rspd3(inst.rspd3());
+	this->set_rspd3Zi(inst.rspd3Zi());
+//----------------------------------------------------------
+	this->set_rspd4(inst.rspd4());
+	this->set_rspd4Zi(inst.rspd4Zi());
+//----------------------------------------------------------
+	this->set_rspd5(inst.rspd5());
+	this->set_rspd5Zi(inst.rspd5Zi());
+//----------------------------------------------------------
+	this->set_wrben1(inst.wrben1());
+	this->set_wrben1Zi(inst.wrben1Zi());
+//----------------------------------------------------------
+	this->set_wrben2(inst.wrben2());
+	this->set_wrben2Zi(inst.wrben2Zi());
+//----------------------------------------------------------
+	this->set_wrben3(inst.wrben3());
+	this->set_wrben3Zi(inst.wrben3Zi());
+//----------------------------------------------------------
+	this->set_wrben4(inst.wrben4());
+	this->set_wrben4Zi(inst.wrben4Zi());
+//----------------------------------------------------------
+	this->set_wrben5(inst.wrben5());
+	this->set_wrben5Zi(inst.wrben5Zi());
+//----------------------------------------------------------
+	this->set_imrben1(inst.imrben1());
+	this->set_imrben1Zi(inst.imrben1Zi());
+//----------------------------------------------------------
+	this->set_imrben2(inst.imrben2());
+	this->set_imrben2Zi(inst.imrben2Zi());
+//----------------------------------------------------------
+	this->set_imrben3(inst.imrben3());
+	this->set_imrben3Zi(inst.imrben3Zi());
+//----------------------------------------------------------
+	this->set_imrben4(inst.imrben4());
+	this->set_imrben4Zi(inst.imrben4Zi());
+//----------------------------------------------------------
+	this->set_imrben5(inst.imrben5());
+	this->set_imrben5Zi(inst.imrben5Zi());
+//----------------------------------------------------------
+	this->set_wrst1(inst.wrst1());
+	this->set_wrst1Zi(inst.wrst1Zi());
+//----------------------------------------------------------
+	this->set_wrsb1(inst.wrsb1());
+	this->set_wrsb1Zi(inst.wrsb1Zi());
+//----------------------------------------------------------
+	this->set_wrst2(inst.wrst2());
+	this->set_wrst2Zi(inst.wrst2Zi());
+//----------------------------------------------------------
+	this->set_wrsb2(inst.wrsb2());
+	this->set_wrsb2Zi(inst.wrsb2Zi());
+//----------------------------------------------------------
+	this->set_wrst3(inst.wrst3());
+	this->set_wrst3Zi(inst.wrst3Zi());
+//----------------------------------------------------------
+	this->set_wrsb3(inst.wrsb3());
+	this->set_wrsb3Zi(inst.wrsb3Zi());
+//----------------------------------------------------------
+	this->set_wrst4(inst.wrst4());
+	this->set_wrst4Zi(inst.wrst4Zi());
+//----------------------------------------------------------
+	this->set_wrsb4(inst.wrsb4());
+	this->set_wrsb4Zi(inst.wrsb4Zi());
+//----------------------------------------------------------
+	this->set_wrst5(inst.wrst5());
+	this->set_wrst5Zi(inst.wrst5Zi());
+//----------------------------------------------------------
+	this->set_wrsb5(inst.wrsb5());
+	this->set_wrsb5Zi(inst.wrsb5Zi());
+//----------------------------------------------------------
+	this->set_imsht1(inst.imsht1());
+	this->set_imsht1Zi(inst.imsht1Zi());
+//----------------------------------------------------------
+	this->set_imshb1(inst.imshb1());
+	this->set_imshb1Zi(inst.imshb1Zi());
+//----------------------------------------------------------
+	this->set_imsht2(inst.imsht2());
+	this->set_imsht2Zi(inst.imsht2Zi());
+//----------------------------------------------------------
+	this->set_imshb2(inst.imshb2());
+	this->set_imshb2Zi(inst.imshb2Zi());
+//----------------------------------------------------------
+	this->set_imsht3(inst.imsht3());
+	this->set_imsht3Zi(inst.imsht3Zi());
+//----------------------------------------------------------
+	this->set_imshb3(inst.imshb3());
+	this->set_imshb3Zi(inst.imshb3Zi());
+//----------------------------------------------------------
+	this->set_imsht4(inst.imsht4());
+	this->set_imsht4Zi(inst.imsht4Zi());
+//----------------------------------------------------------
+	this->set_imshb4(inst.imshb4());
+	this->set_imshb4Zi(inst.imshb4Zi());
+//----------------------------------------------------------
+	this->set_imsht5(inst.imsht5());
+	this->set_imsht5Zi(inst.imsht5Zi());
+//----------------------------------------------------------
+	this->set_imshb5(inst.imshb5());
+	this->set_imshb5Zi(inst.imshb5Zi());
+//----------------------------------------------------------
+	this->set_wgws1(inst.wgws1());
+	this->set_wgws1Zi(inst.wgws1Zi());
+//----------------------------------------------------------
+	this->set_wgws2(inst.wgws2());
+	this->set_wgws2Zi(inst.wgws2Zi());
+//----------------------------------------------------------
+	this->set_wgws3(inst.wgws3());
+	this->set_wgws3Zi(inst.wgws3Zi());
+//----------------------------------------------------------
+	this->set_wgws4(inst.wgws4());
+	this->set_wgws4Zi(inst.wgws4Zi());
+//----------------------------------------------------------
+	this->set_wgws5(inst.wgws5());
+	this->set_wgws5Zi(inst.wgws5Zi());
+//----------------------------------------------------------
+	this->set_wgds1(inst.wgds1());
+	this->set_wgds1Zi(inst.wgds1Zi());
+//----------------------------------------------------------
+	this->set_wgds2(inst.wgds2());
+	this->set_wgds2Zi(inst.wgds2Zi());
+//----------------------------------------------------------
+	this->set_wgds3(inst.wgds3());
+	this->set_wgds3Zi(inst.wgds3Zi());
+//----------------------------------------------------------
+	this->set_wgds4(inst.wgds4());
+	this->set_wgds4Zi(inst.wgds4Zi());
+//----------------------------------------------------------
+	this->set_wgds5(inst.wgds5());
+	this->set_wgds5Zi(inst.wgds5Zi());
+//----------------------------------------------------------
+	this->set_rttl1(inst.rttl1());
+	this->set_rttl1Zi(inst.rttl1Zi());
+//----------------------------------------------------------
+	this->set_rttl2(inst.rttl2());
+	this->set_rttl2Zi(inst.rttl2Zi());
+//----------------------------------------------------------
+	this->set_rttl3(inst.rttl3());
+	this->set_rttl3Zi(inst.rttl3Zi());
+//----------------------------------------------------------
+	this->set_rttl4(inst.rttl4());
+	this->set_rttl4Zi(inst.rttl4Zi());
+//----------------------------------------------------------
+	this->set_rttl5(inst.rttl5());
+	this->set_rttl5Zi(inst.rttl5Zi());
+//----------------------------------------------------------
+	this->set_rdf1(inst.rdf1());
+	this->set_rdf1Zi(inst.rdf1Zi());
+//----------------------------------------------------------
+	this->set_rdf2(inst.rdf2());
+	this->set_rdf2Zi(inst.rdf2Zi());
+//----------------------------------------------------------
+	this->set_rdf3(inst.rdf3());
+	this->set_rdf3Zi(inst.rdf3Zi());
+//----------------------------------------------------------
+	this->set_rdf4(inst.rdf4());
+	this->set_rdf4Zi(inst.rdf4Zi());
+//----------------------------------------------------------
+	this->set_rdf5(inst.rdf5());
+	this->set_rdf5Zi(inst.rdf5Zi());
+//----------------------------------------------------------
+	this->set_tens1(inst.tens1());
+	this->set_tens1Zi(inst.tens1Zi());
+//----------------------------------------------------------
+	this->set_tens2(inst.tens2());
+	this->set_tens2Zi(inst.tens2Zi());
+//----------------------------------------------------------
+	this->set_tens3(inst.tens3());
+	this->set_tens3Zi(inst.tens3Zi());
+//----------------------------------------------------------
+	this->set_tens4(inst.tens4());
+	this->set_tens4Zi(inst.tens4Zi());
+//----------------------------------------------------------
+	this->set_tens5(inst.tens5());
+	this->set_tens5Zi(inst.tens5Zi());
+//----------------------------------------------------------
+	this->set_tens6(inst.tens6());
+	this->set_tens6Zi(inst.tens6Zi());
+//----------------------------------------------------------
+	this->set_tendf1(inst.tendf1());
+	this->set_tendf1Zi(inst.tendf1Zi());
+//----------------------------------------------------------
+	this->set_tendf2(inst.tendf2());
+	this->set_tendf2Zi(inst.tendf2Zi());
+//----------------------------------------------------------
+	this->set_tendf3(inst.tendf3());
+	this->set_tendf3Zi(inst.tendf3Zi());
+//----------------------------------------------------------
+	this->set_tendf4(inst.tendf4());
+	this->set_tendf4Zi(inst.tendf4Zi());
+//----------------------------------------------------------
+	this->set_tendf5(inst.tendf5());
+	this->set_tendf5Zi(inst.tendf5Zi());
+//----------------------------------------------------------
+	this->set_tendf6(inst.tendf6());
+	this->set_tendf6Zi(inst.tendf6Zi());
+//----------------------------------------------------------
+	this->set_mcnb1(inst.mcnb1());
+	this->set_mcnb1Zi(inst.mcnb1Zi());
+//----------------------------------------------------------
+	this->set_mcnb2(inst.mcnb2());
+	this->set_mcnb2Zi(inst.mcnb2Zi());
+//----------------------------------------------------------
+	this->set_mcnb3(inst.mcnb3());
+	this->set_mcnb3Zi(inst.mcnb3Zi());
+//----------------------------------------------------------
+	this->set_mcnb4(inst.mcnb4());
+	this->set_mcnb4Zi(inst.mcnb4Zi());
+//----------------------------------------------------------
+	this->set_mcst1(inst.mcst1());
+	this->set_mcst1Zi(inst.mcst1Zi());
+//----------------------------------------------------------
+	this->set_mcst2(inst.mcst2());
+	this->set_mcst2Zi(inst.mcst2Zi());
+//----------------------------------------------------------
+	this->set_mcst3(inst.mcst3());
+	this->set_mcst3Zi(inst.mcst3Zi());
+//----------------------------------------------------------
+	this->set_mcst4(inst.mcst4());
+	this->set_mcst4Zi(inst.mcst4Zi());
+//----------------------------------------------------------
+	this->set_mcst5(inst.mcst5());
+	this->set_mcst5Zi(inst.mcst5Zi());
+//----------------------------------------------------------
+	this->set_fslip1(inst.fslip1());
+	this->set_fslip1Zi(inst.fslip1Zi());
+//----------------------------------------------------------
+	this->set_fslip2(inst.fslip2());
+	this->set_fslip2Zi(inst.fslip2Zi());
+//----------------------------------------------------------
+	this->set_fslip3(inst.fslip3());
+	this->set_fslip3Zi(inst.fslip3Zi());
+//----------------------------------------------------------
+	this->set_fslip4(inst.fslip4());
+	this->set_fslip4Zi(inst.fslip4Zi());
+//----------------------------------------------------------
+	this->set_fslip5(inst.fslip5());
+	this->set_fslip5Zi(inst.fslip5Zi());
+//----------------------------------------------------------
+	this->set_mvst1(inst.mvst1());
+	this->set_mvst1Zi(inst.mvst1Zi());
+//----------------------------------------------------------
+	this->set_mvst2(inst.mvst2());
+	this->set_mvst2Zi(inst.mvst2Zi());
+//----------------------------------------------------------
+	this->set_mvst3(inst.mvst3());
+	this->set_mvst3Zi(inst.mvst3Zi());
+//----------------------------------------------------------
+	this->set_mvst4(inst.mvst4());
+	this->set_mvst4Zi(inst.mvst4Zi());
+//----------------------------------------------------------
+	this->set_mvst5(inst.mvst5());
+	this->set_mvst5Zi(inst.mvst5Zi());
+//----------------------------------------------------------
+	this->set_drop1(inst.drop1());
+	this->set_drop1Zi(inst.drop1Zi());
+//----------------------------------------------------------
+	this->set_drop2(inst.drop2());
+	this->set_drop2Zi(inst.drop2Zi());
+//----------------------------------------------------------
+	this->set_drop3(inst.drop3());
+	this->set_drop3Zi(inst.drop3Zi());
+//----------------------------------------------------------
+	this->set_drop4(inst.drop4());
+	this->set_drop4Zi(inst.drop4Zi());
+//----------------------------------------------------------
+	this->set_drop5(inst.drop5());
+	this->set_drop5Zi(inst.drop5Zi());
+//----------------------------------------------------------
+	this->set_drspd(inst.drspd());
+	this->set_drspdZi(inst.drspdZi());
+//----------------------------------------------------------
+	this->set_smspd(inst.smspd());
+	this->set_smspdZi(inst.smspdZi());
+//----------------------------------------------------------
+	this->set_mctr1(inst.mctr1());
+	this->set_mctr1Zi(inst.mctr1Zi());
+//----------------------------------------------------------
+	this->set_mctr2(inst.mctr2());
+	this->set_mctr2Zi(inst.mctr2Zi());
+//----------------------------------------------------------
+	this->set_mvtr1(inst.mvtr1());
+	this->set_mvtr1Zi(inst.mvtr1Zi());
+//----------------------------------------------------------
+	this->set_mvtr2(inst.mvtr2());
+	this->set_mvtr2Zi(inst.mvtr2Zi());
+//----------------------------------------------------------
+	this->set_trlen(inst.trlen());
+	this->set_trlenZi(inst.trlenZi());
+//----------------------------------------------------------
+	this->set_msts(inst.msts());
+	this->set_mstsZi(inst.mstsZi());
+//----------------------------------------------------------
+	this->set_accrat(inst.accrat());
+	this->set_accratZi(inst.accratZi());
+//----------------------------------------------------------
+	this->set_decrat(inst.decrat());
+	this->set_decratZi(inst.decratZi());
+//----------------------------------------------------------
+	this->set_mast(inst.mast());
+	this->set_mastZi(inst.mastZi());
+//----------------------------------------------------------
+	this->set_xsts1(inst.xsts1());
+	this->set_xsts1Zi(inst.xsts1Zi());
+//----------------------------------------------------------
+	this->set_xsts2(inst.xsts2());
+	this->set_xsts2Zi(inst.xsts2Zi());
+//----------------------------------------------------------
+	this->set_xsts3(inst.xsts3());
+	this->set_xsts3Zi(inst.xsts3Zi());
+//----------------------------------------------------------
+	this->set_xsts4(inst.xsts4());
+	this->set_xsts4Zi(inst.xsts4Zi());
+//----------------------------------------------------------
+	this->set_xsts5(inst.xsts5());
+	this->set_xsts5Zi(inst.xsts5Zi());
+//----------------------------------------------------------
+	this->set_xsts6(inst.xsts6());
+	this->set_xsts6Zi(inst.xsts6Zi());
+//----------------------------------------------------------
+	this->set_edsts(inst.edsts());
+	this->set_edstsZi(inst.edstsZi());
+//----------------------------------------------------------
+	this->set_agmd1(inst.agmd1());
+	this->set_agmd1Zi(inst.agmd1Zi());
+//----------------------------------------------------------
+	this->set_agmd2(inst.agmd2());
+	this->set_agmd2Zi(inst.agmd2Zi());
+//----------------------------------------------------------
+	this->set_agmd3(inst.agmd3());
+	this->set_agmd3Zi(inst.agmd3Zi());
+//----------------------------------------------------------
+	this->set_agmd4(inst.agmd4());
+	this->set_agmd4Zi(inst.agmd4Zi());
+//----------------------------------------------------------
+	this->set_agmd5(inst.agmd5());
+	this->set_agmd5Zi(inst.agmd5Zi());
+//----------------------------------------------------------
+	this->set_agmd6(inst.agmd6());
+	this->set_agmd6Zi(inst.agmd6Zi());
+//----------------------------------------------------------
+	this->set_agmd7(inst.agmd7());
+	this->set_agmd7Zi(inst.agmd7Zi());
+//----------------------------------------------------------
+	this->set_agmd8(inst.agmd8());
+	this->set_agmd8Zi(inst.agmd8Zi());
+//----------------------------------------------------------
+	this->set_agmd9(inst.agmd9());
+	this->set_agmd9Zi(inst.agmd9Zi());
+//----------------------------------------------------------
+	this->set_agmd10(inst.agmd10());
+	this->set_agmd10Zi(inst.agmd10Zi());
+//----------------------------------------------------------
+	this->set_agmd11(inst.agmd11());
+	this->set_agmd11Zi(inst.agmd11Zi());
+//----------------------------------------------------------
+	this->set_agmd12(inst.agmd12());
+	this->set_agmd12Zi(inst.agmd12Zi());
+//----------------------------------------------------------
+	this->set_asmd1(inst.asmd1());
+	this->set_asmd1Zi(inst.asmd1Zi());
+//----------------------------------------------------------
+	this->set_asmd2(inst.asmd2());
+	this->set_asmd2Zi(inst.asmd2Zi());
+//----------------------------------------------------------
+	this->set_asmd3(inst.asmd3());
+	this->set_asmd3Zi(inst.asmd3Zi());
+//----------------------------------------------------------
+	this->set_asmd4(inst.asmd4());
+	this->set_asmd4Zi(inst.asmd4Zi());
+//----------------------------------------------------------
+	this->set_asmd5(inst.asmd5());
+	this->set_asmd5Zi(inst.asmd5Zi());
+//----------------------------------------------------------
+	this->set_cltptn(inst.cltptn());
+	this->set_cltptnZi(inst.cltptnZi());
+//----------------------------------------------------------
+	this->set_ph_sp1(inst.ph_sp1());
+	this->set_ph_sp1Zi(inst.ph_sp1Zi());
+//----------------------------------------------------------
+	this->set_ph_sp2(inst.ph_sp2());
+	this->set_ph_sp2Zi(inst.ph_sp2Zi());
+//----------------------------------------------------------
+	this->set_conc_sp1(inst.conc_sp1());
+	this->set_conc_sp1Zi(inst.conc_sp1Zi());
+//----------------------------------------------------------
+	this->set_conc_sp2(inst.conc_sp2());
+	this->set_conc_sp2Zi(inst.conc_sp2Zi());
+//----------------------------------------------------------
+	this->set_temp_sp1(inst.temp_sp1());
+	this->set_temp_sp1Zi(inst.temp_sp1Zi());
+//----------------------------------------------------------
+	this->set_temp_sp2(inst.temp_sp2());
+	this->set_temp_sp2Zi(inst.temp_sp2Zi());
+//----------------------------------------------------------
+	this->set_ccposi(inst.ccposi());
+	this->set_ccposiZi(inst.ccposiZi());
+//----------------------------------------------------------
+	this->set_toc(inst.toc());
+	this->set_tocZi(inst.tocZi());
+//----------------------------------------------------------
+	this->set_tom(inst.tom());
+	this->set_tomZi(inst.tomZi());
+//----------------------------------------------------------
+	this->set_mop(inst.mop());
+	this->set_mopZi(inst.mopZi());
+	return(*this);
+}
+

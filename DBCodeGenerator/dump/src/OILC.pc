@@ -1,0 +1,965 @@
+/* *******************************************************************/
+/* *   File               :    OILC.pc
+/* *   Short Description  :    ORACLE DATABASE ACCESS
+/* * 		                   ACCOUNT OILC TABLE
+/* *   Author             :    DB CODE Generator
+/* *   Created Date       :    13.06.2013
+/* *   Tech.Support       :    LiuWeiZhao. email:welljoe@hotmail.com 
+/* *******************************************************************/
+/* *   Copyright (c)  SGAI AI 2009   All Rights Reserved
+/* *******************************************************************/
+
+#include "LOG.h"
+#include "OILC.h"
+//
+// Declare ORACLE Host Variables
+//
+
+#define SQLCA_STORAGE_CLASS static
+#define ORACA_STORAGE_CLASS static
+EXEC SQL INCLUDE sqlca;
+EXEC SQL INCLUDE oraca;
+
+#define OPENED 1
+#define CLOSED 2
+EXEC SQL BEGIN DECLARE SECTION;
+/* ****************************************************************************** */
+/*                                                                                */
+/*                               define Oracle                                    */
+/*                               Host Variables                                   */
+/*                                                          .                     */
+/*                                                                                */
+/* ****************************************************************************** */
+
+static VARCHAR	dynstr[16000];
+static long		rowCnt;       
+static long		cuFl;         
+//Unit[-]:日期.Limit:[-,-]
+static VARCHAR  ora_oildate[33];
+//Unit[-]:班组.Limit:[-,-]
+static VARCHAR  ora_crewno[9];
+static short    ora_crewnoZi;
+//Unit[-]:班次.Limit:[-,-]
+static VARCHAR  ora_shiftno[9];
+static short    ora_shiftnoZi;
+//Unit[-]:钢卷号.Limit:[-,-]
+static VARCHAR  ora_coilno[17];
+static short    ora_coilnoZi;
+//Unit[-]:反射率(上).Limit:[-,-]
+static float    ora_reflectup;
+static short    ora_reflectupZi;
+//Unit[-]:反射率(下).Limit:[-,-]
+static float    ora_reflectdown;
+static short    ora_reflectdownZi;
+//Unit[-]:记录人.Limit:[-,-]
+static VARCHAR  ora_codeman[9];
+static short    ora_codemanZi;
+//Unit[-]:反射率上WS.Limit:[-,-]
+static float    ora_rflectupws;
+static short    ora_rflectupwsZi;
+//Unit[-]:反射率上CE.Limit:[-,-]
+static float    ora_rflectupce;
+static short    ora_rflectupceZi;
+//Unit[-]:反射率上DS.Limit:[-,-]
+static float    ora_rflectupds;
+static short    ora_rflectupdsZi;
+//Unit[-]:反射率下WS.Limit:[-,-]
+static float    ora_rflectdownws;
+static short    ora_rflectdownwsZi;
+//Unit[-]:反射率下DS.Limit:[-,-]
+static float    ora_rflectdownds;
+static short    ora_rflectdowndsZi;
+//Unit[-]:创建时间.Limit:[-,-]
+static VARCHAR  ora_toc[15];
+static short    ora_tocZi;
+//Unit[-]:最后修改时间.Limit:[-,-]
+static VARCHAR  ora_tom[15];
+static short    ora_tomZi;
+//Unit[-]:创建或者修改者.Limit:[-,-]
+static VARCHAR  ora_mop[121];
+static short    ora_mopZi;
+// Host arguments for Primary key
+
+EXEC SQL END DECLARE SECTION;             
+             
+// 				             
+//C O N S T R U C T O R S    
+//=======================    
+//                           
+OILC::OILC()
+{
+	initial();                                             
+}
+
+//					
+//C O P Y  -  C O N S T R U C T O R 
+//==================================
+OILC::OILC(const OILC &inst)
+{
+//----------------------------------------------------------
+	this->set_oildate(inst.oildate());
+//----------------------------------------------------------
+	this->set_crewno(inst.crewno());
+	this->set_crewnoZi(inst.crewnoZi());
+//----------------------------------------------------------
+	this->set_shiftno(inst.shiftno());
+	this->set_shiftnoZi(inst.shiftnoZi());
+//----------------------------------------------------------
+	this->set_coilno(inst.coilno());
+	this->set_coilnoZi(inst.coilnoZi());
+//----------------------------------------------------------
+	this->set_reflectup(inst.reflectup());
+	this->set_reflectupZi(inst.reflectupZi());
+//----------------------------------------------------------
+	this->set_reflectdown(inst.reflectdown());
+	this->set_reflectdownZi(inst.reflectdownZi());
+//----------------------------------------------------------
+	this->set_codeman(inst.codeman());
+	this->set_codemanZi(inst.codemanZi());
+//----------------------------------------------------------
+	this->set_rflectupws(inst.rflectupws());
+	this->set_rflectupwsZi(inst.rflectupwsZi());
+//----------------------------------------------------------
+	this->set_rflectupce(inst.rflectupce());
+	this->set_rflectupceZi(inst.rflectupceZi());
+//----------------------------------------------------------
+	this->set_rflectupds(inst.rflectupds());
+	this->set_rflectupdsZi(inst.rflectupdsZi());
+//----------------------------------------------------------
+	this->set_rflectdownws(inst.rflectdownws());
+	this->set_rflectdownwsZi(inst.rflectdownwsZi());
+//----------------------------------------------------------
+	this->set_rflectdownds(inst.rflectdownds());
+	this->set_rflectdowndsZi(inst.rflectdowndsZi());
+//----------------------------------------------------------
+	this->set_toc(inst.toc());
+	this->set_tocZi(inst.tocZi());
+//----------------------------------------------------------
+	this->set_tom(inst.tom());
+	this->set_tomZi(inst.tomZi());
+//----------------------------------------------------------
+	this->set_mop(inst.mop());
+	this->set_mopZi(inst.mopZi());
+}
+
+//					
+//C O N S T R U C T O R -W I T H P A R A M E T E R S
+//===================================================
+//					
+OILC::OILC()
+{
+	initial();					               
+	setPrimKey ();    
+	//read DB record                           
+	dbAccess = true;                           
+	dbMessage = readDB();                      
+	if ( dbMessage != NULL ) dbAccess = false; 
+}
+
+//D E S T R U C T O R S  
+//=======================
+//                       
+OILC::~OILC()
+{
+}
+
+//initialise all member variables
+void OILC::initial()
+{
+	set_oildate("");
+	set_crewno("");
+	set_crewnoZi(-1);
+	set_shiftno("");
+	set_shiftnoZi(-1);
+	set_coilno("");
+	set_coilnoZi(-1);
+	set_reflectup(0);
+	set_reflectupZi(-1);
+	set_reflectdown(0);
+	set_reflectdownZi(-1);
+	set_codeman("");
+	set_codemanZi(-1);
+	set_rflectupws(0);
+	set_rflectupwsZi(-1);
+	set_rflectupce(0);
+	set_rflectupceZi(-1);
+	set_rflectupds(0);
+	set_rflectupdsZi(-1);
+	set_rflectdownws(0);
+	set_rflectdownwsZi(-1);
+	set_rflectdownds(0);
+	set_rflectdowndsZi(-1);
+	set_toc("");
+	set_tocZi(-1);
+	set_tom("");
+	set_tomZi(-1);
+	set_mop("");
+	set_mopZi(-1);
+	//initialies Primary key members
+// Initial Oracle Options
+	oraca.oradbgf  = 1; // gather debug informations       
+	oraca.oracchf  = 1; // gather cursor cache informations
+	oraca.orahchf  = 1; // check heap                      
+	oraca.orastxtf = 3; // always save last sql-statement  
+	                                                       
+	EXEC ORACLE OPTION (ORACA=YES);                        
+	EXEC ORACLE OPTION (HOLD_CURSOR=YES);                  
+	EXEC ORACLE OPTION (RELEASE_CURSOR=NO);                
+	EXEC ORACLE OPTION (MAXOPENCURSORS=50);                
+	pCatch = CatchDbaxError::instance();                   
+	                                                       
+}
+
+//read a single entry from DB.
+char* OILC::readDB()
+{
+	//
+	//copy the host variables (k_...) to Oracle Host Keys (k_ora_..)
+	//
+		copyKeyToHost();
+	//
+	// Do SELECT
+	//
+	EXEC SQL SELECT 
+		oildate,
+		crewno,
+		shiftno,
+		coilno,
+		reflectup,
+		reflectdown,
+		codeman,
+		rflectupws,
+		rflectupce,
+		rflectupds,
+		rflectdownws,
+		rflectdownds,
+		TO_CHAR(toc , 'YYYYMMDDHH24MISS'),
+		TO_CHAR(tom , 'YYYYMMDDHH24MISS'),
+		mop
+	INTO
+		:ora_oildate,
+		:ora_crewno:ora_crewnoZi,
+		:ora_shiftno:ora_shiftnoZi,
+		:ora_coilno:ora_coilnoZi,
+		:ora_reflectup:ora_reflectupZi,
+		:ora_reflectdown:ora_reflectdownZi,
+		:ora_codeman:ora_codemanZi,
+		:ora_rflectupws:ora_rflectupwsZi,
+		:ora_rflectupce:ora_rflectupceZi,
+		:ora_rflectupds:ora_rflectupdsZi,
+		:ora_rflectdownws:ora_rflectdownwsZi,
+		:ora_rflectdownds:ora_rflectdowndsZi,
+		:ora_toc:ora_tocZi,
+		:ora_tom:ora_tomZi,
+		:ora_mop:ora_mopZi
+	FROM OILC
+	W;
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	//
+	// copy host variables into Class attributes
+	//
+	copyOracleToAttribute();
+	return ( NULL );
+}
+
+//updates a single entry from DB
+char* OILC::updateDB()
+{
+	//
+	//copy the host variables (k_...) to Oracle Host Keys (k_ora_..)
+	//
+		copyKeyToHost();
+	//copy the attributes ( ...) to Oracle Hosts( ora_..)
+	//
+		copyAttributeToOracle();
+	//
+	// Do UPDATE
+	//
+	EXEC SQL UPDATE OILC
+	SET 
+		oildate             =:ora_oildate,
+		crewno              =:ora_crewno:ora_crewnoZi,
+		shiftno             =:ora_shiftno:ora_shiftnoZi,
+		coilno              =:ora_coilno:ora_coilnoZi,
+		reflectup           =:ora_reflectup:ora_reflectupZi,
+		reflectdown         =:ora_reflectdown:ora_reflectdownZi,
+		codeman             =:ora_codeman:ora_codemanZi,
+		rflectupws          =:ora_rflectupws:ora_rflectupwsZi,
+		rflectupce          =:ora_rflectupce:ora_rflectupceZi,
+		rflectupds          =:ora_rflectupds:ora_rflectupdsZi,
+		rflectdownws        =:ora_rflectdownws:ora_rflectdownwsZi,
+		rflectdownds        =:ora_rflectdownds:ora_rflectdowndsZi,
+		toc                 =TO_DATE( :ora_toc:ora_tocZi,'YYYYMMDDHH24MISS'),
+		tom                 =TO_DATE( :ora_tom:ora_tomZi,'YYYYMMDDHH24MISS'),
+		mop                 =:ora_mop:ora_mopZi
+	W;
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//inserts a single entry from DB
+char* OILC::insertDB()
+{
+	//
+	//copy the attributes ( ...) to Oracle Hosts( ora_..) 
+	//
+		copyAttributeToOracle();
+	//
+	// Do INSERT
+	//
+	EXEC SQL INSERT INTO OILC
+	(
+		oildate,
+		crewno,
+		shiftno,
+		coilno,
+		reflectup,
+		reflectdown,
+		codeman,
+		rflectupws,
+		rflectupce,
+		rflectupds,
+		rflectdownws,
+		rflectdownds,
+		toc,
+		tom,
+		mop
+	)
+
+	VALUES
+	(
+		:ora_oildate,
+		:ora_crewno:ora_crewnoZi,
+		:ora_shiftno:ora_shiftnoZi,
+		:ora_coilno:ora_coilnoZi,
+		:ora_reflectup:ora_reflectupZi,
+		:ora_reflectdown:ora_reflectdownZi,
+		:ora_codeman:ora_codemanZi,
+		:ora_rflectupws:ora_rflectupwsZi,
+		:ora_rflectupce:ora_rflectupceZi,
+		:ora_rflectupds:ora_rflectupdsZi,
+		:ora_rflectdownws:ora_rflectdownwsZi,
+		:ora_rflectdownds:ora_rflectdowndsZi,
+		TO_DATE( :ora_toc:ora_tocZi,'YYYYMMDDHH24MISS'),
+		TO_DATE( :ora_tom:ora_tomZi,'YYYYMMDDHH24MISS'),
+		:ora_mop:ora_mopZi
+	);
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//this methode tries to update a DB record,when the update fails.
+char* OILC::storeDB()
+{
+	char* ret = NULL;
+	setKeysFromRecord();
+	ret=updateDB();
+	if(ret != NULL)
+	{
+		ret=insertDB();
+		if(ret != NULL)
+		{
+			dbAccess = false;
+			return(ret);
+		}
+	}
+	return(ret);
+}
+
+//deletes a single entry from DB
+char* OILC::deleteDB()
+{
+//
+//copy the host variables (k_...) to Oracle Host Keys (k_ora_..)
+//
+	copyKeyToHost();
+
+//
+// Do Delete 
+//
+	EXEC SQL DELETE FROM OILC
+	W;
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+// Executes the SQL DELETE with a where clause
+char* OILC::deleteDB(const char* where,long* count)
+{
+	*(count) = -1L;
+// Create dynamic statement.
+//
+	strcpy((char*)dynstr.arr,"DELETE");
+	strcat((char*)dynstr.arr," FROM OILC");
+	if ( where != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, where );
+	}
+
+	dynstr.len = strlen( (char*) dynstr.arr);
+	EXEC SQL EXECUTE IMMEDIATE :dynstr;
+	oracleSqlCode = sqlca.sqlcode;
+		oracleRowsProcessed = sqlca.sqlerrd[2];
+	if (sqlca.sqlcode == 0 )
+		*(count) = sqlca.sqlerrd[2];
+	else 
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//openSetDB data with where condition and sort order.
+char* OILC::openSetDB(const char* where,char* order)
+{
+//
+// Create dynamic statement.
+//
+	strcpy((char*)dynstr.arr,"SELECT ");
+	strcat((char*)dynstr.arr,"oildate,");
+	strcat((char*)dynstr.arr,"crewno,");
+	strcat((char*)dynstr.arr,"shiftno,");
+	strcat((char*)dynstr.arr,"coilno,");
+	strcat((char*)dynstr.arr,"reflectup,");
+	strcat((char*)dynstr.arr,"reflectdown,");
+	strcat((char*)dynstr.arr,"codeman,");
+	strcat((char*)dynstr.arr,"rflectupws,");
+	strcat((char*)dynstr.arr,"rflectupce,");
+	strcat((char*)dynstr.arr,"rflectupds,");
+	strcat((char*)dynstr.arr,"rflectdownws,");
+	strcat((char*)dynstr.arr,"rflectdownds,");
+	strcat((char*)dynstr.arr,"TO_CHAR(toc , 'YYYYMMDDHH24MISS'),");
+	strcat((char*)dynstr.arr,"TO_CHAR(tom , 'YYYYMMDDHH24MISS'),");
+	strcat((char*)dynstr.arr,"mop");
+
+	strcat((char*)dynstr.arr," FROM OILC ");
+	if ( where != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, where);
+	}
+	if ( order != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, order);
+	}
+
+	dynstr.len = strlen( (char*) dynstr.arr);
+	EXEC SQL PREPARE set_OILC FROM :dynstr;
+	if (sqlca.sqlcode == 0 )
+	{
+		EXEC SQL DECLARE cu_OILC CURSOR FOR set_OILC;
+		if (sqlca.sqlcode == 0 )
+			EXEC SQL OPEN cu_OILC;
+	}
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	cuFl = OPENED;
+	return ( NULL );
+}
+
+//Executes the SQL FETCH Statement .
+char* OILC::getSetDB()
+{
+	if ( cuFl != OPENED ) return ("No open Cursor Table:Me");
+	EXEC SQL FETCH cu_OILC INTO
+		:ora_oildate,
+		:ora_crewno:ora_crewnoZi,
+		:ora_shiftno:ora_shiftnoZi,
+		:ora_coilno:ora_coilnoZi,
+		:ora_reflectup:ora_reflectupZi,
+		:ora_reflectdown:ora_reflectdownZi,
+		:ora_codeman:ora_codemanZi,
+		:ora_rflectupws:ora_rflectupwsZi,
+		:ora_rflectupce:ora_rflectupceZi,
+		:ora_rflectupds:ora_rflectupdsZi,
+		:ora_rflectdownws:ora_rflectdownwsZi,
+		:ora_rflectdownds:ora_rflectdowndsZi,
+		:ora_toc:ora_tocZi,
+		:ora_tom:ora_tomZi,
+		:ora_mop:ora_mopZi;
+
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		pCatch->catchError(sqlca.sqlcode);
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		return (char*) sqlca.sqlerrm.sqlerrmc ;
+	}
+	//
+	// copy host variables into Class attributes
+	//
+	copyOracleToAttribute();
+	copyHostToKey();
+	return ( NULL );
+}
+
+//Close a Oracle Cursor
+char* OILC::closeSetDB()
+{
+	EXEC SQL CLOSE cu_OILC;
+	oracleSqlCode = sqlca.sqlcode;         
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		pCatch->catchError(sqlca.sqlcode);
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		return (char*) sqlca.sqlerrm.sqlerrmc ;
+	}
+	cuFl = CLOSED;
+	return ( NULL );
+}
+
+//Executes the SQL count(key) for a where clause
+char* OILC::countDB(const char* where,long* count)
+{
+	*(count) = -1L;
+//
+// Create dynamic statement. 
+//
+	strncpy((char*)dynstr.arr,"SELECT count(*)", sizeof(dynstr.arr));
+	strcat((char*)dynstr.arr," FROM OILC");
+	if ( where != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, where );
+	}
+	dynstr.len = strlen( (char*) dynstr.arr);
+	EXEC SQL PREPARE c_OILC FROM :dynstr;
+	
+	if (sqlca.sqlcode == 0 )
+	{
+		EXEC SQL DECLARE ct_OILC CURSOR FOR c_OILC;
+		if (sqlca.sqlcode == 0 )
+		{
+			EXEC SQL OPEN ct_OILC;
+			if (sqlca.sqlcode == 0 )			{
+				EXEC SQL FETCH ct_OILC INTO :rowCnt;
+				if (sqlca.sqlcode == 0 )
+				*(count) = rowCnt;
+			}
+			EXEC SQL CLOSE ct_OILC;
+		}
+	}
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//private methode copy Attribute to Oracle
+//copys Object attributes into Oracle Host variables.
+void OILC::copyAttributeToOracle()
+{
+	char* ptrStr;
+	ptrStr = this->oildate();
+	if( strlen(ptrStr)< sizeof(ora_oildate.arr))
+	{
+		strncpy((char*)ora_oildate.arr, ptrStr, sizeof(ora_oildate.arr));
+		ora_oildate.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_oildate.len = 0;
+	ptrStr = this->crewno();
+	if( strlen(ptrStr)< sizeof(ora_crewno.arr))
+	{
+		strncpy((char*)ora_crewno.arr, ptrStr, sizeof(ora_crewno.arr));
+		ora_crewno.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_crewno.len = 0;
+	ora_crewnoZi = this->crewnoZi();
+	ptrStr = this->shiftno();
+	if( strlen(ptrStr)< sizeof(ora_shiftno.arr))
+	{
+		strncpy((char*)ora_shiftno.arr, ptrStr, sizeof(ora_shiftno.arr));
+		ora_shiftno.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_shiftno.len = 0;
+	ora_shiftnoZi = this->shiftnoZi();
+	ptrStr = this->coilno();
+	if( strlen(ptrStr)< sizeof(ora_coilno.arr))
+	{
+		strncpy((char*)ora_coilno.arr, ptrStr, sizeof(ora_coilno.arr));
+		ora_coilno.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_coilno.len = 0;
+	ora_coilnoZi = this->coilnoZi();
+	ora_reflectup = this->reflectup();
+	ora_reflectupZi = this->reflectupZi();
+	ora_reflectdown = this->reflectdown();
+	ora_reflectdownZi = this->reflectdownZi();
+	ptrStr = this->codeman();
+	if( strlen(ptrStr)< sizeof(ora_codeman.arr))
+	{
+		strncpy((char*)ora_codeman.arr, ptrStr, sizeof(ora_codeman.arr));
+		ora_codeman.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_codeman.len = 0;
+	ora_codemanZi = this->codemanZi();
+	ora_rflectupws = this->rflectupws();
+	ora_rflectupwsZi = this->rflectupwsZi();
+	ora_rflectupce = this->rflectupce();
+	ora_rflectupceZi = this->rflectupceZi();
+	ora_rflectupds = this->rflectupds();
+	ora_rflectupdsZi = this->rflectupdsZi();
+	ora_rflectdownws = this->rflectdownws();
+	ora_rflectdownwsZi = this->rflectdownwsZi();
+	ora_rflectdownds = this->rflectdownds();
+	ora_rflectdowndsZi = this->rflectdowndsZi();
+	ptrStr = this->toc();
+	if( strlen(ptrStr)< sizeof(ora_toc.arr))
+	{
+		strncpy((char*)ora_toc.arr, ptrStr, sizeof(ora_toc.arr));
+		ora_toc.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_toc.len = 0;
+	ora_tocZi = this->tocZi();
+	ptrStr = this->tom();
+	if( strlen(ptrStr)< sizeof(ora_tom.arr))
+	{
+		strncpy((char*)ora_tom.arr, ptrStr, sizeof(ora_tom.arr));
+		ora_tom.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_tom.len = 0;
+	ora_tomZi = this->tomZi();
+	ptrStr = this->mop();
+	if( strlen(ptrStr)< sizeof(ora_mop.arr))
+	{
+		strncpy((char*)ora_mop.arr, ptrStr, sizeof(ora_mop.arr));
+		ora_mop.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_mop.len = 0;
+	ora_mopZi = this->mopZi();
+}
+
+//private methode copy Oracle to Attribute
+//copys Oracle Host variables into Object attributes.
+void OILC::copyOracleToAttribute()
+{
+	ora_oildate.arr[ora_oildate.len] = '\0';
+	this->set_oildate((char*) ora_oildate.arr);
+	ora_crewno.arr[ora_crewno.len] = '\0';
+	this->set_crewno((char*) ora_crewno.arr);
+	this->set_crewnoZi((short)ora_crewnoZi);
+	ora_shiftno.arr[ora_shiftno.len] = '\0';
+	this->set_shiftno((char*) ora_shiftno.arr);
+	this->set_shiftnoZi((short)ora_shiftnoZi);
+	ora_coilno.arr[ora_coilno.len] = '\0';
+	this->set_coilno((char*) ora_coilno.arr);
+	this->set_coilnoZi((short)ora_coilnoZi);
+	this->set_reflectup((float)ora_reflectup);
+	this->set_reflectupZi((short)ora_reflectupZi);
+	this->set_reflectdown((float)ora_reflectdown);
+	this->set_reflectdownZi((short)ora_reflectdownZi);
+	ora_codeman.arr[ora_codeman.len] = '\0';
+	this->set_codeman((char*) ora_codeman.arr);
+	this->set_codemanZi((short)ora_codemanZi);
+	this->set_rflectupws((float)ora_rflectupws);
+	this->set_rflectupwsZi((short)ora_rflectupwsZi);
+	this->set_rflectupce((float)ora_rflectupce);
+	this->set_rflectupceZi((short)ora_rflectupceZi);
+	this->set_rflectupds((float)ora_rflectupds);
+	this->set_rflectupdsZi((short)ora_rflectupdsZi);
+	this->set_rflectdownws((float)ora_rflectdownws);
+	this->set_rflectdownwsZi((short)ora_rflectdownwsZi);
+	this->set_rflectdownds((float)ora_rflectdownds);
+	this->set_rflectdowndsZi((short)ora_rflectdowndsZi);
+	ora_toc.arr[ora_toc.len] = '\0';
+	this->set_toc((char*) ora_toc.arr);
+	this->set_tocZi((short)ora_tocZi);
+	ora_tom.arr[ora_tom.len] = '\0';
+	this->set_tom((char*) ora_tom.arr);
+	this->set_tomZi((short)ora_tomZi);
+	ora_mop.arr[ora_mop.len] = '\0';
+	this->set_mop((char*) ora_mop.arr);
+	this->set_mopZi((short)ora_mopZi);
+}
+
+//private methode copy Key to host
+//copys Object attributes into Oralce Key variables.
+void OILC::copyKeyToHost()
+{
+	char* ptrStr;
+}
+
+//private methode copy Host to Key
+// copys Oracle Host Key variables into Object Key attributes.
+void OILC::copyHostToKey()
+{
+}
+
+//private methode log Oracle message information
+void OILC::logOraMessageInfo()
+{
+	LOG d("OILC::logOraMessageInfo()");
+	sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+	oraca.orastxt.orastxtc[oraca.orastxt.orastxtl] = '\0';
+	oraca.orasfnm.orasfnmc[oraca.orasfnm.orasfnml] = '\0';
+	
+	//* negating a error code submitted perhaps positively.
+	if (sqlca.sqlcode > 0) sqlca.sqlcode *= -1;
+	
+	//* Distribute fault text, SQL statement and file in the Debug System.
+	d << "ORA-Error: "<< sqlca.sqlerrm.sqlerrmc; d.Info();
+	d << "OracaText: "<< oraca.orastxt.orastxtc; d.Info();
+	d << "in line " << oraca.oraslnr << " in file " << oraca.orasfnm.orasfnmc; d.Info();
+}
+
+//this methode stores the unique key attributes
+void OILC::setPrimKey()
+{
+}
+
+//this methode stores the unique key attributes
+void OILC::initInsertKeys()
+{
+	setPrimKey();
+}
+
+//this methode set the unique key attributes from the DB Record Attributes
+void OILC::setKeysFromRecord()
+{
+}
+
+//			         
+//O P E R A T O R  + 
+//===================
+//                   
+OILC OILC::operator+(const OILC &inst) const
+{
+	OILC ptrOILC(*this);
+//----------------------------------------------------------
+	ptrOILC.set_oildate(inst.oildate());
+//----------------------------------------------------------
+	if(inst.crewnoZi() != -1)
+	{
+		ptrOILC.set_crewno(inst.crewno());
+		ptrOILC.set_crewnoZi(inst.crewnoZi());
+	}
+//----------------------------------------------------------
+	if(inst.shiftnoZi() != -1)
+	{
+		ptrOILC.set_shiftno(inst.shiftno());
+		ptrOILC.set_shiftnoZi(inst.shiftnoZi());
+	}
+//----------------------------------------------------------
+	if(inst.coilnoZi() != -1)
+	{
+		ptrOILC.set_coilno(inst.coilno());
+		ptrOILC.set_coilnoZi(inst.coilnoZi());
+	}
+//----------------------------------------------------------
+	if(inst.reflectupZi() != -1)
+	{
+		ptrOILC.set_reflectup(inst.reflectup());
+		ptrOILC.set_reflectupZi(inst.reflectupZi());
+	}
+//----------------------------------------------------------
+	if(inst.reflectdownZi() != -1)
+	{
+		ptrOILC.set_reflectdown(inst.reflectdown());
+		ptrOILC.set_reflectdownZi(inst.reflectdownZi());
+	}
+//----------------------------------------------------------
+	if(inst.codemanZi() != -1)
+	{
+		ptrOILC.set_codeman(inst.codeman());
+		ptrOILC.set_codemanZi(inst.codemanZi());
+	}
+//----------------------------------------------------------
+	if(inst.rflectupwsZi() != -1)
+	{
+		ptrOILC.set_rflectupws(inst.rflectupws());
+		ptrOILC.set_rflectupwsZi(inst.rflectupwsZi());
+	}
+//----------------------------------------------------------
+	if(inst.rflectupceZi() != -1)
+	{
+		ptrOILC.set_rflectupce(inst.rflectupce());
+		ptrOILC.set_rflectupceZi(inst.rflectupceZi());
+	}
+//----------------------------------------------------------
+	if(inst.rflectupdsZi() != -1)
+	{
+		ptrOILC.set_rflectupds(inst.rflectupds());
+		ptrOILC.set_rflectupdsZi(inst.rflectupdsZi());
+	}
+//----------------------------------------------------------
+	if(inst.rflectdownwsZi() != -1)
+	{
+		ptrOILC.set_rflectdownws(inst.rflectdownws());
+		ptrOILC.set_rflectdownwsZi(inst.rflectdownwsZi());
+	}
+//----------------------------------------------------------
+	if(inst.rflectdowndsZi() != -1)
+	{
+		ptrOILC.set_rflectdownds(inst.rflectdownds());
+		ptrOILC.set_rflectdowndsZi(inst.rflectdowndsZi());
+	}
+//----------------------------------------------------------
+	if(inst.tocZi() != -1)
+	{
+		ptrOILC.set_toc(inst.toc());
+		ptrOILC.set_tocZi(inst.tocZi());
+	}
+//----------------------------------------------------------
+	if(inst.tomZi() != -1)
+	{
+		ptrOILC.set_tom(inst.tom());
+		ptrOILC.set_tomZi(inst.tomZi());
+	}
+//----------------------------------------------------------
+	if(inst.mopZi() != -1)
+	{
+		ptrOILC.set_mop(inst.mop());
+		ptrOILC.set_mopZi(inst.mopZi());
+	}
+	return( ptrOILC );
+}
+
+//			         
+//O P E R A T O R  = 
+//===================
+//                   
+const OILC& OILC::operator=(const OILC &inst)
+{
+//----------------------------------------------------------
+	this->set_oildate(inst.oildate());
+//----------------------------------------------------------
+	this->set_crewno(inst.crewno());
+	this->set_crewnoZi(inst.crewnoZi());
+//----------------------------------------------------------
+	this->set_shiftno(inst.shiftno());
+	this->set_shiftnoZi(inst.shiftnoZi());
+//----------------------------------------------------------
+	this->set_coilno(inst.coilno());
+	this->set_coilnoZi(inst.coilnoZi());
+//----------------------------------------------------------
+	this->set_reflectup(inst.reflectup());
+	this->set_reflectupZi(inst.reflectupZi());
+//----------------------------------------------------------
+	this->set_reflectdown(inst.reflectdown());
+	this->set_reflectdownZi(inst.reflectdownZi());
+//----------------------------------------------------------
+	this->set_codeman(inst.codeman());
+	this->set_codemanZi(inst.codemanZi());
+//----------------------------------------------------------
+	this->set_rflectupws(inst.rflectupws());
+	this->set_rflectupwsZi(inst.rflectupwsZi());
+//----------------------------------------------------------
+	this->set_rflectupce(inst.rflectupce());
+	this->set_rflectupceZi(inst.rflectupceZi());
+//----------------------------------------------------------
+	this->set_rflectupds(inst.rflectupds());
+	this->set_rflectupdsZi(inst.rflectupdsZi());
+//----------------------------------------------------------
+	this->set_rflectdownws(inst.rflectdownws());
+	this->set_rflectdownwsZi(inst.rflectdownwsZi());
+//----------------------------------------------------------
+	this->set_rflectdownds(inst.rflectdownds());
+	this->set_rflectdowndsZi(inst.rflectdowndsZi());
+//----------------------------------------------------------
+	this->set_toc(inst.toc());
+	this->set_tocZi(inst.tocZi());
+//----------------------------------------------------------
+	this->set_tom(inst.tom());
+	this->set_tomZi(inst.tomZi());
+//----------------------------------------------------------
+	this->set_mop(inst.mop());
+	this->set_mopZi(inst.mopZi());
+	return(*this);
+}
+

@@ -1,0 +1,2835 @@
+/* *******************************************************************/
+/* *   File               :    DATASTARULE.pc
+/* *   Short Description  :    ORACLE DATABASE ACCESS
+/* * 		                   DATA STATIC RULE
+/* *   Author             :    DB CODE Generator
+/* *   Created Date       :    13.06.2013
+/* *   Tech.Support       :    LiuWeiZhao. email:welljoe@hotmail.com 
+/* *******************************************************************/
+/* *   Copyright (c)  SGAI AI 2009   All Rights Reserved
+/* *******************************************************************/
+
+#include "LOG.h"
+#include "DATASTARULE.h"
+//
+// Declare ORACLE Host Variables
+//
+
+#define SQLCA_STORAGE_CLASS static
+#define ORACA_STORAGE_CLASS static
+EXEC SQL INCLUDE sqlca;
+EXEC SQL INCLUDE oraca;
+
+#define OPENED 1
+#define CLOSED 2
+EXEC SQL BEGIN DECLARE SECTION;
+/* ****************************************************************************** */
+/*                                                                                */
+/*                               define Oracle                                    */
+/*                               Host Variables                                   */
+/*                                                          .                     */
+/*                                                                                */
+/* ****************************************************************************** */
+
+static VARCHAR	dynstr[16000];
+static long		rowCnt;       
+static long		cuFl;         
+//Unit[-]:规则名称.Limit:[-,-]
+static VARCHAR  ora_rulename[17];
+//Unit[-]:当前规则是否使用,1使用，0不使用.Limit:[-,-]
+static short    ora_ruleusing;
+static short    ora_ruleusingZi;
+//Unit[-]:头部长度定义.Limit:[-,-]
+static float    ora_headlen;
+static short    ora_headlenZi;
+//Unit[-]:尾部长度定义.Limit:[-,-]
+static VARCHAR  ora_taillen[5];
+static short    ora_taillenZi;
+//Unit[-]:厚度规则类型1＝绝对；0＝相对.Limit:[-,-]
+static short    ora_hruletype;
+static short    ora_hruletypeZi;
+//Unit[-]:厚度偏差上限.Limit:[-,-]
+static float    ora_huptol;
+static short    ora_huptolZi;
+//Unit[-]:厚度偏差下限.Limit:[-,-]
+static float    ora_hlowtol;
+static short    ora_hlowtolZi;
+//Unit[-]:厚度等级1起始值.Limit:[-,-]
+static float    ora_hclass1from;
+static short    ora_hclass1fromZi;
+//Unit[-]:厚度等级1终止值.Limit:[-,-]
+static float    ora_hclass1to;
+static short    ora_hclass1toZi;
+//Unit[-]:厚度等级2起始值.Limit:[-,-]
+static float    ora_hclass2from;
+static short    ora_hclass2fromZi;
+//Unit[-]:厚度等级2终止值.Limit:[-,-]
+static float    ora_hclass2to;
+static short    ora_hclass2toZi;
+//Unit[-]:厚度等级3起始值.Limit:[-,-]
+static float    ora_hclass3from;
+static short    ora_hclass3fromZi;
+//Unit[-]:厚度等级3终止值.Limit:[-,-]
+static float    ora_hclass3to;
+static short    ora_hclass3toZi;
+//Unit[-]:厚度等级4起始值.Limit:[-,-]
+static float    ora_hclass4from;
+static short    ora_hclass4fromZi;
+//Unit[-]:厚度等级4终止值.Limit:[-,-]
+static float    ora_hclass4to;
+static short    ora_hclass4toZi;
+//Unit[-]:厚度等级5起始值.Limit:[-,-]
+static float    ora_hclass5from;
+static short    ora_hclass5fromZi;
+//Unit[-]:厚度等级5终止值.Limit:[-,-]
+static float    ora_hclass5to;
+static short    ora_hclass5toZi;
+//Unit[-]:厚度等级6起始值.Limit:[-,-]
+static float    ora_hclass6from;
+static short    ora_hclass6fromZi;
+//Unit[-]:厚度等级6终止值.Limit:[-,-]
+static float    ora_hclass6to;
+static short    ora_hclass6toZi;
+//Unit[-]:厚度等级7起始值.Limit:[-,-]
+static float    ora_hclass7from;
+static short    ora_hclass7fromZi;
+//Unit[-]:厚度等级7终止值.Limit:[-,-]
+static float    ora_hclass7to;
+static short    ora_hclass7toZi;
+//Unit[-]:板形规则类型1＝绝对；0＝相对.Limit:[-,-]
+static short    ora_fruletype;
+static short    ora_fruletypeZi;
+//Unit[-]:板形偏差上限.Limit:[-,-]
+static float    ora_fuptol;
+static short    ora_fuptolZi;
+//Unit[-]:板形偏差下限.Limit:[-,-]
+static float    ora_flowtol;
+static short    ora_flowtolZi;
+//Unit[-]:板形等级1起始值.Limit:[-,-]
+static float    ora_fclass1from;
+static short    ora_fclass1fromZi;
+//Unit[-]:板形等级1终止值.Limit:[-,-]
+static float    ora_fclass1to;
+static short    ora_fclass1toZi;
+//Unit[-]:板形等级2起始值.Limit:[-,-]
+static float    ora_fclass2from;
+static short    ora_fclass2fromZi;
+//Unit[-]:板形等级2终止值.Limit:[-,-]
+static float    ora_fclass2to;
+static short    ora_fclass2toZi;
+//Unit[-]:板形等级3起始值.Limit:[-,-]
+static float    ora_fclass3from;
+static short    ora_fclass3fromZi;
+//Unit[-]:板形等级3终止值.Limit:[-,-]
+static float    ora_fclass3to;
+static short    ora_fclass3toZi;
+//Unit[-]:板形等级4起始值.Limit:[-,-]
+static float    ora_fclass4from;
+static short    ora_fclass4fromZi;
+//Unit[-]:板形等级4终止值.Limit:[-,-]
+static float    ora_fclass4to;
+static short    ora_fclass4toZi;
+//Unit[-]:板形等级5起始值.Limit:[-,-]
+static float    ora_fclass5from;
+static short    ora_fclass5fromZi;
+//Unit[-]:板形等级5终止值.Limit:[-,-]
+static float    ora_fclass5to;
+static short    ora_fclass5toZi;
+//Unit[-]:板形等级6起始值.Limit:[-,-]
+static float    ora_fclass6from;
+static short    ora_fclass6fromZi;
+//Unit[-]:板形等级6终止值.Limit:[-,-]
+static float    ora_fclass6to;
+static short    ora_fclass6toZi;
+//Unit[-]:板形等级7起始值.Limit:[-,-]
+static float    ora_fclass7from;
+static short    ora_fclass7fromZi;
+//Unit[-]:板形等级7终止值.Limit:[-,-]
+static float    ora_fclass7to;
+static short    ora_fclass7toZi;
+//Unit[-]:边降规则类型1＝绝对；0＝相对.Limit:[-,-]
+static short    ora_edropruletype;
+static short    ora_edropruletypeZi;
+//Unit[-]:边降偏差上限.Limit:[-,-]
+static float    ora_edropuptol;
+static short    ora_edropuptolZi;
+//Unit[-]:边降偏差下限.Limit:[-,-]
+static float    ora_edroplowtol;
+static short    ora_edroplowtolZi;
+//Unit[-]:边降等级1起始值.Limit:[-,-]
+static float    ora_edropclass1from;
+static short    ora_edropclass1fromZi;
+//Unit[-]:边降等级1终止值.Limit:[-,-]
+static float    ora_edropclass1to;
+static short    ora_edropclass1toZi;
+//Unit[-]:边降等级2起始值.Limit:[-,-]
+static float    ora_edropclass2from;
+static short    ora_edropclass2fromZi;
+//Unit[-]:边降等级2终止值.Limit:[-,-]
+static float    ora_edropclass2to;
+static short    ora_edropclass2toZi;
+//Unit[-]:边降等级3起始值.Limit:[-,-]
+static float    ora_edropclass3from;
+static short    ora_edropclass3fromZi;
+//Unit[-]:边降等级3终止值.Limit:[-,-]
+static float    ora_edropclass3to;
+static short    ora_edropclass3toZi;
+//Unit[-]:边降等级4起始值.Limit:[-,-]
+static float    ora_edropclass4from;
+static short    ora_edropclass4fromZi;
+//Unit[-]:边降等级4终止值.Limit:[-,-]
+static float    ora_edropclass4to;
+static short    ora_edropclass4toZi;
+//Unit[-]:边降等级5起始值.Limit:[-,-]
+static float    ora_edropclass5from;
+static short    ora_edropclass5fromZi;
+//Unit[-]:边降等级5终止值.Limit:[-,-]
+static float    ora_edropclass5to;
+static short    ora_edropclass5toZi;
+//Unit[-]:边降等级6起始值.Limit:[-,-]
+static float    ora_edropclass6from;
+static short    ora_edropclass6fromZi;
+//Unit[-]:边降等级6终止值.Limit:[-,-]
+static float    ora_edropclass6to;
+static short    ora_edropclass6toZi;
+//Unit[-]:边降等级7起始值.Limit:[-,-]
+static float    ora_edropclass7from;
+static short    ora_edropclass7fromZi;
+//Unit[-]:边降等级7终止值.Limit:[-,-]
+static float    ora_edropclass7to;
+static short    ora_edropclass7toZi;
+//Unit[-]:同板差规则类型1＝绝对；0＝相对.Limit:[-,-]
+static short    ora_hdifruletype;
+static short    ora_hdifruletypeZi;
+//Unit[-]:同板差偏差Std1上限.Limit:[-,-]
+static float    ora_hdifstd1uptol;
+static short    ora_hdifstd1uptolZi;
+//Unit[-]:同板差偏差Std1下限.Limit:[-,-]
+static float    ora_hdifstd1lowtol;
+static short    ora_hdifstd1lowtolZi;
+//Unit[-]:同板差偏差Std2上限.Limit:[-,-]
+static float    ora_hdifstd2uptol;
+static short    ora_hdifstd2uptolZi;
+//Unit[-]:同板差偏差Std2下限.Limit:[-,-]
+static float    ora_hdifstd2lowtol;
+static short    ora_hdifstd2lowtolZi;
+//Unit[-]:同板差偏差Std3上限.Limit:[-,-]
+static float    ora_hdifstd3uptol;
+static short    ora_hdifstd3uptolZi;
+//Unit[-]:同板差偏差Std3下限.Limit:[-,-]
+static float    ora_hdifstd3lowtol;
+static short    ora_hdifstd3lowtolZi;
+//Unit[-]:同板差等级1起始值.Limit:[-,-]
+static float    ora_hdifclass1from;
+static short    ora_hdifclass1fromZi;
+//Unit[-]:同板差等级1终止值.Limit:[-,-]
+static float    ora_hdifclass1to;
+static short    ora_hdifclass1toZi;
+//Unit[-]:同板差等级2起始值.Limit:[-,-]
+static float    ora_hdifclass2from;
+static short    ora_hdifclass2fromZi;
+//Unit[-]:同板差等级2终止值.Limit:[-,-]
+static float    ora_hdifclass2to;
+static short    ora_hdifclass2toZi;
+//Unit[-]:同板差等级3起始值.Limit:[-,-]
+static float    ora_hdifclass3from;
+static short    ora_hdifclass3fromZi;
+//Unit[-]:同板差等级3终止值.Limit:[-,-]
+static float    ora_hdifclass3to;
+static short    ora_hdifclass3toZi;
+//Unit[-]:同板差等级4起始值.Limit:[-,-]
+static float    ora_hdifclass4from;
+static short    ora_hdifclass4fromZi;
+//Unit[-]:同板差等级4终止值.Limit:[-,-]
+static float    ora_hdifclass4to;
+static short    ora_hdifclass4toZi;
+//Unit[-]:同板差等级5起始值.Limit:[-,-]
+static float    ora_hdifclass5from;
+static short    ora_hdifclass5fromZi;
+//Unit[-]:同板差等级5终止值.Limit:[-,-]
+static float    ora_hdifclass5to;
+static short    ora_hdifclass5toZi;
+//Unit[-]:同板差等级6起始值.Limit:[-,-]
+static float    ora_hdifclass6from;
+static short    ora_hdifclass6fromZi;
+//Unit[-]:同板差等级6终止值.Limit:[-,-]
+static float    ora_hdifclass6to;
+static short    ora_hdifclass6toZi;
+//Unit[-]:同板差等级7起始值.Limit:[-,-]
+static float    ora_hdifclass7from;
+static short    ora_hdifclass7fromZi;
+//Unit[-]:同板差等级7终止值.Limit:[-,-]
+static float    ora_hdifclass7to;
+static short    ora_hdifclass7toZi;
+//Unit[-]:中浪阈值.Limit:[-,-]
+static float    ora_mwlimit;
+static short    ora_mwlimitZi;
+//Unit[-]:边浪阈值.Limit:[-,-]
+static float    ora_ewlimit;
+static short    ora_ewlimitZi;
+//Unit[-]:1/4浪阈值.Limit:[-,-]
+static float    ora_qwlimit;
+static short    ora_qwlimitZi;
+//Unit[-]:创建时间.Limit:[-,-]
+static VARCHAR  ora_toc[15];
+static short    ora_tocZi;
+//Unit[-]:最后修改时间.Limit:[-,-]
+static VARCHAR  ora_tom[15];
+static short    ora_tomZi;
+//Unit[-]:创建或者修改者.Limit:[-,-]
+static VARCHAR  ora_mop[121];
+static short    ora_mopZi;
+// Host arguments for Primary key
+static VARCHAR  k_ora_rulename[17];   // Unit[-]:规则名称.Limit:[-,-]
+
+EXEC SQL END DECLARE SECTION;           
+             
+// 				             
+//C O N S T R U C T O R S    
+//=======================    
+//                           
+DATASTARULE::DATASTARULE()
+{
+	initial();                                             
+}
+
+//					
+//C O P Y  -  C O N S T R U C T O R 
+//==================================
+DATASTARULE::DATASTARULE(const DATASTARULE &inst)
+{
+//----------------------------------------------------------
+	this->set_rulename(inst.rulename());
+//----------------------------------------------------------
+	this->set_ruleusing(inst.ruleusing());
+	this->set_ruleusingZi(inst.ruleusingZi());
+//----------------------------------------------------------
+	this->set_headlen(inst.headlen());
+	this->set_headlenZi(inst.headlenZi());
+//----------------------------------------------------------
+	this->set_taillen(inst.taillen());
+	this->set_taillenZi(inst.taillenZi());
+//----------------------------------------------------------
+	this->set_hruletype(inst.hruletype());
+	this->set_hruletypeZi(inst.hruletypeZi());
+//----------------------------------------------------------
+	this->set_huptol(inst.huptol());
+	this->set_huptolZi(inst.huptolZi());
+//----------------------------------------------------------
+	this->set_hlowtol(inst.hlowtol());
+	this->set_hlowtolZi(inst.hlowtolZi());
+//----------------------------------------------------------
+	this->set_hclass1from(inst.hclass1from());
+	this->set_hclass1fromZi(inst.hclass1fromZi());
+//----------------------------------------------------------
+	this->set_hclass1to(inst.hclass1to());
+	this->set_hclass1toZi(inst.hclass1toZi());
+//----------------------------------------------------------
+	this->set_hclass2from(inst.hclass2from());
+	this->set_hclass2fromZi(inst.hclass2fromZi());
+//----------------------------------------------------------
+	this->set_hclass2to(inst.hclass2to());
+	this->set_hclass2toZi(inst.hclass2toZi());
+//----------------------------------------------------------
+	this->set_hclass3from(inst.hclass3from());
+	this->set_hclass3fromZi(inst.hclass3fromZi());
+//----------------------------------------------------------
+	this->set_hclass3to(inst.hclass3to());
+	this->set_hclass3toZi(inst.hclass3toZi());
+//----------------------------------------------------------
+	this->set_hclass4from(inst.hclass4from());
+	this->set_hclass4fromZi(inst.hclass4fromZi());
+//----------------------------------------------------------
+	this->set_hclass4to(inst.hclass4to());
+	this->set_hclass4toZi(inst.hclass4toZi());
+//----------------------------------------------------------
+	this->set_hclass5from(inst.hclass5from());
+	this->set_hclass5fromZi(inst.hclass5fromZi());
+//----------------------------------------------------------
+	this->set_hclass5to(inst.hclass5to());
+	this->set_hclass5toZi(inst.hclass5toZi());
+//----------------------------------------------------------
+	this->set_hclass6from(inst.hclass6from());
+	this->set_hclass6fromZi(inst.hclass6fromZi());
+//----------------------------------------------------------
+	this->set_hclass6to(inst.hclass6to());
+	this->set_hclass6toZi(inst.hclass6toZi());
+//----------------------------------------------------------
+	this->set_hclass7from(inst.hclass7from());
+	this->set_hclass7fromZi(inst.hclass7fromZi());
+//----------------------------------------------------------
+	this->set_hclass7to(inst.hclass7to());
+	this->set_hclass7toZi(inst.hclass7toZi());
+//----------------------------------------------------------
+	this->set_fruletype(inst.fruletype());
+	this->set_fruletypeZi(inst.fruletypeZi());
+//----------------------------------------------------------
+	this->set_fuptol(inst.fuptol());
+	this->set_fuptolZi(inst.fuptolZi());
+//----------------------------------------------------------
+	this->set_flowtol(inst.flowtol());
+	this->set_flowtolZi(inst.flowtolZi());
+//----------------------------------------------------------
+	this->set_fclass1from(inst.fclass1from());
+	this->set_fclass1fromZi(inst.fclass1fromZi());
+//----------------------------------------------------------
+	this->set_fclass1to(inst.fclass1to());
+	this->set_fclass1toZi(inst.fclass1toZi());
+//----------------------------------------------------------
+	this->set_fclass2from(inst.fclass2from());
+	this->set_fclass2fromZi(inst.fclass2fromZi());
+//----------------------------------------------------------
+	this->set_fclass2to(inst.fclass2to());
+	this->set_fclass2toZi(inst.fclass2toZi());
+//----------------------------------------------------------
+	this->set_fclass3from(inst.fclass3from());
+	this->set_fclass3fromZi(inst.fclass3fromZi());
+//----------------------------------------------------------
+	this->set_fclass3to(inst.fclass3to());
+	this->set_fclass3toZi(inst.fclass3toZi());
+//----------------------------------------------------------
+	this->set_fclass4from(inst.fclass4from());
+	this->set_fclass4fromZi(inst.fclass4fromZi());
+//----------------------------------------------------------
+	this->set_fclass4to(inst.fclass4to());
+	this->set_fclass4toZi(inst.fclass4toZi());
+//----------------------------------------------------------
+	this->set_fclass5from(inst.fclass5from());
+	this->set_fclass5fromZi(inst.fclass5fromZi());
+//----------------------------------------------------------
+	this->set_fclass5to(inst.fclass5to());
+	this->set_fclass5toZi(inst.fclass5toZi());
+//----------------------------------------------------------
+	this->set_fclass6from(inst.fclass6from());
+	this->set_fclass6fromZi(inst.fclass6fromZi());
+//----------------------------------------------------------
+	this->set_fclass6to(inst.fclass6to());
+	this->set_fclass6toZi(inst.fclass6toZi());
+//----------------------------------------------------------
+	this->set_fclass7from(inst.fclass7from());
+	this->set_fclass7fromZi(inst.fclass7fromZi());
+//----------------------------------------------------------
+	this->set_fclass7to(inst.fclass7to());
+	this->set_fclass7toZi(inst.fclass7toZi());
+//----------------------------------------------------------
+	this->set_edropruletype(inst.edropruletype());
+	this->set_edropruletypeZi(inst.edropruletypeZi());
+//----------------------------------------------------------
+	this->set_edropuptol(inst.edropuptol());
+	this->set_edropuptolZi(inst.edropuptolZi());
+//----------------------------------------------------------
+	this->set_edroplowtol(inst.edroplowtol());
+	this->set_edroplowtolZi(inst.edroplowtolZi());
+//----------------------------------------------------------
+	this->set_edropclass1from(inst.edropclass1from());
+	this->set_edropclass1fromZi(inst.edropclass1fromZi());
+//----------------------------------------------------------
+	this->set_edropclass1to(inst.edropclass1to());
+	this->set_edropclass1toZi(inst.edropclass1toZi());
+//----------------------------------------------------------
+	this->set_edropclass2from(inst.edropclass2from());
+	this->set_edropclass2fromZi(inst.edropclass2fromZi());
+//----------------------------------------------------------
+	this->set_edropclass2to(inst.edropclass2to());
+	this->set_edropclass2toZi(inst.edropclass2toZi());
+//----------------------------------------------------------
+	this->set_edropclass3from(inst.edropclass3from());
+	this->set_edropclass3fromZi(inst.edropclass3fromZi());
+//----------------------------------------------------------
+	this->set_edropclass3to(inst.edropclass3to());
+	this->set_edropclass3toZi(inst.edropclass3toZi());
+//----------------------------------------------------------
+	this->set_edropclass4from(inst.edropclass4from());
+	this->set_edropclass4fromZi(inst.edropclass4fromZi());
+//----------------------------------------------------------
+	this->set_edropclass4to(inst.edropclass4to());
+	this->set_edropclass4toZi(inst.edropclass4toZi());
+//----------------------------------------------------------
+	this->set_edropclass5from(inst.edropclass5from());
+	this->set_edropclass5fromZi(inst.edropclass5fromZi());
+//----------------------------------------------------------
+	this->set_edropclass5to(inst.edropclass5to());
+	this->set_edropclass5toZi(inst.edropclass5toZi());
+//----------------------------------------------------------
+	this->set_edropclass6from(inst.edropclass6from());
+	this->set_edropclass6fromZi(inst.edropclass6fromZi());
+//----------------------------------------------------------
+	this->set_edropclass6to(inst.edropclass6to());
+	this->set_edropclass6toZi(inst.edropclass6toZi());
+//----------------------------------------------------------
+	this->set_edropclass7from(inst.edropclass7from());
+	this->set_edropclass7fromZi(inst.edropclass7fromZi());
+//----------------------------------------------------------
+	this->set_edropclass7to(inst.edropclass7to());
+	this->set_edropclass7toZi(inst.edropclass7toZi());
+//----------------------------------------------------------
+	this->set_hdifruletype(inst.hdifruletype());
+	this->set_hdifruletypeZi(inst.hdifruletypeZi());
+//----------------------------------------------------------
+	this->set_hdifstd1uptol(inst.hdifstd1uptol());
+	this->set_hdifstd1uptolZi(inst.hdifstd1uptolZi());
+//----------------------------------------------------------
+	this->set_hdifstd1lowtol(inst.hdifstd1lowtol());
+	this->set_hdifstd1lowtolZi(inst.hdifstd1lowtolZi());
+//----------------------------------------------------------
+	this->set_hdifstd2uptol(inst.hdifstd2uptol());
+	this->set_hdifstd2uptolZi(inst.hdifstd2uptolZi());
+//----------------------------------------------------------
+	this->set_hdifstd2lowtol(inst.hdifstd2lowtol());
+	this->set_hdifstd2lowtolZi(inst.hdifstd2lowtolZi());
+//----------------------------------------------------------
+	this->set_hdifstd3uptol(inst.hdifstd3uptol());
+	this->set_hdifstd3uptolZi(inst.hdifstd3uptolZi());
+//----------------------------------------------------------
+	this->set_hdifstd3lowtol(inst.hdifstd3lowtol());
+	this->set_hdifstd3lowtolZi(inst.hdifstd3lowtolZi());
+//----------------------------------------------------------
+	this->set_hdifclass1from(inst.hdifclass1from());
+	this->set_hdifclass1fromZi(inst.hdifclass1fromZi());
+//----------------------------------------------------------
+	this->set_hdifclass1to(inst.hdifclass1to());
+	this->set_hdifclass1toZi(inst.hdifclass1toZi());
+//----------------------------------------------------------
+	this->set_hdifclass2from(inst.hdifclass2from());
+	this->set_hdifclass2fromZi(inst.hdifclass2fromZi());
+//----------------------------------------------------------
+	this->set_hdifclass2to(inst.hdifclass2to());
+	this->set_hdifclass2toZi(inst.hdifclass2toZi());
+//----------------------------------------------------------
+	this->set_hdifclass3from(inst.hdifclass3from());
+	this->set_hdifclass3fromZi(inst.hdifclass3fromZi());
+//----------------------------------------------------------
+	this->set_hdifclass3to(inst.hdifclass3to());
+	this->set_hdifclass3toZi(inst.hdifclass3toZi());
+//----------------------------------------------------------
+	this->set_hdifclass4from(inst.hdifclass4from());
+	this->set_hdifclass4fromZi(inst.hdifclass4fromZi());
+//----------------------------------------------------------
+	this->set_hdifclass4to(inst.hdifclass4to());
+	this->set_hdifclass4toZi(inst.hdifclass4toZi());
+//----------------------------------------------------------
+	this->set_hdifclass5from(inst.hdifclass5from());
+	this->set_hdifclass5fromZi(inst.hdifclass5fromZi());
+//----------------------------------------------------------
+	this->set_hdifclass5to(inst.hdifclass5to());
+	this->set_hdifclass5toZi(inst.hdifclass5toZi());
+//----------------------------------------------------------
+	this->set_hdifclass6from(inst.hdifclass6from());
+	this->set_hdifclass6fromZi(inst.hdifclass6fromZi());
+//----------------------------------------------------------
+	this->set_hdifclass6to(inst.hdifclass6to());
+	this->set_hdifclass6toZi(inst.hdifclass6toZi());
+//----------------------------------------------------------
+	this->set_hdifclass7from(inst.hdifclass7from());
+	this->set_hdifclass7fromZi(inst.hdifclass7fromZi());
+//----------------------------------------------------------
+	this->set_hdifclass7to(inst.hdifclass7to());
+	this->set_hdifclass7toZi(inst.hdifclass7toZi());
+//----------------------------------------------------------
+	this->set_mwlimit(inst.mwlimit());
+	this->set_mwlimitZi(inst.mwlimitZi());
+//----------------------------------------------------------
+	this->set_ewlimit(inst.ewlimit());
+	this->set_ewlimitZi(inst.ewlimitZi());
+//----------------------------------------------------------
+	this->set_qwlimit(inst.qwlimit());
+	this->set_qwlimitZi(inst.qwlimitZi());
+//----------------------------------------------------------
+	this->set_toc(inst.toc());
+	this->set_tocZi(inst.tocZi());
+//----------------------------------------------------------
+	this->set_tom(inst.tom());
+	this->set_tomZi(inst.tomZi());
+//----------------------------------------------------------
+	this->set_mop(inst.mop());
+	this->set_mopZi(inst.mopZi());
+}
+
+//					
+//C O N S T R U C T O R -W I T H P A R A M E T E R S
+//===================================================
+//					
+DATASTARULE::DATASTARULE(char* arg1)
+{
+	initial();					               
+	setPrimKey (arg1);    
+	//read DB record                           
+	dbAccess = true;                           
+	dbMessage = readDB();                      
+	if ( dbMessage != NULL ) dbAccess = false; 
+}
+
+//D E S T R U C T O R S  
+//=======================
+//                       
+DATASTARULE::~DATASTARULE()
+{
+}
+
+//initialise all member variables
+void DATASTARULE::initial()
+{
+	set_rulename("");
+	set_ruleusing(0);
+	set_ruleusingZi(-1);
+	set_headlen(0);
+	set_headlenZi(-1);
+	set_taillen("");
+	set_taillenZi(-1);
+	set_hruletype(0);
+	set_hruletypeZi(-1);
+	set_huptol(0);
+	set_huptolZi(-1);
+	set_hlowtol(0);
+	set_hlowtolZi(-1);
+	set_hclass1from(0);
+	set_hclass1fromZi(-1);
+	set_hclass1to(0);
+	set_hclass1toZi(-1);
+	set_hclass2from(0);
+	set_hclass2fromZi(-1);
+	set_hclass2to(0);
+	set_hclass2toZi(-1);
+	set_hclass3from(0);
+	set_hclass3fromZi(-1);
+	set_hclass3to(0);
+	set_hclass3toZi(-1);
+	set_hclass4from(0);
+	set_hclass4fromZi(-1);
+	set_hclass4to(0);
+	set_hclass4toZi(-1);
+	set_hclass5from(0);
+	set_hclass5fromZi(-1);
+	set_hclass5to(0);
+	set_hclass5toZi(-1);
+	set_hclass6from(0);
+	set_hclass6fromZi(-1);
+	set_hclass6to(0);
+	set_hclass6toZi(-1);
+	set_hclass7from(0);
+	set_hclass7fromZi(-1);
+	set_hclass7to(0);
+	set_hclass7toZi(-1);
+	set_fruletype(0);
+	set_fruletypeZi(-1);
+	set_fuptol(0);
+	set_fuptolZi(-1);
+	set_flowtol(0);
+	set_flowtolZi(-1);
+	set_fclass1from(0);
+	set_fclass1fromZi(-1);
+	set_fclass1to(0);
+	set_fclass1toZi(-1);
+	set_fclass2from(0);
+	set_fclass2fromZi(-1);
+	set_fclass2to(0);
+	set_fclass2toZi(-1);
+	set_fclass3from(0);
+	set_fclass3fromZi(-1);
+	set_fclass3to(0);
+	set_fclass3toZi(-1);
+	set_fclass4from(0);
+	set_fclass4fromZi(-1);
+	set_fclass4to(0);
+	set_fclass4toZi(-1);
+	set_fclass5from(0);
+	set_fclass5fromZi(-1);
+	set_fclass5to(0);
+	set_fclass5toZi(-1);
+	set_fclass6from(0);
+	set_fclass6fromZi(-1);
+	set_fclass6to(0);
+	set_fclass6toZi(-1);
+	set_fclass7from(0);
+	set_fclass7fromZi(-1);
+	set_fclass7to(0);
+	set_fclass7toZi(-1);
+	set_edropruletype(0);
+	set_edropruletypeZi(-1);
+	set_edropuptol(0);
+	set_edropuptolZi(-1);
+	set_edroplowtol(0);
+	set_edroplowtolZi(-1);
+	set_edropclass1from(0);
+	set_edropclass1fromZi(-1);
+	set_edropclass1to(0);
+	set_edropclass1toZi(-1);
+	set_edropclass2from(0);
+	set_edropclass2fromZi(-1);
+	set_edropclass2to(0);
+	set_edropclass2toZi(-1);
+	set_edropclass3from(0);
+	set_edropclass3fromZi(-1);
+	set_edropclass3to(0);
+	set_edropclass3toZi(-1);
+	set_edropclass4from(0);
+	set_edropclass4fromZi(-1);
+	set_edropclass4to(0);
+	set_edropclass4toZi(-1);
+	set_edropclass5from(0);
+	set_edropclass5fromZi(-1);
+	set_edropclass5to(0);
+	set_edropclass5toZi(-1);
+	set_edropclass6from(0);
+	set_edropclass6fromZi(-1);
+	set_edropclass6to(0);
+	set_edropclass6toZi(-1);
+	set_edropclass7from(0);
+	set_edropclass7fromZi(-1);
+	set_edropclass7to(0);
+	set_edropclass7toZi(-1);
+	set_hdifruletype(0);
+	set_hdifruletypeZi(-1);
+	set_hdifstd1uptol(0);
+	set_hdifstd1uptolZi(-1);
+	set_hdifstd1lowtol(0);
+	set_hdifstd1lowtolZi(-1);
+	set_hdifstd2uptol(0);
+	set_hdifstd2uptolZi(-1);
+	set_hdifstd2lowtol(0);
+	set_hdifstd2lowtolZi(-1);
+	set_hdifstd3uptol(0);
+	set_hdifstd3uptolZi(-1);
+	set_hdifstd3lowtol(0);
+	set_hdifstd3lowtolZi(-1);
+	set_hdifclass1from(0);
+	set_hdifclass1fromZi(-1);
+	set_hdifclass1to(0);
+	set_hdifclass1toZi(-1);
+	set_hdifclass2from(0);
+	set_hdifclass2fromZi(-1);
+	set_hdifclass2to(0);
+	set_hdifclass2toZi(-1);
+	set_hdifclass3from(0);
+	set_hdifclass3fromZi(-1);
+	set_hdifclass3to(0);
+	set_hdifclass3toZi(-1);
+	set_hdifclass4from(0);
+	set_hdifclass4fromZi(-1);
+	set_hdifclass4to(0);
+	set_hdifclass4toZi(-1);
+	set_hdifclass5from(0);
+	set_hdifclass5fromZi(-1);
+	set_hdifclass5to(0);
+	set_hdifclass5toZi(-1);
+	set_hdifclass6from(0);
+	set_hdifclass6fromZi(-1);
+	set_hdifclass6to(0);
+	set_hdifclass6toZi(-1);
+	set_hdifclass7from(0);
+	set_hdifclass7fromZi(-1);
+	set_hdifclass7to(0);
+	set_hdifclass7toZi(-1);
+	set_mwlimit(0);
+	set_mwlimitZi(-1);
+	set_ewlimit(0);
+	set_ewlimitZi(-1);
+	set_qwlimit(0);
+	set_qwlimitZi(-1);
+	set_toc("");
+	set_tocZi(-1);
+	set_tom("");
+	set_tomZi(-1);
+	set_mop("");
+	set_mopZi(-1);
+	//initialies Primary key members
+	set_k_rulename("");
+// Initial Oracle Options
+	oraca.oradbgf  = 1; // gather debug informations       
+	oraca.oracchf  = 1; // gather cursor cache informations
+	oraca.orahchf  = 1; // check heap                      
+	oraca.orastxtf = 3; // always save last sql-statement  
+	                                                       
+	EXEC ORACLE OPTION (ORACA=YES);                        
+	EXEC ORACLE OPTION (HOLD_CURSOR=YES);                  
+	EXEC ORACLE OPTION (RELEASE_CURSOR=NO);                
+	EXEC ORACLE OPTION (MAXOPENCURSORS=50);                
+	pCatch = CatchDbaxError::instance();                   
+	                                                       
+}
+
+//read a single entry from DB.
+char* DATASTARULE::readDB()
+{
+	//
+	//copy the host variables (k_...) to Oracle Host Keys (k_ora_..)
+	//
+		copyKeyToHost();
+	//
+	// Do SELECT
+	//
+	EXEC SQL SELECT 
+		rulename,
+		ruleusing,
+		headlen,
+		taillen,
+		hruletype,
+		huptol,
+		hlowtol,
+		hclass1from,
+		hclass1to,
+		hclass2from,
+		hclass2to,
+		hclass3from,
+		hclass3to,
+		hclass4from,
+		hclass4to,
+		hclass5from,
+		hclass5to,
+		hclass6from,
+		hclass6to,
+		hclass7from,
+		hclass7to,
+		fruletype,
+		fuptol,
+		flowtol,
+		fclass1from,
+		fclass1to,
+		fclass2from,
+		fclass2to,
+		fclass3from,
+		fclass3to,
+		fclass4from,
+		fclass4to,
+		fclass5from,
+		fclass5to,
+		fclass6from,
+		fclass6to,
+		fclass7from,
+		fclass7to,
+		edropruletype,
+		edropuptol,
+		edroplowtol,
+		edropclass1from,
+		edropclass1to,
+		edropclass2from,
+		edropclass2to,
+		edropclass3from,
+		edropclass3to,
+		edropclass4from,
+		edropclass4to,
+		edropclass5from,
+		edropclass5to,
+		edropclass6from,
+		edropclass6to,
+		edropclass7from,
+		edropclass7to,
+		hdifruletype,
+		hdifstd1uptol,
+		hdifstd1lowtol,
+		hdifstd2uptol,
+		hdifstd2lowtol,
+		hdifstd3uptol,
+		hdifstd3lowtol,
+		hdifclass1from,
+		hdifclass1to,
+		hdifclass2from,
+		hdifclass2to,
+		hdifclass3from,
+		hdifclass3to,
+		hdifclass4from,
+		hdifclass4to,
+		hdifclass5from,
+		hdifclass5to,
+		hdifclass6from,
+		hdifclass6to,
+		hdifclass7from,
+		hdifclass7to,
+		mwlimit,
+		ewlimit,
+		qwlimit,
+		TO_CHAR(toc , 'YYYYMMDDHH24MISS'),
+		TO_CHAR(tom , 'YYYYMMDDHH24MISS'),
+		mop
+	INTO
+		:ora_rulename,
+		:ora_ruleusing:ora_ruleusingZi,
+		:ora_headlen:ora_headlenZi,
+		:ora_taillen:ora_taillenZi,
+		:ora_hruletype:ora_hruletypeZi,
+		:ora_huptol:ora_huptolZi,
+		:ora_hlowtol:ora_hlowtolZi,
+		:ora_hclass1from:ora_hclass1fromZi,
+		:ora_hclass1to:ora_hclass1toZi,
+		:ora_hclass2from:ora_hclass2fromZi,
+		:ora_hclass2to:ora_hclass2toZi,
+		:ora_hclass3from:ora_hclass3fromZi,
+		:ora_hclass3to:ora_hclass3toZi,
+		:ora_hclass4from:ora_hclass4fromZi,
+		:ora_hclass4to:ora_hclass4toZi,
+		:ora_hclass5from:ora_hclass5fromZi,
+		:ora_hclass5to:ora_hclass5toZi,
+		:ora_hclass6from:ora_hclass6fromZi,
+		:ora_hclass6to:ora_hclass6toZi,
+		:ora_hclass7from:ora_hclass7fromZi,
+		:ora_hclass7to:ora_hclass7toZi,
+		:ora_fruletype:ora_fruletypeZi,
+		:ora_fuptol:ora_fuptolZi,
+		:ora_flowtol:ora_flowtolZi,
+		:ora_fclass1from:ora_fclass1fromZi,
+		:ora_fclass1to:ora_fclass1toZi,
+		:ora_fclass2from:ora_fclass2fromZi,
+		:ora_fclass2to:ora_fclass2toZi,
+		:ora_fclass3from:ora_fclass3fromZi,
+		:ora_fclass3to:ora_fclass3toZi,
+		:ora_fclass4from:ora_fclass4fromZi,
+		:ora_fclass4to:ora_fclass4toZi,
+		:ora_fclass5from:ora_fclass5fromZi,
+		:ora_fclass5to:ora_fclass5toZi,
+		:ora_fclass6from:ora_fclass6fromZi,
+		:ora_fclass6to:ora_fclass6toZi,
+		:ora_fclass7from:ora_fclass7fromZi,
+		:ora_fclass7to:ora_fclass7toZi,
+		:ora_edropruletype:ora_edropruletypeZi,
+		:ora_edropuptol:ora_edropuptolZi,
+		:ora_edroplowtol:ora_edroplowtolZi,
+		:ora_edropclass1from:ora_edropclass1fromZi,
+		:ora_edropclass1to:ora_edropclass1toZi,
+		:ora_edropclass2from:ora_edropclass2fromZi,
+		:ora_edropclass2to:ora_edropclass2toZi,
+		:ora_edropclass3from:ora_edropclass3fromZi,
+		:ora_edropclass3to:ora_edropclass3toZi,
+		:ora_edropclass4from:ora_edropclass4fromZi,
+		:ora_edropclass4to:ora_edropclass4toZi,
+		:ora_edropclass5from:ora_edropclass5fromZi,
+		:ora_edropclass5to:ora_edropclass5toZi,
+		:ora_edropclass6from:ora_edropclass6fromZi,
+		:ora_edropclass6to:ora_edropclass6toZi,
+		:ora_edropclass7from:ora_edropclass7fromZi,
+		:ora_edropclass7to:ora_edropclass7toZi,
+		:ora_hdifruletype:ora_hdifruletypeZi,
+		:ora_hdifstd1uptol:ora_hdifstd1uptolZi,
+		:ora_hdifstd1lowtol:ora_hdifstd1lowtolZi,
+		:ora_hdifstd2uptol:ora_hdifstd2uptolZi,
+		:ora_hdifstd2lowtol:ora_hdifstd2lowtolZi,
+		:ora_hdifstd3uptol:ora_hdifstd3uptolZi,
+		:ora_hdifstd3lowtol:ora_hdifstd3lowtolZi,
+		:ora_hdifclass1from:ora_hdifclass1fromZi,
+		:ora_hdifclass1to:ora_hdifclass1toZi,
+		:ora_hdifclass2from:ora_hdifclass2fromZi,
+		:ora_hdifclass2to:ora_hdifclass2toZi,
+		:ora_hdifclass3from:ora_hdifclass3fromZi,
+		:ora_hdifclass3to:ora_hdifclass3toZi,
+		:ora_hdifclass4from:ora_hdifclass4fromZi,
+		:ora_hdifclass4to:ora_hdifclass4toZi,
+		:ora_hdifclass5from:ora_hdifclass5fromZi,
+		:ora_hdifclass5to:ora_hdifclass5toZi,
+		:ora_hdifclass6from:ora_hdifclass6fromZi,
+		:ora_hdifclass6to:ora_hdifclass6toZi,
+		:ora_hdifclass7from:ora_hdifclass7fromZi,
+		:ora_hdifclass7to:ora_hdifclass7toZi,
+		:ora_mwlimit:ora_mwlimitZi,
+		:ora_ewlimit:ora_ewlimitZi,
+		:ora_qwlimit:ora_qwlimitZi,
+		:ora_toc:ora_tocZi,
+		:ora_tom:ora_tomZi,
+		:ora_mop:ora_mopZi
+	FROM DATASTARULE
+	WHERE
+				rulename        = :k_ora_rulename ;
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	//
+	// copy host variables into Class attributes
+	//
+	copyOracleToAttribute();
+	return ( NULL );
+}
+
+//updates a single entry from DB
+char* DATASTARULE::updateDB()
+{
+	//
+	//copy the host variables (k_...) to Oracle Host Keys (k_ora_..)
+	//
+		copyKeyToHost();
+	//copy the attributes ( ...) to Oracle Hosts( ora_..)
+	//
+		copyAttributeToOracle();
+	//
+	// Do UPDATE
+	//
+	EXEC SQL UPDATE DATASTARULE
+	SET 
+		rulename            =:ora_rulename,
+		ruleusing           =:ora_ruleusing:ora_ruleusingZi,
+		headlen             =:ora_headlen:ora_headlenZi,
+		taillen             =:ora_taillen:ora_taillenZi,
+		hruletype           =:ora_hruletype:ora_hruletypeZi,
+		huptol              =:ora_huptol:ora_huptolZi,
+		hlowtol             =:ora_hlowtol:ora_hlowtolZi,
+		hclass1from         =:ora_hclass1from:ora_hclass1fromZi,
+		hclass1to           =:ora_hclass1to:ora_hclass1toZi,
+		hclass2from         =:ora_hclass2from:ora_hclass2fromZi,
+		hclass2to           =:ora_hclass2to:ora_hclass2toZi,
+		hclass3from         =:ora_hclass3from:ora_hclass3fromZi,
+		hclass3to           =:ora_hclass3to:ora_hclass3toZi,
+		hclass4from         =:ora_hclass4from:ora_hclass4fromZi,
+		hclass4to           =:ora_hclass4to:ora_hclass4toZi,
+		hclass5from         =:ora_hclass5from:ora_hclass5fromZi,
+		hclass5to           =:ora_hclass5to:ora_hclass5toZi,
+		hclass6from         =:ora_hclass6from:ora_hclass6fromZi,
+		hclass6to           =:ora_hclass6to:ora_hclass6toZi,
+		hclass7from         =:ora_hclass7from:ora_hclass7fromZi,
+		hclass7to           =:ora_hclass7to:ora_hclass7toZi,
+		fruletype           =:ora_fruletype:ora_fruletypeZi,
+		fuptol              =:ora_fuptol:ora_fuptolZi,
+		flowtol             =:ora_flowtol:ora_flowtolZi,
+		fclass1from         =:ora_fclass1from:ora_fclass1fromZi,
+		fclass1to           =:ora_fclass1to:ora_fclass1toZi,
+		fclass2from         =:ora_fclass2from:ora_fclass2fromZi,
+		fclass2to           =:ora_fclass2to:ora_fclass2toZi,
+		fclass3from         =:ora_fclass3from:ora_fclass3fromZi,
+		fclass3to           =:ora_fclass3to:ora_fclass3toZi,
+		fclass4from         =:ora_fclass4from:ora_fclass4fromZi,
+		fclass4to           =:ora_fclass4to:ora_fclass4toZi,
+		fclass5from         =:ora_fclass5from:ora_fclass5fromZi,
+		fclass5to           =:ora_fclass5to:ora_fclass5toZi,
+		fclass6from         =:ora_fclass6from:ora_fclass6fromZi,
+		fclass6to           =:ora_fclass6to:ora_fclass6toZi,
+		fclass7from         =:ora_fclass7from:ora_fclass7fromZi,
+		fclass7to           =:ora_fclass7to:ora_fclass7toZi,
+		edropruletype       =:ora_edropruletype:ora_edropruletypeZi,
+		edropuptol          =:ora_edropuptol:ora_edropuptolZi,
+		edroplowtol         =:ora_edroplowtol:ora_edroplowtolZi,
+		edropclass1from     =:ora_edropclass1from:ora_edropclass1fromZi,
+		edropclass1to       =:ora_edropclass1to:ora_edropclass1toZi,
+		edropclass2from     =:ora_edropclass2from:ora_edropclass2fromZi,
+		edropclass2to       =:ora_edropclass2to:ora_edropclass2toZi,
+		edropclass3from     =:ora_edropclass3from:ora_edropclass3fromZi,
+		edropclass3to       =:ora_edropclass3to:ora_edropclass3toZi,
+		edropclass4from     =:ora_edropclass4from:ora_edropclass4fromZi,
+		edropclass4to       =:ora_edropclass4to:ora_edropclass4toZi,
+		edropclass5from     =:ora_edropclass5from:ora_edropclass5fromZi,
+		edropclass5to       =:ora_edropclass5to:ora_edropclass5toZi,
+		edropclass6from     =:ora_edropclass6from:ora_edropclass6fromZi,
+		edropclass6to       =:ora_edropclass6to:ora_edropclass6toZi,
+		edropclass7from     =:ora_edropclass7from:ora_edropclass7fromZi,
+		edropclass7to       =:ora_edropclass7to:ora_edropclass7toZi,
+		hdifruletype        =:ora_hdifruletype:ora_hdifruletypeZi,
+		hdifstd1uptol       =:ora_hdifstd1uptol:ora_hdifstd1uptolZi,
+		hdifstd1lowtol      =:ora_hdifstd1lowtol:ora_hdifstd1lowtolZi,
+		hdifstd2uptol       =:ora_hdifstd2uptol:ora_hdifstd2uptolZi,
+		hdifstd2lowtol      =:ora_hdifstd2lowtol:ora_hdifstd2lowtolZi,
+		hdifstd3uptol       =:ora_hdifstd3uptol:ora_hdifstd3uptolZi,
+		hdifstd3lowtol      =:ora_hdifstd3lowtol:ora_hdifstd3lowtolZi,
+		hdifclass1from      =:ora_hdifclass1from:ora_hdifclass1fromZi,
+		hdifclass1to        =:ora_hdifclass1to:ora_hdifclass1toZi,
+		hdifclass2from      =:ora_hdifclass2from:ora_hdifclass2fromZi,
+		hdifclass2to        =:ora_hdifclass2to:ora_hdifclass2toZi,
+		hdifclass3from      =:ora_hdifclass3from:ora_hdifclass3fromZi,
+		hdifclass3to        =:ora_hdifclass3to:ora_hdifclass3toZi,
+		hdifclass4from      =:ora_hdifclass4from:ora_hdifclass4fromZi,
+		hdifclass4to        =:ora_hdifclass4to:ora_hdifclass4toZi,
+		hdifclass5from      =:ora_hdifclass5from:ora_hdifclass5fromZi,
+		hdifclass5to        =:ora_hdifclass5to:ora_hdifclass5toZi,
+		hdifclass6from      =:ora_hdifclass6from:ora_hdifclass6fromZi,
+		hdifclass6to        =:ora_hdifclass6to:ora_hdifclass6toZi,
+		hdifclass7from      =:ora_hdifclass7from:ora_hdifclass7fromZi,
+		hdifclass7to        =:ora_hdifclass7to:ora_hdifclass7toZi,
+		mwlimit             =:ora_mwlimit:ora_mwlimitZi,
+		ewlimit             =:ora_ewlimit:ora_ewlimitZi,
+		qwlimit             =:ora_qwlimit:ora_qwlimitZi,
+		toc                 =TO_DATE( :ora_toc:ora_tocZi,'YYYYMMDDHH24MISS'),
+		tom                 =TO_DATE( :ora_tom:ora_tomZi,'YYYYMMDDHH24MISS'),
+		mop                 =:ora_mop:ora_mopZi
+	WHERE
+		rulename        = :k_ora_rulename ;
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//inserts a single entry from DB
+char* DATASTARULE::insertDB()
+{
+	//
+	//copy the attributes ( ...) to Oracle Hosts( ora_..) 
+	//
+		copyAttributeToOracle();
+	//
+	// Do INSERT
+	//
+	EXEC SQL INSERT INTO DATASTARULE
+	(
+		rulename,
+		ruleusing,
+		headlen,
+		taillen,
+		hruletype,
+		huptol,
+		hlowtol,
+		hclass1from,
+		hclass1to,
+		hclass2from,
+		hclass2to,
+		hclass3from,
+		hclass3to,
+		hclass4from,
+		hclass4to,
+		hclass5from,
+		hclass5to,
+		hclass6from,
+		hclass6to,
+		hclass7from,
+		hclass7to,
+		fruletype,
+		fuptol,
+		flowtol,
+		fclass1from,
+		fclass1to,
+		fclass2from,
+		fclass2to,
+		fclass3from,
+		fclass3to,
+		fclass4from,
+		fclass4to,
+		fclass5from,
+		fclass5to,
+		fclass6from,
+		fclass6to,
+		fclass7from,
+		fclass7to,
+		edropruletype,
+		edropuptol,
+		edroplowtol,
+		edropclass1from,
+		edropclass1to,
+		edropclass2from,
+		edropclass2to,
+		edropclass3from,
+		edropclass3to,
+		edropclass4from,
+		edropclass4to,
+		edropclass5from,
+		edropclass5to,
+		edropclass6from,
+		edropclass6to,
+		edropclass7from,
+		edropclass7to,
+		hdifruletype,
+		hdifstd1uptol,
+		hdifstd1lowtol,
+		hdifstd2uptol,
+		hdifstd2lowtol,
+		hdifstd3uptol,
+		hdifstd3lowtol,
+		hdifclass1from,
+		hdifclass1to,
+		hdifclass2from,
+		hdifclass2to,
+		hdifclass3from,
+		hdifclass3to,
+		hdifclass4from,
+		hdifclass4to,
+		hdifclass5from,
+		hdifclass5to,
+		hdifclass6from,
+		hdifclass6to,
+		hdifclass7from,
+		hdifclass7to,
+		mwlimit,
+		ewlimit,
+		qwlimit,
+		toc,
+		tom,
+		mop
+	)
+
+	VALUES
+	(
+		:ora_rulename,
+		:ora_ruleusing:ora_ruleusingZi,
+		:ora_headlen:ora_headlenZi,
+		:ora_taillen:ora_taillenZi,
+		:ora_hruletype:ora_hruletypeZi,
+		:ora_huptol:ora_huptolZi,
+		:ora_hlowtol:ora_hlowtolZi,
+		:ora_hclass1from:ora_hclass1fromZi,
+		:ora_hclass1to:ora_hclass1toZi,
+		:ora_hclass2from:ora_hclass2fromZi,
+		:ora_hclass2to:ora_hclass2toZi,
+		:ora_hclass3from:ora_hclass3fromZi,
+		:ora_hclass3to:ora_hclass3toZi,
+		:ora_hclass4from:ora_hclass4fromZi,
+		:ora_hclass4to:ora_hclass4toZi,
+		:ora_hclass5from:ora_hclass5fromZi,
+		:ora_hclass5to:ora_hclass5toZi,
+		:ora_hclass6from:ora_hclass6fromZi,
+		:ora_hclass6to:ora_hclass6toZi,
+		:ora_hclass7from:ora_hclass7fromZi,
+		:ora_hclass7to:ora_hclass7toZi,
+		:ora_fruletype:ora_fruletypeZi,
+		:ora_fuptol:ora_fuptolZi,
+		:ora_flowtol:ora_flowtolZi,
+		:ora_fclass1from:ora_fclass1fromZi,
+		:ora_fclass1to:ora_fclass1toZi,
+		:ora_fclass2from:ora_fclass2fromZi,
+		:ora_fclass2to:ora_fclass2toZi,
+		:ora_fclass3from:ora_fclass3fromZi,
+		:ora_fclass3to:ora_fclass3toZi,
+		:ora_fclass4from:ora_fclass4fromZi,
+		:ora_fclass4to:ora_fclass4toZi,
+		:ora_fclass5from:ora_fclass5fromZi,
+		:ora_fclass5to:ora_fclass5toZi,
+		:ora_fclass6from:ora_fclass6fromZi,
+		:ora_fclass6to:ora_fclass6toZi,
+		:ora_fclass7from:ora_fclass7fromZi,
+		:ora_fclass7to:ora_fclass7toZi,
+		:ora_edropruletype:ora_edropruletypeZi,
+		:ora_edropuptol:ora_edropuptolZi,
+		:ora_edroplowtol:ora_edroplowtolZi,
+		:ora_edropclass1from:ora_edropclass1fromZi,
+		:ora_edropclass1to:ora_edropclass1toZi,
+		:ora_edropclass2from:ora_edropclass2fromZi,
+		:ora_edropclass2to:ora_edropclass2toZi,
+		:ora_edropclass3from:ora_edropclass3fromZi,
+		:ora_edropclass3to:ora_edropclass3toZi,
+		:ora_edropclass4from:ora_edropclass4fromZi,
+		:ora_edropclass4to:ora_edropclass4toZi,
+		:ora_edropclass5from:ora_edropclass5fromZi,
+		:ora_edropclass5to:ora_edropclass5toZi,
+		:ora_edropclass6from:ora_edropclass6fromZi,
+		:ora_edropclass6to:ora_edropclass6toZi,
+		:ora_edropclass7from:ora_edropclass7fromZi,
+		:ora_edropclass7to:ora_edropclass7toZi,
+		:ora_hdifruletype:ora_hdifruletypeZi,
+		:ora_hdifstd1uptol:ora_hdifstd1uptolZi,
+		:ora_hdifstd1lowtol:ora_hdifstd1lowtolZi,
+		:ora_hdifstd2uptol:ora_hdifstd2uptolZi,
+		:ora_hdifstd2lowtol:ora_hdifstd2lowtolZi,
+		:ora_hdifstd3uptol:ora_hdifstd3uptolZi,
+		:ora_hdifstd3lowtol:ora_hdifstd3lowtolZi,
+		:ora_hdifclass1from:ora_hdifclass1fromZi,
+		:ora_hdifclass1to:ora_hdifclass1toZi,
+		:ora_hdifclass2from:ora_hdifclass2fromZi,
+		:ora_hdifclass2to:ora_hdifclass2toZi,
+		:ora_hdifclass3from:ora_hdifclass3fromZi,
+		:ora_hdifclass3to:ora_hdifclass3toZi,
+		:ora_hdifclass4from:ora_hdifclass4fromZi,
+		:ora_hdifclass4to:ora_hdifclass4toZi,
+		:ora_hdifclass5from:ora_hdifclass5fromZi,
+		:ora_hdifclass5to:ora_hdifclass5toZi,
+		:ora_hdifclass6from:ora_hdifclass6fromZi,
+		:ora_hdifclass6to:ora_hdifclass6toZi,
+		:ora_hdifclass7from:ora_hdifclass7fromZi,
+		:ora_hdifclass7to:ora_hdifclass7toZi,
+		:ora_mwlimit:ora_mwlimitZi,
+		:ora_ewlimit:ora_ewlimitZi,
+		:ora_qwlimit:ora_qwlimitZi,
+		TO_DATE( :ora_toc:ora_tocZi,'YYYYMMDDHH24MISS'),
+		TO_DATE( :ora_tom:ora_tomZi,'YYYYMMDDHH24MISS'),
+		:ora_mop:ora_mopZi
+	);
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//this methode tries to update a DB record,when the update fails.
+char* DATASTARULE::storeDB()
+{
+	char* ret = NULL;
+	setKeysFromRecord();
+	ret=updateDB();
+	if(ret != NULL)
+	{
+		ret=insertDB();
+		if(ret != NULL)
+		{
+			dbAccess = false;
+			return(ret);
+		}
+	}
+	return(ret);
+}
+
+//deletes a single entry from DB
+char* DATASTARULE::deleteDB()
+{
+//
+//copy the host variables (k_...) to Oracle Host Keys (k_ora_..)
+//
+	copyKeyToHost();
+
+//
+// Do Delete 
+//
+	EXEC SQL DELETE FROM DATASTARULE
+	WHERE
+				rulename        = :k_ora_rulename ;
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+// Executes the SQL DELETE with a where clause
+char* DATASTARULE::deleteDB(const char* where,long* count)
+{
+	*(count) = -1L;
+// Create dynamic statement.
+//
+	strcpy((char*)dynstr.arr,"DELETE");
+	strcat((char*)dynstr.arr," FROM DATASTARULE");
+	if ( where != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, where );
+	}
+
+	dynstr.len = strlen( (char*) dynstr.arr);
+	EXEC SQL EXECUTE IMMEDIATE :dynstr;
+	oracleSqlCode = sqlca.sqlcode;
+		oracleRowsProcessed = sqlca.sqlerrd[2];
+	if (sqlca.sqlcode == 0 )
+		*(count) = sqlca.sqlerrd[2];
+	else 
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//openSetDB data with where condition and sort order.
+char* DATASTARULE::openSetDB(const char* where,char* order)
+{
+//
+// Create dynamic statement.
+//
+	strcpy((char*)dynstr.arr,"SELECT ");
+	strcat((char*)dynstr.arr,"rulename,");
+	strcat((char*)dynstr.arr,"ruleusing,");
+	strcat((char*)dynstr.arr,"headlen,");
+	strcat((char*)dynstr.arr,"taillen,");
+	strcat((char*)dynstr.arr,"hruletype,");
+	strcat((char*)dynstr.arr,"huptol,");
+	strcat((char*)dynstr.arr,"hlowtol,");
+	strcat((char*)dynstr.arr,"hclass1from,");
+	strcat((char*)dynstr.arr,"hclass1to,");
+	strcat((char*)dynstr.arr,"hclass2from,");
+	strcat((char*)dynstr.arr,"hclass2to,");
+	strcat((char*)dynstr.arr,"hclass3from,");
+	strcat((char*)dynstr.arr,"hclass3to,");
+	strcat((char*)dynstr.arr,"hclass4from,");
+	strcat((char*)dynstr.arr,"hclass4to,");
+	strcat((char*)dynstr.arr,"hclass5from,");
+	strcat((char*)dynstr.arr,"hclass5to,");
+	strcat((char*)dynstr.arr,"hclass6from,");
+	strcat((char*)dynstr.arr,"hclass6to,");
+	strcat((char*)dynstr.arr,"hclass7from,");
+	strcat((char*)dynstr.arr,"hclass7to,");
+	strcat((char*)dynstr.arr,"fruletype,");
+	strcat((char*)dynstr.arr,"fuptol,");
+	strcat((char*)dynstr.arr,"flowtol,");
+	strcat((char*)dynstr.arr,"fclass1from,");
+	strcat((char*)dynstr.arr,"fclass1to,");
+	strcat((char*)dynstr.arr,"fclass2from,");
+	strcat((char*)dynstr.arr,"fclass2to,");
+	strcat((char*)dynstr.arr,"fclass3from,");
+	strcat((char*)dynstr.arr,"fclass3to,");
+	strcat((char*)dynstr.arr,"fclass4from,");
+	strcat((char*)dynstr.arr,"fclass4to,");
+	strcat((char*)dynstr.arr,"fclass5from,");
+	strcat((char*)dynstr.arr,"fclass5to,");
+	strcat((char*)dynstr.arr,"fclass6from,");
+	strcat((char*)dynstr.arr,"fclass6to,");
+	strcat((char*)dynstr.arr,"fclass7from,");
+	strcat((char*)dynstr.arr,"fclass7to,");
+	strcat((char*)dynstr.arr,"edropruletype,");
+	strcat((char*)dynstr.arr,"edropuptol,");
+	strcat((char*)dynstr.arr,"edroplowtol,");
+	strcat((char*)dynstr.arr,"edropclass1from,");
+	strcat((char*)dynstr.arr,"edropclass1to,");
+	strcat((char*)dynstr.arr,"edropclass2from,");
+	strcat((char*)dynstr.arr,"edropclass2to,");
+	strcat((char*)dynstr.arr,"edropclass3from,");
+	strcat((char*)dynstr.arr,"edropclass3to,");
+	strcat((char*)dynstr.arr,"edropclass4from,");
+	strcat((char*)dynstr.arr,"edropclass4to,");
+	strcat((char*)dynstr.arr,"edropclass5from,");
+	strcat((char*)dynstr.arr,"edropclass5to,");
+	strcat((char*)dynstr.arr,"edropclass6from,");
+	strcat((char*)dynstr.arr,"edropclass6to,");
+	strcat((char*)dynstr.arr,"edropclass7from,");
+	strcat((char*)dynstr.arr,"edropclass7to,");
+	strcat((char*)dynstr.arr,"hdifruletype,");
+	strcat((char*)dynstr.arr,"hdifstd1uptol,");
+	strcat((char*)dynstr.arr,"hdifstd1lowtol,");
+	strcat((char*)dynstr.arr,"hdifstd2uptol,");
+	strcat((char*)dynstr.arr,"hdifstd2lowtol,");
+	strcat((char*)dynstr.arr,"hdifstd3uptol,");
+	strcat((char*)dynstr.arr,"hdifstd3lowtol,");
+	strcat((char*)dynstr.arr,"hdifclass1from,");
+	strcat((char*)dynstr.arr,"hdifclass1to,");
+	strcat((char*)dynstr.arr,"hdifclass2from,");
+	strcat((char*)dynstr.arr,"hdifclass2to,");
+	strcat((char*)dynstr.arr,"hdifclass3from,");
+	strcat((char*)dynstr.arr,"hdifclass3to,");
+	strcat((char*)dynstr.arr,"hdifclass4from,");
+	strcat((char*)dynstr.arr,"hdifclass4to,");
+	strcat((char*)dynstr.arr,"hdifclass5from,");
+	strcat((char*)dynstr.arr,"hdifclass5to,");
+	strcat((char*)dynstr.arr,"hdifclass6from,");
+	strcat((char*)dynstr.arr,"hdifclass6to,");
+	strcat((char*)dynstr.arr,"hdifclass7from,");
+	strcat((char*)dynstr.arr,"hdifclass7to,");
+	strcat((char*)dynstr.arr,"mwlimit,");
+	strcat((char*)dynstr.arr,"ewlimit,");
+	strcat((char*)dynstr.arr,"qwlimit,");
+	strcat((char*)dynstr.arr,"TO_CHAR(toc , 'YYYYMMDDHH24MISS'),");
+	strcat((char*)dynstr.arr,"TO_CHAR(tom , 'YYYYMMDDHH24MISS'),");
+	strcat((char*)dynstr.arr,"mop");
+
+	strcat((char*)dynstr.arr," FROM DATASTARULE ");
+	if ( where != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, where);
+	}
+	if ( order != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, order);
+	}
+
+	dynstr.len = strlen( (char*) dynstr.arr);
+	EXEC SQL PREPARE set_DATASTARULE FROM :dynstr;
+	if (sqlca.sqlcode == 0 )
+	{
+		EXEC SQL DECLARE cu_DATASTARULE CURSOR FOR set_DATASTARULE;
+		if (sqlca.sqlcode == 0 )
+			EXEC SQL OPEN cu_DATASTARULE;
+	}
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	cuFl = OPENED;
+	return ( NULL );
+}
+
+//Executes the SQL FETCH Statement .
+char* DATASTARULE::getSetDB()
+{
+	if ( cuFl != OPENED ) return ("No open Cursor Table:Me");
+	EXEC SQL FETCH cu_DATASTARULE INTO
+		:ora_rulename,
+		:ora_ruleusing:ora_ruleusingZi,
+		:ora_headlen:ora_headlenZi,
+		:ora_taillen:ora_taillenZi,
+		:ora_hruletype:ora_hruletypeZi,
+		:ora_huptol:ora_huptolZi,
+		:ora_hlowtol:ora_hlowtolZi,
+		:ora_hclass1from:ora_hclass1fromZi,
+		:ora_hclass1to:ora_hclass1toZi,
+		:ora_hclass2from:ora_hclass2fromZi,
+		:ora_hclass2to:ora_hclass2toZi,
+		:ora_hclass3from:ora_hclass3fromZi,
+		:ora_hclass3to:ora_hclass3toZi,
+		:ora_hclass4from:ora_hclass4fromZi,
+		:ora_hclass4to:ora_hclass4toZi,
+		:ora_hclass5from:ora_hclass5fromZi,
+		:ora_hclass5to:ora_hclass5toZi,
+		:ora_hclass6from:ora_hclass6fromZi,
+		:ora_hclass6to:ora_hclass6toZi,
+		:ora_hclass7from:ora_hclass7fromZi,
+		:ora_hclass7to:ora_hclass7toZi,
+		:ora_fruletype:ora_fruletypeZi,
+		:ora_fuptol:ora_fuptolZi,
+		:ora_flowtol:ora_flowtolZi,
+		:ora_fclass1from:ora_fclass1fromZi,
+		:ora_fclass1to:ora_fclass1toZi,
+		:ora_fclass2from:ora_fclass2fromZi,
+		:ora_fclass2to:ora_fclass2toZi,
+		:ora_fclass3from:ora_fclass3fromZi,
+		:ora_fclass3to:ora_fclass3toZi,
+		:ora_fclass4from:ora_fclass4fromZi,
+		:ora_fclass4to:ora_fclass4toZi,
+		:ora_fclass5from:ora_fclass5fromZi,
+		:ora_fclass5to:ora_fclass5toZi,
+		:ora_fclass6from:ora_fclass6fromZi,
+		:ora_fclass6to:ora_fclass6toZi,
+		:ora_fclass7from:ora_fclass7fromZi,
+		:ora_fclass7to:ora_fclass7toZi,
+		:ora_edropruletype:ora_edropruletypeZi,
+		:ora_edropuptol:ora_edropuptolZi,
+		:ora_edroplowtol:ora_edroplowtolZi,
+		:ora_edropclass1from:ora_edropclass1fromZi,
+		:ora_edropclass1to:ora_edropclass1toZi,
+		:ora_edropclass2from:ora_edropclass2fromZi,
+		:ora_edropclass2to:ora_edropclass2toZi,
+		:ora_edropclass3from:ora_edropclass3fromZi,
+		:ora_edropclass3to:ora_edropclass3toZi,
+		:ora_edropclass4from:ora_edropclass4fromZi,
+		:ora_edropclass4to:ora_edropclass4toZi,
+		:ora_edropclass5from:ora_edropclass5fromZi,
+		:ora_edropclass5to:ora_edropclass5toZi,
+		:ora_edropclass6from:ora_edropclass6fromZi,
+		:ora_edropclass6to:ora_edropclass6toZi,
+		:ora_edropclass7from:ora_edropclass7fromZi,
+		:ora_edropclass7to:ora_edropclass7toZi,
+		:ora_hdifruletype:ora_hdifruletypeZi,
+		:ora_hdifstd1uptol:ora_hdifstd1uptolZi,
+		:ora_hdifstd1lowtol:ora_hdifstd1lowtolZi,
+		:ora_hdifstd2uptol:ora_hdifstd2uptolZi,
+		:ora_hdifstd2lowtol:ora_hdifstd2lowtolZi,
+		:ora_hdifstd3uptol:ora_hdifstd3uptolZi,
+		:ora_hdifstd3lowtol:ora_hdifstd3lowtolZi,
+		:ora_hdifclass1from:ora_hdifclass1fromZi,
+		:ora_hdifclass1to:ora_hdifclass1toZi,
+		:ora_hdifclass2from:ora_hdifclass2fromZi,
+		:ora_hdifclass2to:ora_hdifclass2toZi,
+		:ora_hdifclass3from:ora_hdifclass3fromZi,
+		:ora_hdifclass3to:ora_hdifclass3toZi,
+		:ora_hdifclass4from:ora_hdifclass4fromZi,
+		:ora_hdifclass4to:ora_hdifclass4toZi,
+		:ora_hdifclass5from:ora_hdifclass5fromZi,
+		:ora_hdifclass5to:ora_hdifclass5toZi,
+		:ora_hdifclass6from:ora_hdifclass6fromZi,
+		:ora_hdifclass6to:ora_hdifclass6toZi,
+		:ora_hdifclass7from:ora_hdifclass7fromZi,
+		:ora_hdifclass7to:ora_hdifclass7toZi,
+		:ora_mwlimit:ora_mwlimitZi,
+		:ora_ewlimit:ora_ewlimitZi,
+		:ora_qwlimit:ora_qwlimitZi,
+		:ora_toc:ora_tocZi,
+		:ora_tom:ora_tomZi,
+		:ora_mop:ora_mopZi;
+
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		pCatch->catchError(sqlca.sqlcode);
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		return (char*) sqlca.sqlerrm.sqlerrmc ;
+	}
+	//
+	// copy host variables into Class attributes
+	//
+	copyOracleToAttribute();
+	copyHostToKey();
+	return ( NULL );
+}
+
+//Close a Oracle Cursor
+char* DATASTARULE::closeSetDB()
+{
+	EXEC SQL CLOSE cu_DATASTARULE;
+	oracleSqlCode = sqlca.sqlcode;         
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		pCatch->catchError(sqlca.sqlcode);
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		return (char*) sqlca.sqlerrm.sqlerrmc ;
+	}
+	cuFl = CLOSED;
+	return ( NULL );
+}
+
+//Executes the SQL count(key) for a where clause
+char* DATASTARULE::countDB(const char* where,long* count)
+{
+	*(count) = -1L;
+//
+// Create dynamic statement. 
+//
+	strncpy((char*)dynstr.arr,"SELECT count(rulename)", sizeof(dynstr.arr));
+	strcat((char*)dynstr.arr," FROM DATASTARULE");
+	if ( where != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, where );
+	}
+	dynstr.len = strlen( (char*) dynstr.arr);
+	EXEC SQL PREPARE c_DATASTARULE FROM :dynstr;
+	
+	if (sqlca.sqlcode == 0 )
+	{
+		EXEC SQL DECLARE ct_DATASTARULE CURSOR FOR c_DATASTARULE;
+		if (sqlca.sqlcode == 0 )
+		{
+			EXEC SQL OPEN ct_DATASTARULE;
+			if (sqlca.sqlcode == 0 )			{
+				EXEC SQL FETCH ct_DATASTARULE INTO :rowCnt;
+				if (sqlca.sqlcode == 0 )
+				*(count) = rowCnt;
+			}
+			EXEC SQL CLOSE ct_DATASTARULE;
+		}
+	}
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//private methode copy Attribute to Oracle
+//copys Object attributes into Oracle Host variables.
+void DATASTARULE::copyAttributeToOracle()
+{
+	char* ptrStr;
+	ptrStr = this->rulename();
+	if( strlen(ptrStr)< sizeof(ora_rulename.arr))
+	{
+		strncpy((char*)ora_rulename.arr, ptrStr, sizeof(ora_rulename.arr));
+		ora_rulename.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_rulename.len = 0;
+	ora_ruleusing = this->ruleusing();
+	ora_ruleusingZi = this->ruleusingZi();
+	ora_headlen = this->headlen();
+	ora_headlenZi = this->headlenZi();
+	ptrStr = this->taillen();
+	if( strlen(ptrStr)< sizeof(ora_taillen.arr))
+	{
+		strncpy((char*)ora_taillen.arr, ptrStr, sizeof(ora_taillen.arr));
+		ora_taillen.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_taillen.len = 0;
+	ora_taillenZi = this->taillenZi();
+	ora_hruletype = this->hruletype();
+	ora_hruletypeZi = this->hruletypeZi();
+	ora_huptol = this->huptol();
+	ora_huptolZi = this->huptolZi();
+	ora_hlowtol = this->hlowtol();
+	ora_hlowtolZi = this->hlowtolZi();
+	ora_hclass1from = this->hclass1from();
+	ora_hclass1fromZi = this->hclass1fromZi();
+	ora_hclass1to = this->hclass1to();
+	ora_hclass1toZi = this->hclass1toZi();
+	ora_hclass2from = this->hclass2from();
+	ora_hclass2fromZi = this->hclass2fromZi();
+	ora_hclass2to = this->hclass2to();
+	ora_hclass2toZi = this->hclass2toZi();
+	ora_hclass3from = this->hclass3from();
+	ora_hclass3fromZi = this->hclass3fromZi();
+	ora_hclass3to = this->hclass3to();
+	ora_hclass3toZi = this->hclass3toZi();
+	ora_hclass4from = this->hclass4from();
+	ora_hclass4fromZi = this->hclass4fromZi();
+	ora_hclass4to = this->hclass4to();
+	ora_hclass4toZi = this->hclass4toZi();
+	ora_hclass5from = this->hclass5from();
+	ora_hclass5fromZi = this->hclass5fromZi();
+	ora_hclass5to = this->hclass5to();
+	ora_hclass5toZi = this->hclass5toZi();
+	ora_hclass6from = this->hclass6from();
+	ora_hclass6fromZi = this->hclass6fromZi();
+	ora_hclass6to = this->hclass6to();
+	ora_hclass6toZi = this->hclass6toZi();
+	ora_hclass7from = this->hclass7from();
+	ora_hclass7fromZi = this->hclass7fromZi();
+	ora_hclass7to = this->hclass7to();
+	ora_hclass7toZi = this->hclass7toZi();
+	ora_fruletype = this->fruletype();
+	ora_fruletypeZi = this->fruletypeZi();
+	ora_fuptol = this->fuptol();
+	ora_fuptolZi = this->fuptolZi();
+	ora_flowtol = this->flowtol();
+	ora_flowtolZi = this->flowtolZi();
+	ora_fclass1from = this->fclass1from();
+	ora_fclass1fromZi = this->fclass1fromZi();
+	ora_fclass1to = this->fclass1to();
+	ora_fclass1toZi = this->fclass1toZi();
+	ora_fclass2from = this->fclass2from();
+	ora_fclass2fromZi = this->fclass2fromZi();
+	ora_fclass2to = this->fclass2to();
+	ora_fclass2toZi = this->fclass2toZi();
+	ora_fclass3from = this->fclass3from();
+	ora_fclass3fromZi = this->fclass3fromZi();
+	ora_fclass3to = this->fclass3to();
+	ora_fclass3toZi = this->fclass3toZi();
+	ora_fclass4from = this->fclass4from();
+	ora_fclass4fromZi = this->fclass4fromZi();
+	ora_fclass4to = this->fclass4to();
+	ora_fclass4toZi = this->fclass4toZi();
+	ora_fclass5from = this->fclass5from();
+	ora_fclass5fromZi = this->fclass5fromZi();
+	ora_fclass5to = this->fclass5to();
+	ora_fclass5toZi = this->fclass5toZi();
+	ora_fclass6from = this->fclass6from();
+	ora_fclass6fromZi = this->fclass6fromZi();
+	ora_fclass6to = this->fclass6to();
+	ora_fclass6toZi = this->fclass6toZi();
+	ora_fclass7from = this->fclass7from();
+	ora_fclass7fromZi = this->fclass7fromZi();
+	ora_fclass7to = this->fclass7to();
+	ora_fclass7toZi = this->fclass7toZi();
+	ora_edropruletype = this->edropruletype();
+	ora_edropruletypeZi = this->edropruletypeZi();
+	ora_edropuptol = this->edropuptol();
+	ora_edropuptolZi = this->edropuptolZi();
+	ora_edroplowtol = this->edroplowtol();
+	ora_edroplowtolZi = this->edroplowtolZi();
+	ora_edropclass1from = this->edropclass1from();
+	ora_edropclass1fromZi = this->edropclass1fromZi();
+	ora_edropclass1to = this->edropclass1to();
+	ora_edropclass1toZi = this->edropclass1toZi();
+	ora_edropclass2from = this->edropclass2from();
+	ora_edropclass2fromZi = this->edropclass2fromZi();
+	ora_edropclass2to = this->edropclass2to();
+	ora_edropclass2toZi = this->edropclass2toZi();
+	ora_edropclass3from = this->edropclass3from();
+	ora_edropclass3fromZi = this->edropclass3fromZi();
+	ora_edropclass3to = this->edropclass3to();
+	ora_edropclass3toZi = this->edropclass3toZi();
+	ora_edropclass4from = this->edropclass4from();
+	ora_edropclass4fromZi = this->edropclass4fromZi();
+	ora_edropclass4to = this->edropclass4to();
+	ora_edropclass4toZi = this->edropclass4toZi();
+	ora_edropclass5from = this->edropclass5from();
+	ora_edropclass5fromZi = this->edropclass5fromZi();
+	ora_edropclass5to = this->edropclass5to();
+	ora_edropclass5toZi = this->edropclass5toZi();
+	ora_edropclass6from = this->edropclass6from();
+	ora_edropclass6fromZi = this->edropclass6fromZi();
+	ora_edropclass6to = this->edropclass6to();
+	ora_edropclass6toZi = this->edropclass6toZi();
+	ora_edropclass7from = this->edropclass7from();
+	ora_edropclass7fromZi = this->edropclass7fromZi();
+	ora_edropclass7to = this->edropclass7to();
+	ora_edropclass7toZi = this->edropclass7toZi();
+	ora_hdifruletype = this->hdifruletype();
+	ora_hdifruletypeZi = this->hdifruletypeZi();
+	ora_hdifstd1uptol = this->hdifstd1uptol();
+	ora_hdifstd1uptolZi = this->hdifstd1uptolZi();
+	ora_hdifstd1lowtol = this->hdifstd1lowtol();
+	ora_hdifstd1lowtolZi = this->hdifstd1lowtolZi();
+	ora_hdifstd2uptol = this->hdifstd2uptol();
+	ora_hdifstd2uptolZi = this->hdifstd2uptolZi();
+	ora_hdifstd2lowtol = this->hdifstd2lowtol();
+	ora_hdifstd2lowtolZi = this->hdifstd2lowtolZi();
+	ora_hdifstd3uptol = this->hdifstd3uptol();
+	ora_hdifstd3uptolZi = this->hdifstd3uptolZi();
+	ora_hdifstd3lowtol = this->hdifstd3lowtol();
+	ora_hdifstd3lowtolZi = this->hdifstd3lowtolZi();
+	ora_hdifclass1from = this->hdifclass1from();
+	ora_hdifclass1fromZi = this->hdifclass1fromZi();
+	ora_hdifclass1to = this->hdifclass1to();
+	ora_hdifclass1toZi = this->hdifclass1toZi();
+	ora_hdifclass2from = this->hdifclass2from();
+	ora_hdifclass2fromZi = this->hdifclass2fromZi();
+	ora_hdifclass2to = this->hdifclass2to();
+	ora_hdifclass2toZi = this->hdifclass2toZi();
+	ora_hdifclass3from = this->hdifclass3from();
+	ora_hdifclass3fromZi = this->hdifclass3fromZi();
+	ora_hdifclass3to = this->hdifclass3to();
+	ora_hdifclass3toZi = this->hdifclass3toZi();
+	ora_hdifclass4from = this->hdifclass4from();
+	ora_hdifclass4fromZi = this->hdifclass4fromZi();
+	ora_hdifclass4to = this->hdifclass4to();
+	ora_hdifclass4toZi = this->hdifclass4toZi();
+	ora_hdifclass5from = this->hdifclass5from();
+	ora_hdifclass5fromZi = this->hdifclass5fromZi();
+	ora_hdifclass5to = this->hdifclass5to();
+	ora_hdifclass5toZi = this->hdifclass5toZi();
+	ora_hdifclass6from = this->hdifclass6from();
+	ora_hdifclass6fromZi = this->hdifclass6fromZi();
+	ora_hdifclass6to = this->hdifclass6to();
+	ora_hdifclass6toZi = this->hdifclass6toZi();
+	ora_hdifclass7from = this->hdifclass7from();
+	ora_hdifclass7fromZi = this->hdifclass7fromZi();
+	ora_hdifclass7to = this->hdifclass7to();
+	ora_hdifclass7toZi = this->hdifclass7toZi();
+	ora_mwlimit = this->mwlimit();
+	ora_mwlimitZi = this->mwlimitZi();
+	ora_ewlimit = this->ewlimit();
+	ora_ewlimitZi = this->ewlimitZi();
+	ora_qwlimit = this->qwlimit();
+	ora_qwlimitZi = this->qwlimitZi();
+	ptrStr = this->toc();
+	if( strlen(ptrStr)< sizeof(ora_toc.arr))
+	{
+		strncpy((char*)ora_toc.arr, ptrStr, sizeof(ora_toc.arr));
+		ora_toc.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_toc.len = 0;
+	ora_tocZi = this->tocZi();
+	ptrStr = this->tom();
+	if( strlen(ptrStr)< sizeof(ora_tom.arr))
+	{
+		strncpy((char*)ora_tom.arr, ptrStr, sizeof(ora_tom.arr));
+		ora_tom.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_tom.len = 0;
+	ora_tomZi = this->tomZi();
+	ptrStr = this->mop();
+	if( strlen(ptrStr)< sizeof(ora_mop.arr))
+	{
+		strncpy((char*)ora_mop.arr, ptrStr, sizeof(ora_mop.arr));
+		ora_mop.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_mop.len = 0;
+	ora_mopZi = this->mopZi();
+}
+
+//private methode copy Oracle to Attribute
+//copys Oracle Host variables into Object attributes.
+void DATASTARULE::copyOracleToAttribute()
+{
+	ora_rulename.arr[ora_rulename.len] = '\0';
+	this->set_rulename((char*) ora_rulename.arr);
+	this->set_ruleusing((short)ora_ruleusing);
+	this->set_ruleusingZi((short)ora_ruleusingZi);
+	this->set_headlen((float)ora_headlen);
+	this->set_headlenZi((short)ora_headlenZi);
+	ora_taillen.arr[ora_taillen.len] = '\0';
+	this->set_taillen((char*) ora_taillen.arr);
+	this->set_taillenZi((short)ora_taillenZi);
+	this->set_hruletype((short)ora_hruletype);
+	this->set_hruletypeZi((short)ora_hruletypeZi);
+	this->set_huptol((float)ora_huptol);
+	this->set_huptolZi((short)ora_huptolZi);
+	this->set_hlowtol((float)ora_hlowtol);
+	this->set_hlowtolZi((short)ora_hlowtolZi);
+	this->set_hclass1from((float)ora_hclass1from);
+	this->set_hclass1fromZi((short)ora_hclass1fromZi);
+	this->set_hclass1to((float)ora_hclass1to);
+	this->set_hclass1toZi((short)ora_hclass1toZi);
+	this->set_hclass2from((float)ora_hclass2from);
+	this->set_hclass2fromZi((short)ora_hclass2fromZi);
+	this->set_hclass2to((float)ora_hclass2to);
+	this->set_hclass2toZi((short)ora_hclass2toZi);
+	this->set_hclass3from((float)ora_hclass3from);
+	this->set_hclass3fromZi((short)ora_hclass3fromZi);
+	this->set_hclass3to((float)ora_hclass3to);
+	this->set_hclass3toZi((short)ora_hclass3toZi);
+	this->set_hclass4from((float)ora_hclass4from);
+	this->set_hclass4fromZi((short)ora_hclass4fromZi);
+	this->set_hclass4to((float)ora_hclass4to);
+	this->set_hclass4toZi((short)ora_hclass4toZi);
+	this->set_hclass5from((float)ora_hclass5from);
+	this->set_hclass5fromZi((short)ora_hclass5fromZi);
+	this->set_hclass5to((float)ora_hclass5to);
+	this->set_hclass5toZi((short)ora_hclass5toZi);
+	this->set_hclass6from((float)ora_hclass6from);
+	this->set_hclass6fromZi((short)ora_hclass6fromZi);
+	this->set_hclass6to((float)ora_hclass6to);
+	this->set_hclass6toZi((short)ora_hclass6toZi);
+	this->set_hclass7from((float)ora_hclass7from);
+	this->set_hclass7fromZi((short)ora_hclass7fromZi);
+	this->set_hclass7to((float)ora_hclass7to);
+	this->set_hclass7toZi((short)ora_hclass7toZi);
+	this->set_fruletype((short)ora_fruletype);
+	this->set_fruletypeZi((short)ora_fruletypeZi);
+	this->set_fuptol((float)ora_fuptol);
+	this->set_fuptolZi((short)ora_fuptolZi);
+	this->set_flowtol((float)ora_flowtol);
+	this->set_flowtolZi((short)ora_flowtolZi);
+	this->set_fclass1from((float)ora_fclass1from);
+	this->set_fclass1fromZi((short)ora_fclass1fromZi);
+	this->set_fclass1to((float)ora_fclass1to);
+	this->set_fclass1toZi((short)ora_fclass1toZi);
+	this->set_fclass2from((float)ora_fclass2from);
+	this->set_fclass2fromZi((short)ora_fclass2fromZi);
+	this->set_fclass2to((float)ora_fclass2to);
+	this->set_fclass2toZi((short)ora_fclass2toZi);
+	this->set_fclass3from((float)ora_fclass3from);
+	this->set_fclass3fromZi((short)ora_fclass3fromZi);
+	this->set_fclass3to((float)ora_fclass3to);
+	this->set_fclass3toZi((short)ora_fclass3toZi);
+	this->set_fclass4from((float)ora_fclass4from);
+	this->set_fclass4fromZi((short)ora_fclass4fromZi);
+	this->set_fclass4to((float)ora_fclass4to);
+	this->set_fclass4toZi((short)ora_fclass4toZi);
+	this->set_fclass5from((float)ora_fclass5from);
+	this->set_fclass5fromZi((short)ora_fclass5fromZi);
+	this->set_fclass5to((float)ora_fclass5to);
+	this->set_fclass5toZi((short)ora_fclass5toZi);
+	this->set_fclass6from((float)ora_fclass6from);
+	this->set_fclass6fromZi((short)ora_fclass6fromZi);
+	this->set_fclass6to((float)ora_fclass6to);
+	this->set_fclass6toZi((short)ora_fclass6toZi);
+	this->set_fclass7from((float)ora_fclass7from);
+	this->set_fclass7fromZi((short)ora_fclass7fromZi);
+	this->set_fclass7to((float)ora_fclass7to);
+	this->set_fclass7toZi((short)ora_fclass7toZi);
+	this->set_edropruletype((short)ora_edropruletype);
+	this->set_edropruletypeZi((short)ora_edropruletypeZi);
+	this->set_edropuptol((float)ora_edropuptol);
+	this->set_edropuptolZi((short)ora_edropuptolZi);
+	this->set_edroplowtol((float)ora_edroplowtol);
+	this->set_edroplowtolZi((short)ora_edroplowtolZi);
+	this->set_edropclass1from((float)ora_edropclass1from);
+	this->set_edropclass1fromZi((short)ora_edropclass1fromZi);
+	this->set_edropclass1to((float)ora_edropclass1to);
+	this->set_edropclass1toZi((short)ora_edropclass1toZi);
+	this->set_edropclass2from((float)ora_edropclass2from);
+	this->set_edropclass2fromZi((short)ora_edropclass2fromZi);
+	this->set_edropclass2to((float)ora_edropclass2to);
+	this->set_edropclass2toZi((short)ora_edropclass2toZi);
+	this->set_edropclass3from((float)ora_edropclass3from);
+	this->set_edropclass3fromZi((short)ora_edropclass3fromZi);
+	this->set_edropclass3to((float)ora_edropclass3to);
+	this->set_edropclass3toZi((short)ora_edropclass3toZi);
+	this->set_edropclass4from((float)ora_edropclass4from);
+	this->set_edropclass4fromZi((short)ora_edropclass4fromZi);
+	this->set_edropclass4to((float)ora_edropclass4to);
+	this->set_edropclass4toZi((short)ora_edropclass4toZi);
+	this->set_edropclass5from((float)ora_edropclass5from);
+	this->set_edropclass5fromZi((short)ora_edropclass5fromZi);
+	this->set_edropclass5to((float)ora_edropclass5to);
+	this->set_edropclass5toZi((short)ora_edropclass5toZi);
+	this->set_edropclass6from((float)ora_edropclass6from);
+	this->set_edropclass6fromZi((short)ora_edropclass6fromZi);
+	this->set_edropclass6to((float)ora_edropclass6to);
+	this->set_edropclass6toZi((short)ora_edropclass6toZi);
+	this->set_edropclass7from((float)ora_edropclass7from);
+	this->set_edropclass7fromZi((short)ora_edropclass7fromZi);
+	this->set_edropclass7to((float)ora_edropclass7to);
+	this->set_edropclass7toZi((short)ora_edropclass7toZi);
+	this->set_hdifruletype((short)ora_hdifruletype);
+	this->set_hdifruletypeZi((short)ora_hdifruletypeZi);
+	this->set_hdifstd1uptol((float)ora_hdifstd1uptol);
+	this->set_hdifstd1uptolZi((short)ora_hdifstd1uptolZi);
+	this->set_hdifstd1lowtol((float)ora_hdifstd1lowtol);
+	this->set_hdifstd1lowtolZi((short)ora_hdifstd1lowtolZi);
+	this->set_hdifstd2uptol((float)ora_hdifstd2uptol);
+	this->set_hdifstd2uptolZi((short)ora_hdifstd2uptolZi);
+	this->set_hdifstd2lowtol((float)ora_hdifstd2lowtol);
+	this->set_hdifstd2lowtolZi((short)ora_hdifstd2lowtolZi);
+	this->set_hdifstd3uptol((float)ora_hdifstd3uptol);
+	this->set_hdifstd3uptolZi((short)ora_hdifstd3uptolZi);
+	this->set_hdifstd3lowtol((float)ora_hdifstd3lowtol);
+	this->set_hdifstd3lowtolZi((short)ora_hdifstd3lowtolZi);
+	this->set_hdifclass1from((float)ora_hdifclass1from);
+	this->set_hdifclass1fromZi((short)ora_hdifclass1fromZi);
+	this->set_hdifclass1to((float)ora_hdifclass1to);
+	this->set_hdifclass1toZi((short)ora_hdifclass1toZi);
+	this->set_hdifclass2from((float)ora_hdifclass2from);
+	this->set_hdifclass2fromZi((short)ora_hdifclass2fromZi);
+	this->set_hdifclass2to((float)ora_hdifclass2to);
+	this->set_hdifclass2toZi((short)ora_hdifclass2toZi);
+	this->set_hdifclass3from((float)ora_hdifclass3from);
+	this->set_hdifclass3fromZi((short)ora_hdifclass3fromZi);
+	this->set_hdifclass3to((float)ora_hdifclass3to);
+	this->set_hdifclass3toZi((short)ora_hdifclass3toZi);
+	this->set_hdifclass4from((float)ora_hdifclass4from);
+	this->set_hdifclass4fromZi((short)ora_hdifclass4fromZi);
+	this->set_hdifclass4to((float)ora_hdifclass4to);
+	this->set_hdifclass4toZi((short)ora_hdifclass4toZi);
+	this->set_hdifclass5from((float)ora_hdifclass5from);
+	this->set_hdifclass5fromZi((short)ora_hdifclass5fromZi);
+	this->set_hdifclass5to((float)ora_hdifclass5to);
+	this->set_hdifclass5toZi((short)ora_hdifclass5toZi);
+	this->set_hdifclass6from((float)ora_hdifclass6from);
+	this->set_hdifclass6fromZi((short)ora_hdifclass6fromZi);
+	this->set_hdifclass6to((float)ora_hdifclass6to);
+	this->set_hdifclass6toZi((short)ora_hdifclass6toZi);
+	this->set_hdifclass7from((float)ora_hdifclass7from);
+	this->set_hdifclass7fromZi((short)ora_hdifclass7fromZi);
+	this->set_hdifclass7to((float)ora_hdifclass7to);
+	this->set_hdifclass7toZi((short)ora_hdifclass7toZi);
+	this->set_mwlimit((float)ora_mwlimit);
+	this->set_mwlimitZi((short)ora_mwlimitZi);
+	this->set_ewlimit((float)ora_ewlimit);
+	this->set_ewlimitZi((short)ora_ewlimitZi);
+	this->set_qwlimit((float)ora_qwlimit);
+	this->set_qwlimitZi((short)ora_qwlimitZi);
+	ora_toc.arr[ora_toc.len] = '\0';
+	this->set_toc((char*) ora_toc.arr);
+	this->set_tocZi((short)ora_tocZi);
+	ora_tom.arr[ora_tom.len] = '\0';
+	this->set_tom((char*) ora_tom.arr);
+	this->set_tomZi((short)ora_tomZi);
+	ora_mop.arr[ora_mop.len] = '\0';
+	this->set_mop((char*) ora_mop.arr);
+	this->set_mopZi((short)ora_mopZi);
+}
+
+//private methode copy Key to host
+//copys Object attributes into Oralce Key variables.
+void DATASTARULE::copyKeyToHost()
+{
+	char* ptrStr;
+	ptrStr = this->k_rulename();
+	if( strlen(ptrStr)< sizeof(k_ora_rulename.arr))
+	{
+		strncpy((char*)k_ora_rulename.arr, ptrStr, sizeof(k_ora_rulename.arr));
+		k_ora_rulename.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		k_ora_rulename.len = 0;
+}
+
+//private methode copy Host to Key
+// copys Oracle Host Key variables into Object Key attributes.
+void DATASTARULE::copyHostToKey()
+{
+	ora_rulename.arr[ora_rulename.len] = '\0';
+	this->set_k_rulename((char*) ora_rulename.arr);
+}
+
+//private methode log Oracle message information
+void DATASTARULE::logOraMessageInfo()
+{
+	LOG d("DATASTARULE::logOraMessageInfo()");
+	sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+	oraca.orastxt.orastxtc[oraca.orastxt.orastxtl] = '\0';
+	oraca.orasfnm.orasfnmc[oraca.orasfnm.orasfnml] = '\0';
+	
+	//* negating a error code submitted perhaps positively.
+	if (sqlca.sqlcode > 0) sqlca.sqlcode *= -1;
+	
+	//* Distribute fault text, SQL statement and file in the Debug System.
+	d << "ORA-Error: "<< sqlca.sqlerrm.sqlerrmc; d.Info();
+	d << "OracaText: "<< oraca.orastxt.orastxtc; d.Info();
+	d << "in line " << oraca.oraslnr << " in file " << oraca.orasfnm.orasfnmc; d.Info();
+}
+
+//this methode stores the unique key attributes
+void DATASTARULE::setPrimKey(char* arg1)
+{
+	strncpy( (char*)c_k_rulename, arg1, sizeof(c_k_rulename));
+	c_k_rulename[sizeof(c_k_rulename)-1] = '\0';
+}
+
+//this methode stores the unique key attributes
+void DATASTARULE::initInsertKeys(char* arg1)
+{
+	setPrimKey(arg1);
+	strncpy( (char*)c_rulename, arg1, sizeof(c_rulename));
+	c_rulename[sizeof(c_rulename)-1] = '\0';
+}
+
+//this methode set the unique key attributes from the DB Record Attributes
+void DATASTARULE::setKeysFromRecord()
+{
+	set_k_rulename( rulename() );
+}
+
+//			         
+//O P E R A T O R  + 
+//===================
+//                   
+DATASTARULE DATASTARULE::operator+(const DATASTARULE &inst) const
+{
+	DATASTARULE ptrDATASTARULE(*this);
+//----------------------------------------------------------
+	ptrDATASTARULE.set_rulename(inst.rulename());
+//----------------------------------------------------------
+	if(inst.ruleusingZi() != -1)
+	{
+		ptrDATASTARULE.set_ruleusing(inst.ruleusing());
+		ptrDATASTARULE.set_ruleusingZi(inst.ruleusingZi());
+	}
+//----------------------------------------------------------
+	if(inst.headlenZi() != -1)
+	{
+		ptrDATASTARULE.set_headlen(inst.headlen());
+		ptrDATASTARULE.set_headlenZi(inst.headlenZi());
+	}
+//----------------------------------------------------------
+	if(inst.taillenZi() != -1)
+	{
+		ptrDATASTARULE.set_taillen(inst.taillen());
+		ptrDATASTARULE.set_taillenZi(inst.taillenZi());
+	}
+//----------------------------------------------------------
+	if(inst.hruletypeZi() != -1)
+	{
+		ptrDATASTARULE.set_hruletype(inst.hruletype());
+		ptrDATASTARULE.set_hruletypeZi(inst.hruletypeZi());
+	}
+//----------------------------------------------------------
+	if(inst.huptolZi() != -1)
+	{
+		ptrDATASTARULE.set_huptol(inst.huptol());
+		ptrDATASTARULE.set_huptolZi(inst.huptolZi());
+	}
+//----------------------------------------------------------
+	if(inst.hlowtolZi() != -1)
+	{
+		ptrDATASTARULE.set_hlowtol(inst.hlowtol());
+		ptrDATASTARULE.set_hlowtolZi(inst.hlowtolZi());
+	}
+//----------------------------------------------------------
+	if(inst.hclass1fromZi() != -1)
+	{
+		ptrDATASTARULE.set_hclass1from(inst.hclass1from());
+		ptrDATASTARULE.set_hclass1fromZi(inst.hclass1fromZi());
+	}
+//----------------------------------------------------------
+	if(inst.hclass1toZi() != -1)
+	{
+		ptrDATASTARULE.set_hclass1to(inst.hclass1to());
+		ptrDATASTARULE.set_hclass1toZi(inst.hclass1toZi());
+	}
+//----------------------------------------------------------
+	if(inst.hclass2fromZi() != -1)
+	{
+		ptrDATASTARULE.set_hclass2from(inst.hclass2from());
+		ptrDATASTARULE.set_hclass2fromZi(inst.hclass2fromZi());
+	}
+//----------------------------------------------------------
+	if(inst.hclass2toZi() != -1)
+	{
+		ptrDATASTARULE.set_hclass2to(inst.hclass2to());
+		ptrDATASTARULE.set_hclass2toZi(inst.hclass2toZi());
+	}
+//----------------------------------------------------------
+	if(inst.hclass3fromZi() != -1)
+	{
+		ptrDATASTARULE.set_hclass3from(inst.hclass3from());
+		ptrDATASTARULE.set_hclass3fromZi(inst.hclass3fromZi());
+	}
+//----------------------------------------------------------
+	if(inst.hclass3toZi() != -1)
+	{
+		ptrDATASTARULE.set_hclass3to(inst.hclass3to());
+		ptrDATASTARULE.set_hclass3toZi(inst.hclass3toZi());
+	}
+//----------------------------------------------------------
+	if(inst.hclass4fromZi() != -1)
+	{
+		ptrDATASTARULE.set_hclass4from(inst.hclass4from());
+		ptrDATASTARULE.set_hclass4fromZi(inst.hclass4fromZi());
+	}
+//----------------------------------------------------------
+	if(inst.hclass4toZi() != -1)
+	{
+		ptrDATASTARULE.set_hclass4to(inst.hclass4to());
+		ptrDATASTARULE.set_hclass4toZi(inst.hclass4toZi());
+	}
+//----------------------------------------------------------
+	if(inst.hclass5fromZi() != -1)
+	{
+		ptrDATASTARULE.set_hclass5from(inst.hclass5from());
+		ptrDATASTARULE.set_hclass5fromZi(inst.hclass5fromZi());
+	}
+//----------------------------------------------------------
+	if(inst.hclass5toZi() != -1)
+	{
+		ptrDATASTARULE.set_hclass5to(inst.hclass5to());
+		ptrDATASTARULE.set_hclass5toZi(inst.hclass5toZi());
+	}
+//----------------------------------------------------------
+	if(inst.hclass6fromZi() != -1)
+	{
+		ptrDATASTARULE.set_hclass6from(inst.hclass6from());
+		ptrDATASTARULE.set_hclass6fromZi(inst.hclass6fromZi());
+	}
+//----------------------------------------------------------
+	if(inst.hclass6toZi() != -1)
+	{
+		ptrDATASTARULE.set_hclass6to(inst.hclass6to());
+		ptrDATASTARULE.set_hclass6toZi(inst.hclass6toZi());
+	}
+//----------------------------------------------------------
+	if(inst.hclass7fromZi() != -1)
+	{
+		ptrDATASTARULE.set_hclass7from(inst.hclass7from());
+		ptrDATASTARULE.set_hclass7fromZi(inst.hclass7fromZi());
+	}
+//----------------------------------------------------------
+	if(inst.hclass7toZi() != -1)
+	{
+		ptrDATASTARULE.set_hclass7to(inst.hclass7to());
+		ptrDATASTARULE.set_hclass7toZi(inst.hclass7toZi());
+	}
+//----------------------------------------------------------
+	if(inst.fruletypeZi() != -1)
+	{
+		ptrDATASTARULE.set_fruletype(inst.fruletype());
+		ptrDATASTARULE.set_fruletypeZi(inst.fruletypeZi());
+	}
+//----------------------------------------------------------
+	if(inst.fuptolZi() != -1)
+	{
+		ptrDATASTARULE.set_fuptol(inst.fuptol());
+		ptrDATASTARULE.set_fuptolZi(inst.fuptolZi());
+	}
+//----------------------------------------------------------
+	if(inst.flowtolZi() != -1)
+	{
+		ptrDATASTARULE.set_flowtol(inst.flowtol());
+		ptrDATASTARULE.set_flowtolZi(inst.flowtolZi());
+	}
+//----------------------------------------------------------
+	if(inst.fclass1fromZi() != -1)
+	{
+		ptrDATASTARULE.set_fclass1from(inst.fclass1from());
+		ptrDATASTARULE.set_fclass1fromZi(inst.fclass1fromZi());
+	}
+//----------------------------------------------------------
+	if(inst.fclass1toZi() != -1)
+	{
+		ptrDATASTARULE.set_fclass1to(inst.fclass1to());
+		ptrDATASTARULE.set_fclass1toZi(inst.fclass1toZi());
+	}
+//----------------------------------------------------------
+	if(inst.fclass2fromZi() != -1)
+	{
+		ptrDATASTARULE.set_fclass2from(inst.fclass2from());
+		ptrDATASTARULE.set_fclass2fromZi(inst.fclass2fromZi());
+	}
+//----------------------------------------------------------
+	if(inst.fclass2toZi() != -1)
+	{
+		ptrDATASTARULE.set_fclass2to(inst.fclass2to());
+		ptrDATASTARULE.set_fclass2toZi(inst.fclass2toZi());
+	}
+//----------------------------------------------------------
+	if(inst.fclass3fromZi() != -1)
+	{
+		ptrDATASTARULE.set_fclass3from(inst.fclass3from());
+		ptrDATASTARULE.set_fclass3fromZi(inst.fclass3fromZi());
+	}
+//----------------------------------------------------------
+	if(inst.fclass3toZi() != -1)
+	{
+		ptrDATASTARULE.set_fclass3to(inst.fclass3to());
+		ptrDATASTARULE.set_fclass3toZi(inst.fclass3toZi());
+	}
+//----------------------------------------------------------
+	if(inst.fclass4fromZi() != -1)
+	{
+		ptrDATASTARULE.set_fclass4from(inst.fclass4from());
+		ptrDATASTARULE.set_fclass4fromZi(inst.fclass4fromZi());
+	}
+//----------------------------------------------------------
+	if(inst.fclass4toZi() != -1)
+	{
+		ptrDATASTARULE.set_fclass4to(inst.fclass4to());
+		ptrDATASTARULE.set_fclass4toZi(inst.fclass4toZi());
+	}
+//----------------------------------------------------------
+	if(inst.fclass5fromZi() != -1)
+	{
+		ptrDATASTARULE.set_fclass5from(inst.fclass5from());
+		ptrDATASTARULE.set_fclass5fromZi(inst.fclass5fromZi());
+	}
+//----------------------------------------------------------
+	if(inst.fclass5toZi() != -1)
+	{
+		ptrDATASTARULE.set_fclass5to(inst.fclass5to());
+		ptrDATASTARULE.set_fclass5toZi(inst.fclass5toZi());
+	}
+//----------------------------------------------------------
+	if(inst.fclass6fromZi() != -1)
+	{
+		ptrDATASTARULE.set_fclass6from(inst.fclass6from());
+		ptrDATASTARULE.set_fclass6fromZi(inst.fclass6fromZi());
+	}
+//----------------------------------------------------------
+	if(inst.fclass6toZi() != -1)
+	{
+		ptrDATASTARULE.set_fclass6to(inst.fclass6to());
+		ptrDATASTARULE.set_fclass6toZi(inst.fclass6toZi());
+	}
+//----------------------------------------------------------
+	if(inst.fclass7fromZi() != -1)
+	{
+		ptrDATASTARULE.set_fclass7from(inst.fclass7from());
+		ptrDATASTARULE.set_fclass7fromZi(inst.fclass7fromZi());
+	}
+//----------------------------------------------------------
+	if(inst.fclass7toZi() != -1)
+	{
+		ptrDATASTARULE.set_fclass7to(inst.fclass7to());
+		ptrDATASTARULE.set_fclass7toZi(inst.fclass7toZi());
+	}
+//----------------------------------------------------------
+	if(inst.edropruletypeZi() != -1)
+	{
+		ptrDATASTARULE.set_edropruletype(inst.edropruletype());
+		ptrDATASTARULE.set_edropruletypeZi(inst.edropruletypeZi());
+	}
+//----------------------------------------------------------
+	if(inst.edropuptolZi() != -1)
+	{
+		ptrDATASTARULE.set_edropuptol(inst.edropuptol());
+		ptrDATASTARULE.set_edropuptolZi(inst.edropuptolZi());
+	}
+//----------------------------------------------------------
+	if(inst.edroplowtolZi() != -1)
+	{
+		ptrDATASTARULE.set_edroplowtol(inst.edroplowtol());
+		ptrDATASTARULE.set_edroplowtolZi(inst.edroplowtolZi());
+	}
+//----------------------------------------------------------
+	if(inst.edropclass1fromZi() != -1)
+	{
+		ptrDATASTARULE.set_edropclass1from(inst.edropclass1from());
+		ptrDATASTARULE.set_edropclass1fromZi(inst.edropclass1fromZi());
+	}
+//----------------------------------------------------------
+	if(inst.edropclass1toZi() != -1)
+	{
+		ptrDATASTARULE.set_edropclass1to(inst.edropclass1to());
+		ptrDATASTARULE.set_edropclass1toZi(inst.edropclass1toZi());
+	}
+//----------------------------------------------------------
+	if(inst.edropclass2fromZi() != -1)
+	{
+		ptrDATASTARULE.set_edropclass2from(inst.edropclass2from());
+		ptrDATASTARULE.set_edropclass2fromZi(inst.edropclass2fromZi());
+	}
+//----------------------------------------------------------
+	if(inst.edropclass2toZi() != -1)
+	{
+		ptrDATASTARULE.set_edropclass2to(inst.edropclass2to());
+		ptrDATASTARULE.set_edropclass2toZi(inst.edropclass2toZi());
+	}
+//----------------------------------------------------------
+	if(inst.edropclass3fromZi() != -1)
+	{
+		ptrDATASTARULE.set_edropclass3from(inst.edropclass3from());
+		ptrDATASTARULE.set_edropclass3fromZi(inst.edropclass3fromZi());
+	}
+//----------------------------------------------------------
+	if(inst.edropclass3toZi() != -1)
+	{
+		ptrDATASTARULE.set_edropclass3to(inst.edropclass3to());
+		ptrDATASTARULE.set_edropclass3toZi(inst.edropclass3toZi());
+	}
+//----------------------------------------------------------
+	if(inst.edropclass4fromZi() != -1)
+	{
+		ptrDATASTARULE.set_edropclass4from(inst.edropclass4from());
+		ptrDATASTARULE.set_edropclass4fromZi(inst.edropclass4fromZi());
+	}
+//----------------------------------------------------------
+	if(inst.edropclass4toZi() != -1)
+	{
+		ptrDATASTARULE.set_edropclass4to(inst.edropclass4to());
+		ptrDATASTARULE.set_edropclass4toZi(inst.edropclass4toZi());
+	}
+//----------------------------------------------------------
+	if(inst.edropclass5fromZi() != -1)
+	{
+		ptrDATASTARULE.set_edropclass5from(inst.edropclass5from());
+		ptrDATASTARULE.set_edropclass5fromZi(inst.edropclass5fromZi());
+	}
+//----------------------------------------------------------
+	if(inst.edropclass5toZi() != -1)
+	{
+		ptrDATASTARULE.set_edropclass5to(inst.edropclass5to());
+		ptrDATASTARULE.set_edropclass5toZi(inst.edropclass5toZi());
+	}
+//----------------------------------------------------------
+	if(inst.edropclass6fromZi() != -1)
+	{
+		ptrDATASTARULE.set_edropclass6from(inst.edropclass6from());
+		ptrDATASTARULE.set_edropclass6fromZi(inst.edropclass6fromZi());
+	}
+//----------------------------------------------------------
+	if(inst.edropclass6toZi() != -1)
+	{
+		ptrDATASTARULE.set_edropclass6to(inst.edropclass6to());
+		ptrDATASTARULE.set_edropclass6toZi(inst.edropclass6toZi());
+	}
+//----------------------------------------------------------
+	if(inst.edropclass7fromZi() != -1)
+	{
+		ptrDATASTARULE.set_edropclass7from(inst.edropclass7from());
+		ptrDATASTARULE.set_edropclass7fromZi(inst.edropclass7fromZi());
+	}
+//----------------------------------------------------------
+	if(inst.edropclass7toZi() != -1)
+	{
+		ptrDATASTARULE.set_edropclass7to(inst.edropclass7to());
+		ptrDATASTARULE.set_edropclass7toZi(inst.edropclass7toZi());
+	}
+//----------------------------------------------------------
+	if(inst.hdifruletypeZi() != -1)
+	{
+		ptrDATASTARULE.set_hdifruletype(inst.hdifruletype());
+		ptrDATASTARULE.set_hdifruletypeZi(inst.hdifruletypeZi());
+	}
+//----------------------------------------------------------
+	if(inst.hdifstd1uptolZi() != -1)
+	{
+		ptrDATASTARULE.set_hdifstd1uptol(inst.hdifstd1uptol());
+		ptrDATASTARULE.set_hdifstd1uptolZi(inst.hdifstd1uptolZi());
+	}
+//----------------------------------------------------------
+	if(inst.hdifstd1lowtolZi() != -1)
+	{
+		ptrDATASTARULE.set_hdifstd1lowtol(inst.hdifstd1lowtol());
+		ptrDATASTARULE.set_hdifstd1lowtolZi(inst.hdifstd1lowtolZi());
+	}
+//----------------------------------------------------------
+	if(inst.hdifstd2uptolZi() != -1)
+	{
+		ptrDATASTARULE.set_hdifstd2uptol(inst.hdifstd2uptol());
+		ptrDATASTARULE.set_hdifstd2uptolZi(inst.hdifstd2uptolZi());
+	}
+//----------------------------------------------------------
+	if(inst.hdifstd2lowtolZi() != -1)
+	{
+		ptrDATASTARULE.set_hdifstd2lowtol(inst.hdifstd2lowtol());
+		ptrDATASTARULE.set_hdifstd2lowtolZi(inst.hdifstd2lowtolZi());
+	}
+//----------------------------------------------------------
+	if(inst.hdifstd3uptolZi() != -1)
+	{
+		ptrDATASTARULE.set_hdifstd3uptol(inst.hdifstd3uptol());
+		ptrDATASTARULE.set_hdifstd3uptolZi(inst.hdifstd3uptolZi());
+	}
+//----------------------------------------------------------
+	if(inst.hdifstd3lowtolZi() != -1)
+	{
+		ptrDATASTARULE.set_hdifstd3lowtol(inst.hdifstd3lowtol());
+		ptrDATASTARULE.set_hdifstd3lowtolZi(inst.hdifstd3lowtolZi());
+	}
+//----------------------------------------------------------
+	if(inst.hdifclass1fromZi() != -1)
+	{
+		ptrDATASTARULE.set_hdifclass1from(inst.hdifclass1from());
+		ptrDATASTARULE.set_hdifclass1fromZi(inst.hdifclass1fromZi());
+	}
+//----------------------------------------------------------
+	if(inst.hdifclass1toZi() != -1)
+	{
+		ptrDATASTARULE.set_hdifclass1to(inst.hdifclass1to());
+		ptrDATASTARULE.set_hdifclass1toZi(inst.hdifclass1toZi());
+	}
+//----------------------------------------------------------
+	if(inst.hdifclass2fromZi() != -1)
+	{
+		ptrDATASTARULE.set_hdifclass2from(inst.hdifclass2from());
+		ptrDATASTARULE.set_hdifclass2fromZi(inst.hdifclass2fromZi());
+	}
+//----------------------------------------------------------
+	if(inst.hdifclass2toZi() != -1)
+	{
+		ptrDATASTARULE.set_hdifclass2to(inst.hdifclass2to());
+		ptrDATASTARULE.set_hdifclass2toZi(inst.hdifclass2toZi());
+	}
+//----------------------------------------------------------
+	if(inst.hdifclass3fromZi() != -1)
+	{
+		ptrDATASTARULE.set_hdifclass3from(inst.hdifclass3from());
+		ptrDATASTARULE.set_hdifclass3fromZi(inst.hdifclass3fromZi());
+	}
+//----------------------------------------------------------
+	if(inst.hdifclass3toZi() != -1)
+	{
+		ptrDATASTARULE.set_hdifclass3to(inst.hdifclass3to());
+		ptrDATASTARULE.set_hdifclass3toZi(inst.hdifclass3toZi());
+	}
+//----------------------------------------------------------
+	if(inst.hdifclass4fromZi() != -1)
+	{
+		ptrDATASTARULE.set_hdifclass4from(inst.hdifclass4from());
+		ptrDATASTARULE.set_hdifclass4fromZi(inst.hdifclass4fromZi());
+	}
+//----------------------------------------------------------
+	if(inst.hdifclass4toZi() != -1)
+	{
+		ptrDATASTARULE.set_hdifclass4to(inst.hdifclass4to());
+		ptrDATASTARULE.set_hdifclass4toZi(inst.hdifclass4toZi());
+	}
+//----------------------------------------------------------
+	if(inst.hdifclass5fromZi() != -1)
+	{
+		ptrDATASTARULE.set_hdifclass5from(inst.hdifclass5from());
+		ptrDATASTARULE.set_hdifclass5fromZi(inst.hdifclass5fromZi());
+	}
+//----------------------------------------------------------
+	if(inst.hdifclass5toZi() != -1)
+	{
+		ptrDATASTARULE.set_hdifclass5to(inst.hdifclass5to());
+		ptrDATASTARULE.set_hdifclass5toZi(inst.hdifclass5toZi());
+	}
+//----------------------------------------------------------
+	if(inst.hdifclass6fromZi() != -1)
+	{
+		ptrDATASTARULE.set_hdifclass6from(inst.hdifclass6from());
+		ptrDATASTARULE.set_hdifclass6fromZi(inst.hdifclass6fromZi());
+	}
+//----------------------------------------------------------
+	if(inst.hdifclass6toZi() != -1)
+	{
+		ptrDATASTARULE.set_hdifclass6to(inst.hdifclass6to());
+		ptrDATASTARULE.set_hdifclass6toZi(inst.hdifclass6toZi());
+	}
+//----------------------------------------------------------
+	if(inst.hdifclass7fromZi() != -1)
+	{
+		ptrDATASTARULE.set_hdifclass7from(inst.hdifclass7from());
+		ptrDATASTARULE.set_hdifclass7fromZi(inst.hdifclass7fromZi());
+	}
+//----------------------------------------------------------
+	if(inst.hdifclass7toZi() != -1)
+	{
+		ptrDATASTARULE.set_hdifclass7to(inst.hdifclass7to());
+		ptrDATASTARULE.set_hdifclass7toZi(inst.hdifclass7toZi());
+	}
+//----------------------------------------------------------
+	if(inst.mwlimitZi() != -1)
+	{
+		ptrDATASTARULE.set_mwlimit(inst.mwlimit());
+		ptrDATASTARULE.set_mwlimitZi(inst.mwlimitZi());
+	}
+//----------------------------------------------------------
+	if(inst.ewlimitZi() != -1)
+	{
+		ptrDATASTARULE.set_ewlimit(inst.ewlimit());
+		ptrDATASTARULE.set_ewlimitZi(inst.ewlimitZi());
+	}
+//----------------------------------------------------------
+	if(inst.qwlimitZi() != -1)
+	{
+		ptrDATASTARULE.set_qwlimit(inst.qwlimit());
+		ptrDATASTARULE.set_qwlimitZi(inst.qwlimitZi());
+	}
+//----------------------------------------------------------
+	if(inst.tocZi() != -1)
+	{
+		ptrDATASTARULE.set_toc(inst.toc());
+		ptrDATASTARULE.set_tocZi(inst.tocZi());
+	}
+//----------------------------------------------------------
+	if(inst.tomZi() != -1)
+	{
+		ptrDATASTARULE.set_tom(inst.tom());
+		ptrDATASTARULE.set_tomZi(inst.tomZi());
+	}
+//----------------------------------------------------------
+	if(inst.mopZi() != -1)
+	{
+		ptrDATASTARULE.set_mop(inst.mop());
+		ptrDATASTARULE.set_mopZi(inst.mopZi());
+	}
+	return( ptrDATASTARULE );
+}
+
+//			         
+//O P E R A T O R  = 
+//===================
+//                   
+const DATASTARULE& DATASTARULE::operator=(const DATASTARULE &inst)
+{
+//----------------------------------------------------------
+	this->set_rulename(inst.rulename());
+//----------------------------------------------------------
+	this->set_ruleusing(inst.ruleusing());
+	this->set_ruleusingZi(inst.ruleusingZi());
+//----------------------------------------------------------
+	this->set_headlen(inst.headlen());
+	this->set_headlenZi(inst.headlenZi());
+//----------------------------------------------------------
+	this->set_taillen(inst.taillen());
+	this->set_taillenZi(inst.taillenZi());
+//----------------------------------------------------------
+	this->set_hruletype(inst.hruletype());
+	this->set_hruletypeZi(inst.hruletypeZi());
+//----------------------------------------------------------
+	this->set_huptol(inst.huptol());
+	this->set_huptolZi(inst.huptolZi());
+//----------------------------------------------------------
+	this->set_hlowtol(inst.hlowtol());
+	this->set_hlowtolZi(inst.hlowtolZi());
+//----------------------------------------------------------
+	this->set_hclass1from(inst.hclass1from());
+	this->set_hclass1fromZi(inst.hclass1fromZi());
+//----------------------------------------------------------
+	this->set_hclass1to(inst.hclass1to());
+	this->set_hclass1toZi(inst.hclass1toZi());
+//----------------------------------------------------------
+	this->set_hclass2from(inst.hclass2from());
+	this->set_hclass2fromZi(inst.hclass2fromZi());
+//----------------------------------------------------------
+	this->set_hclass2to(inst.hclass2to());
+	this->set_hclass2toZi(inst.hclass2toZi());
+//----------------------------------------------------------
+	this->set_hclass3from(inst.hclass3from());
+	this->set_hclass3fromZi(inst.hclass3fromZi());
+//----------------------------------------------------------
+	this->set_hclass3to(inst.hclass3to());
+	this->set_hclass3toZi(inst.hclass3toZi());
+//----------------------------------------------------------
+	this->set_hclass4from(inst.hclass4from());
+	this->set_hclass4fromZi(inst.hclass4fromZi());
+//----------------------------------------------------------
+	this->set_hclass4to(inst.hclass4to());
+	this->set_hclass4toZi(inst.hclass4toZi());
+//----------------------------------------------------------
+	this->set_hclass5from(inst.hclass5from());
+	this->set_hclass5fromZi(inst.hclass5fromZi());
+//----------------------------------------------------------
+	this->set_hclass5to(inst.hclass5to());
+	this->set_hclass5toZi(inst.hclass5toZi());
+//----------------------------------------------------------
+	this->set_hclass6from(inst.hclass6from());
+	this->set_hclass6fromZi(inst.hclass6fromZi());
+//----------------------------------------------------------
+	this->set_hclass6to(inst.hclass6to());
+	this->set_hclass6toZi(inst.hclass6toZi());
+//----------------------------------------------------------
+	this->set_hclass7from(inst.hclass7from());
+	this->set_hclass7fromZi(inst.hclass7fromZi());
+//----------------------------------------------------------
+	this->set_hclass7to(inst.hclass7to());
+	this->set_hclass7toZi(inst.hclass7toZi());
+//----------------------------------------------------------
+	this->set_fruletype(inst.fruletype());
+	this->set_fruletypeZi(inst.fruletypeZi());
+//----------------------------------------------------------
+	this->set_fuptol(inst.fuptol());
+	this->set_fuptolZi(inst.fuptolZi());
+//----------------------------------------------------------
+	this->set_flowtol(inst.flowtol());
+	this->set_flowtolZi(inst.flowtolZi());
+//----------------------------------------------------------
+	this->set_fclass1from(inst.fclass1from());
+	this->set_fclass1fromZi(inst.fclass1fromZi());
+//----------------------------------------------------------
+	this->set_fclass1to(inst.fclass1to());
+	this->set_fclass1toZi(inst.fclass1toZi());
+//----------------------------------------------------------
+	this->set_fclass2from(inst.fclass2from());
+	this->set_fclass2fromZi(inst.fclass2fromZi());
+//----------------------------------------------------------
+	this->set_fclass2to(inst.fclass2to());
+	this->set_fclass2toZi(inst.fclass2toZi());
+//----------------------------------------------------------
+	this->set_fclass3from(inst.fclass3from());
+	this->set_fclass3fromZi(inst.fclass3fromZi());
+//----------------------------------------------------------
+	this->set_fclass3to(inst.fclass3to());
+	this->set_fclass3toZi(inst.fclass3toZi());
+//----------------------------------------------------------
+	this->set_fclass4from(inst.fclass4from());
+	this->set_fclass4fromZi(inst.fclass4fromZi());
+//----------------------------------------------------------
+	this->set_fclass4to(inst.fclass4to());
+	this->set_fclass4toZi(inst.fclass4toZi());
+//----------------------------------------------------------
+	this->set_fclass5from(inst.fclass5from());
+	this->set_fclass5fromZi(inst.fclass5fromZi());
+//----------------------------------------------------------
+	this->set_fclass5to(inst.fclass5to());
+	this->set_fclass5toZi(inst.fclass5toZi());
+//----------------------------------------------------------
+	this->set_fclass6from(inst.fclass6from());
+	this->set_fclass6fromZi(inst.fclass6fromZi());
+//----------------------------------------------------------
+	this->set_fclass6to(inst.fclass6to());
+	this->set_fclass6toZi(inst.fclass6toZi());
+//----------------------------------------------------------
+	this->set_fclass7from(inst.fclass7from());
+	this->set_fclass7fromZi(inst.fclass7fromZi());
+//----------------------------------------------------------
+	this->set_fclass7to(inst.fclass7to());
+	this->set_fclass7toZi(inst.fclass7toZi());
+//----------------------------------------------------------
+	this->set_edropruletype(inst.edropruletype());
+	this->set_edropruletypeZi(inst.edropruletypeZi());
+//----------------------------------------------------------
+	this->set_edropuptol(inst.edropuptol());
+	this->set_edropuptolZi(inst.edropuptolZi());
+//----------------------------------------------------------
+	this->set_edroplowtol(inst.edroplowtol());
+	this->set_edroplowtolZi(inst.edroplowtolZi());
+//----------------------------------------------------------
+	this->set_edropclass1from(inst.edropclass1from());
+	this->set_edropclass1fromZi(inst.edropclass1fromZi());
+//----------------------------------------------------------
+	this->set_edropclass1to(inst.edropclass1to());
+	this->set_edropclass1toZi(inst.edropclass1toZi());
+//----------------------------------------------------------
+	this->set_edropclass2from(inst.edropclass2from());
+	this->set_edropclass2fromZi(inst.edropclass2fromZi());
+//----------------------------------------------------------
+	this->set_edropclass2to(inst.edropclass2to());
+	this->set_edropclass2toZi(inst.edropclass2toZi());
+//----------------------------------------------------------
+	this->set_edropclass3from(inst.edropclass3from());
+	this->set_edropclass3fromZi(inst.edropclass3fromZi());
+//----------------------------------------------------------
+	this->set_edropclass3to(inst.edropclass3to());
+	this->set_edropclass3toZi(inst.edropclass3toZi());
+//----------------------------------------------------------
+	this->set_edropclass4from(inst.edropclass4from());
+	this->set_edropclass4fromZi(inst.edropclass4fromZi());
+//----------------------------------------------------------
+	this->set_edropclass4to(inst.edropclass4to());
+	this->set_edropclass4toZi(inst.edropclass4toZi());
+//----------------------------------------------------------
+	this->set_edropclass5from(inst.edropclass5from());
+	this->set_edropclass5fromZi(inst.edropclass5fromZi());
+//----------------------------------------------------------
+	this->set_edropclass5to(inst.edropclass5to());
+	this->set_edropclass5toZi(inst.edropclass5toZi());
+//----------------------------------------------------------
+	this->set_edropclass6from(inst.edropclass6from());
+	this->set_edropclass6fromZi(inst.edropclass6fromZi());
+//----------------------------------------------------------
+	this->set_edropclass6to(inst.edropclass6to());
+	this->set_edropclass6toZi(inst.edropclass6toZi());
+//----------------------------------------------------------
+	this->set_edropclass7from(inst.edropclass7from());
+	this->set_edropclass7fromZi(inst.edropclass7fromZi());
+//----------------------------------------------------------
+	this->set_edropclass7to(inst.edropclass7to());
+	this->set_edropclass7toZi(inst.edropclass7toZi());
+//----------------------------------------------------------
+	this->set_hdifruletype(inst.hdifruletype());
+	this->set_hdifruletypeZi(inst.hdifruletypeZi());
+//----------------------------------------------------------
+	this->set_hdifstd1uptol(inst.hdifstd1uptol());
+	this->set_hdifstd1uptolZi(inst.hdifstd1uptolZi());
+//----------------------------------------------------------
+	this->set_hdifstd1lowtol(inst.hdifstd1lowtol());
+	this->set_hdifstd1lowtolZi(inst.hdifstd1lowtolZi());
+//----------------------------------------------------------
+	this->set_hdifstd2uptol(inst.hdifstd2uptol());
+	this->set_hdifstd2uptolZi(inst.hdifstd2uptolZi());
+//----------------------------------------------------------
+	this->set_hdifstd2lowtol(inst.hdifstd2lowtol());
+	this->set_hdifstd2lowtolZi(inst.hdifstd2lowtolZi());
+//----------------------------------------------------------
+	this->set_hdifstd3uptol(inst.hdifstd3uptol());
+	this->set_hdifstd3uptolZi(inst.hdifstd3uptolZi());
+//----------------------------------------------------------
+	this->set_hdifstd3lowtol(inst.hdifstd3lowtol());
+	this->set_hdifstd3lowtolZi(inst.hdifstd3lowtolZi());
+//----------------------------------------------------------
+	this->set_hdifclass1from(inst.hdifclass1from());
+	this->set_hdifclass1fromZi(inst.hdifclass1fromZi());
+//----------------------------------------------------------
+	this->set_hdifclass1to(inst.hdifclass1to());
+	this->set_hdifclass1toZi(inst.hdifclass1toZi());
+//----------------------------------------------------------
+	this->set_hdifclass2from(inst.hdifclass2from());
+	this->set_hdifclass2fromZi(inst.hdifclass2fromZi());
+//----------------------------------------------------------
+	this->set_hdifclass2to(inst.hdifclass2to());
+	this->set_hdifclass2toZi(inst.hdifclass2toZi());
+//----------------------------------------------------------
+	this->set_hdifclass3from(inst.hdifclass3from());
+	this->set_hdifclass3fromZi(inst.hdifclass3fromZi());
+//----------------------------------------------------------
+	this->set_hdifclass3to(inst.hdifclass3to());
+	this->set_hdifclass3toZi(inst.hdifclass3toZi());
+//----------------------------------------------------------
+	this->set_hdifclass4from(inst.hdifclass4from());
+	this->set_hdifclass4fromZi(inst.hdifclass4fromZi());
+//----------------------------------------------------------
+	this->set_hdifclass4to(inst.hdifclass4to());
+	this->set_hdifclass4toZi(inst.hdifclass4toZi());
+//----------------------------------------------------------
+	this->set_hdifclass5from(inst.hdifclass5from());
+	this->set_hdifclass5fromZi(inst.hdifclass5fromZi());
+//----------------------------------------------------------
+	this->set_hdifclass5to(inst.hdifclass5to());
+	this->set_hdifclass5toZi(inst.hdifclass5toZi());
+//----------------------------------------------------------
+	this->set_hdifclass6from(inst.hdifclass6from());
+	this->set_hdifclass6fromZi(inst.hdifclass6fromZi());
+//----------------------------------------------------------
+	this->set_hdifclass6to(inst.hdifclass6to());
+	this->set_hdifclass6toZi(inst.hdifclass6toZi());
+//----------------------------------------------------------
+	this->set_hdifclass7from(inst.hdifclass7from());
+	this->set_hdifclass7fromZi(inst.hdifclass7fromZi());
+//----------------------------------------------------------
+	this->set_hdifclass7to(inst.hdifclass7to());
+	this->set_hdifclass7toZi(inst.hdifclass7toZi());
+//----------------------------------------------------------
+	this->set_mwlimit(inst.mwlimit());
+	this->set_mwlimitZi(inst.mwlimitZi());
+//----------------------------------------------------------
+	this->set_ewlimit(inst.ewlimit());
+	this->set_ewlimitZi(inst.ewlimitZi());
+//----------------------------------------------------------
+	this->set_qwlimit(inst.qwlimit());
+	this->set_qwlimitZi(inst.qwlimitZi());
+//----------------------------------------------------------
+	this->set_toc(inst.toc());
+	this->set_tocZi(inst.tocZi());
+//----------------------------------------------------------
+	this->set_tom(inst.tom());
+	this->set_tomZi(inst.tomZi());
+//----------------------------------------------------------
+	this->set_mop(inst.mop());
+	this->set_mopZi(inst.mopZi());
+	return(*this);
+}
+

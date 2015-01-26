@@ -1,0 +1,3580 @@
+/* *******************************************************************/
+/* *   File               :    ACTDT_TRKDAT.pc
+/* *   Short Description  :    ORACLE DATABASE ACCESS
+/* * 		                   PL Tracking Data
+/* *   Author             :    DB CODE Generator
+/* *   Created Date       :    13.06.2013
+/* *   Tech.Support       :    LiuWeiZhao. email:welljoe@hotmail.com 
+/* *******************************************************************/
+/* *   Copyright (c)  SGAI AI 2009   All Rights Reserved
+/* *******************************************************************/
+
+#include "LOG.h"
+#include "ACTDT_TRKDAT.h"
+//
+// Declare ORACLE Host Variables
+//
+
+#define SQLCA_STORAGE_CLASS static
+#define ORACA_STORAGE_CLASS static
+EXEC SQL INCLUDE sqlca;
+EXEC SQL INCLUDE oraca;
+
+#define OPENED 1
+#define CLOSED 2
+EXEC SQL BEGIN DECLARE SECTION;
+/* ****************************************************************************** */
+/*                                                                                */
+/*                               define Oracle                                    */
+/*                               Host Variables                                   */
+/*                                                          .                     */
+/*                                                                                */
+/* ****************************************************************************** */
+
+static VARCHAR	dynstr[16000];
+static long		rowCnt;       
+static long		cuFl;         
+//Unit[-]:Date.Limit:[-,-]
+static VARCHAR  ora_datee[9];
+//Unit[-]:Time.Limit:[-,-]
+static VARCHAR  ora_timee[7];
+//Unit[-]:Sampling no..Limit:[-,500000]
+static short    ora_samp_no;
+//Unit[-]:wpdx 1.Limit:[-,-]
+static long     ora_wpdx_1;
+static short    ora_wpdx_1Zi;
+//Unit[-]:ti1.Limit:[-,-]
+static long     ora_ti_1;
+static short    ora_ti_1Zi;
+//Unit[-]:Hot coil Id1.Limit:[-,-]
+static long     ora_plength_1;
+static short    ora_plength_1Zi;
+//Unit[-]:length1.Limit:[-,-]
+static VARCHAR  ora_hcoil_id_1[17];
+static short    ora_hcoil_id_1Zi;
+//Unit[-]:wpdx 2.Limit:[-,-]
+static long     ora_wpdx_2;
+static short    ora_wpdx_2Zi;
+//Unit[-]:ti2.Limit:[-,-]
+static long     ora_ti_2;
+static short    ora_ti_2Zi;
+//Unit[-]:Hot coil Id2.Limit:[-,-]
+static long     ora_plength_2;
+static short    ora_plength_2Zi;
+//Unit[-]:length2.Limit:[-,-]
+static VARCHAR  ora_hcoil_id_2[17];
+static short    ora_hcoil_id_2Zi;
+//Unit[-]:wpdx 3.Limit:[-,-]
+static long     ora_wpdx_3;
+static short    ora_wpdx_3Zi;
+//Unit[-]:ti3.Limit:[-,-]
+static long     ora_ti_3;
+static short    ora_ti_3Zi;
+//Unit[-]:Hot coil Id3.Limit:[-,-]
+static long     ora_plength_3;
+static short    ora_plength_3Zi;
+//Unit[-]:length3.Limit:[-,-]
+static VARCHAR  ora_hcoil_id_3[17];
+static short    ora_hcoil_id_3Zi;
+//Unit[-]:wpdx 4.Limit:[-,-]
+static long     ora_wpdx_4;
+static short    ora_wpdx_4Zi;
+//Unit[-]:ti4.Limit:[-,-]
+static long     ora_ti_4;
+static short    ora_ti_4Zi;
+//Unit[-]:Hot coil Id4.Limit:[-,-]
+static long     ora_plength_4;
+static short    ora_plength_4Zi;
+//Unit[-]:length4.Limit:[-,-]
+static VARCHAR  ora_hcoil_id_4[17];
+static short    ora_hcoil_id_4Zi;
+//Unit[-]:wpdx 5.Limit:[-,-]
+static long     ora_wpdx_5;
+static short    ora_wpdx_5Zi;
+//Unit[-]:ti5.Limit:[-,-]
+static long     ora_ti_5;
+static short    ora_ti_5Zi;
+//Unit[-]:Hot coil Id5.Limit:[-,-]
+static long     ora_plength_5;
+static short    ora_plength_5Zi;
+//Unit[-]:length5.Limit:[-,-]
+static VARCHAR  ora_hcoil_id_5[17];
+static short    ora_hcoil_id_5Zi;
+//Unit[-]:wpdx 6.Limit:[-,-]
+static long     ora_wpdx_6;
+static short    ora_wpdx_6Zi;
+//Unit[-]:ti6.Limit:[-,-]
+static long     ora_ti_6;
+static short    ora_ti_6Zi;
+//Unit[-]:Hot coil Id6.Limit:[-,-]
+static long     ora_plength_6;
+static short    ora_plength_6Zi;
+//Unit[-]:length6.Limit:[-,-]
+static VARCHAR  ora_hcoil_id_6[17];
+static short    ora_hcoil_id_6Zi;
+//Unit[-]:wpdx 7.Limit:[-,-]
+static long     ora_wpdx_7;
+static short    ora_wpdx_7Zi;
+//Unit[-]:ti7.Limit:[-,-]
+static long     ora_ti_7;
+static short    ora_ti_7Zi;
+//Unit[-]:Hot coil Id7.Limit:[-,-]
+static long     ora_plength_7;
+static short    ora_plength_7Zi;
+//Unit[-]:length7.Limit:[-,-]
+static VARCHAR  ora_hcoil_id_7[17];
+static short    ora_hcoil_id_7Zi;
+//Unit[-]:wpdx 8.Limit:[-,-]
+static long     ora_wpdx_8;
+static short    ora_wpdx_8Zi;
+//Unit[-]:ti8.Limit:[-,-]
+static long     ora_ti_8;
+static short    ora_ti_8Zi;
+//Unit[-]:Hot coil Id8.Limit:[-,-]
+static long     ora_plength_8;
+static short    ora_plength_8Zi;
+//Unit[-]:length8.Limit:[-,-]
+static VARCHAR  ora_hcoil_id_8[17];
+static short    ora_hcoil_id_8Zi;
+//Unit[-]:wpdx 9.Limit:[-,-]
+static long     ora_wpdx_9;
+static short    ora_wpdx_9Zi;
+//Unit[-]:ti9.Limit:[-,-]
+static long     ora_ti_9;
+static short    ora_ti_9Zi;
+//Unit[-]:Hot coil Id9.Limit:[-,-]
+static long     ora_plength_9;
+static short    ora_plength_9Zi;
+//Unit[-]:length9.Limit:[-,-]
+static VARCHAR  ora_hcoil_id_9[17];
+static short    ora_hcoil_id_9Zi;
+//Unit[-]:wpdx 10.Limit:[-,-]
+static long     ora_wpdx_10;
+static short    ora_wpdx_10Zi;
+//Unit[-]:ti10.Limit:[-,-]
+static long     ora_ti_10;
+static short    ora_ti_10Zi;
+//Unit[-]:Hot coil Id10.Limit:[-,-]
+static long     ora_plength_10;
+static short    ora_plength_10Zi;
+//Unit[-]:length10.Limit:[-,-]
+static VARCHAR  ora_hcoil_id_10[17];
+static short    ora_hcoil_id_10Zi;
+//Unit[-]:wpdx 11.Limit:[-,-]
+static long     ora_wpdx_11;
+static short    ora_wpdx_11Zi;
+//Unit[-]:ti11.Limit:[-,-]
+static long     ora_ti_11;
+static short    ora_ti_11Zi;
+//Unit[-]:Hot coil Id11.Limit:[-,-]
+static long     ora_plength_11;
+static short    ora_plength_11Zi;
+//Unit[-]:length11.Limit:[-,-]
+static VARCHAR  ora_hcoil_id_11[17];
+static short    ora_hcoil_id_11Zi;
+//Unit[-]:wpdx 12.Limit:[-,-]
+static long     ora_wpdx_12;
+static short    ora_wpdx_12Zi;
+//Unit[-]:ti12.Limit:[-,-]
+static long     ora_ti_12;
+static short    ora_ti_12Zi;
+//Unit[-]:Hot coil Id12.Limit:[-,-]
+static long     ora_plength_12;
+static short    ora_plength_12Zi;
+//Unit[-]:length12.Limit:[-,-]
+static VARCHAR  ora_hcoil_id_12[17];
+static short    ora_hcoil_id_12Zi;
+//Unit[-]:wpdx 13.Limit:[-,-]
+static long     ora_wpdx_13;
+static short    ora_wpdx_13Zi;
+//Unit[-]:ti13.Limit:[-,-]
+static long     ora_ti_13;
+static short    ora_ti_13Zi;
+//Unit[-]:Hot coil Id13.Limit:[-,-]
+static long     ora_plength_13;
+static short    ora_plength_13Zi;
+//Unit[-]:length13.Limit:[-,-]
+static VARCHAR  ora_hcoil_id_13[17];
+static short    ora_hcoil_id_13Zi;
+//Unit[-]:wpdx 14.Limit:[-,-]
+static long     ora_wpdx_14;
+static short    ora_wpdx_14Zi;
+//Unit[-]:ti14.Limit:[-,-]
+static long     ora_ti_14;
+static short    ora_ti_14Zi;
+//Unit[-]:Hot coil Id14.Limit:[-,-]
+static long     ora_plength_14;
+static short    ora_plength_14Zi;
+//Unit[-]:length14.Limit:[-,-]
+static VARCHAR  ora_hcoil_id_14[17];
+static short    ora_hcoil_id_14Zi;
+//Unit[-]:wpdx 15.Limit:[-,-]
+static long     ora_wpdx_15;
+static short    ora_wpdx_15Zi;
+//Unit[-]:ti15.Limit:[-,-]
+static long     ora_ti_15;
+static short    ora_ti_15Zi;
+//Unit[-]:Hot coil Id15.Limit:[-,-]
+static long     ora_plength_15;
+static short    ora_plength_15Zi;
+//Unit[-]:length15.Limit:[-,-]
+static VARCHAR  ora_hcoil_id_15[17];
+static short    ora_hcoil_id_15Zi;
+//Unit[-]:wpdx 16.Limit:[-,-]
+static long     ora_wpdx_16;
+static short    ora_wpdx_16Zi;
+//Unit[-]:ti16.Limit:[-,-]
+static long     ora_ti_16;
+static short    ora_ti_16Zi;
+//Unit[-]:Hot coil Id16.Limit:[-,-]
+static long     ora_plength_16;
+static short    ora_plength_16Zi;
+//Unit[-]:length16.Limit:[-,-]
+static VARCHAR  ora_hcoil_id_16[17];
+static short    ora_hcoil_id_16Zi;
+//Unit[-]:wpdx 17.Limit:[-,-]
+static long     ora_wpdx_17;
+static short    ora_wpdx_17Zi;
+//Unit[-]:ti17.Limit:[-,-]
+static long     ora_ti_17;
+static short    ora_ti_17Zi;
+//Unit[-]:Hot coil Id17.Limit:[-,-]
+static long     ora_plength_17;
+static short    ora_plength_17Zi;
+//Unit[-]:length17.Limit:[-,-]
+static VARCHAR  ora_hcoil_id_17[17];
+static short    ora_hcoil_id_17Zi;
+//Unit[-]:wpdx 18.Limit:[-,-]
+static long     ora_wpdx_18;
+static short    ora_wpdx_18Zi;
+//Unit[-]:ti18.Limit:[-,-]
+static long     ora_ti_18;
+static short    ora_ti_18Zi;
+//Unit[-]:Hot coil Id18.Limit:[-,-]
+static long     ora_plength_18;
+static short    ora_plength_18Zi;
+//Unit[-]:length18.Limit:[-,-]
+static VARCHAR  ora_hcoil_id_18[17];
+static short    ora_hcoil_id_18Zi;
+//Unit[-]:wpdx 19.Limit:[-,-]
+static long     ora_wpdx_19;
+static short    ora_wpdx_19Zi;
+//Unit[-]:ti19.Limit:[-,-]
+static long     ora_ti_19;
+static short    ora_ti_19Zi;
+//Unit[-]:Hot coil Id19.Limit:[-,-]
+static long     ora_plength_19;
+static short    ora_plength_19Zi;
+//Unit[-]:length19.Limit:[-,-]
+static VARCHAR  ora_hcoil_id_19[17];
+static short    ora_hcoil_id_19Zi;
+//Unit[-]:wpdx 20.Limit:[-,-]
+static long     ora_wpdx_20;
+static short    ora_wpdx_20Zi;
+//Unit[-]:ti20.Limit:[-,-]
+static long     ora_ti_20;
+static short    ora_ti_20Zi;
+//Unit[-]:Hot coil Id20.Limit:[-,-]
+static long     ora_plength_20;
+static short    ora_plength_20Zi;
+//Unit[-]:length20.Limit:[-,-]
+static VARCHAR  ora_hcoil_id_20[17];
+static short    ora_hcoil_id_20Zi;
+//Unit[-]:wpdx 21.Limit:[-,-]
+static long     ora_wpdx_21;
+static short    ora_wpdx_21Zi;
+//Unit[-]:ti21.Limit:[-,-]
+static long     ora_ti_21;
+static short    ora_ti_21Zi;
+//Unit[-]:Hot coil Id21.Limit:[-,-]
+static long     ora_plength_21;
+static short    ora_plength_21Zi;
+//Unit[-]:length21.Limit:[-,-]
+static VARCHAR  ora_hcoil_id_21[17];
+static short    ora_hcoil_id_21Zi;
+//Unit[-]:wpdx 22.Limit:[-,-]
+static long     ora_wpdx_22;
+static short    ora_wpdx_22Zi;
+//Unit[-]:ti22.Limit:[-,-]
+static long     ora_ti_22;
+static short    ora_ti_22Zi;
+//Unit[-]:Hot coil Id22.Limit:[-,-]
+static long     ora_plength_22;
+static short    ora_plength_22Zi;
+//Unit[-]:length22.Limit:[-,-]
+static VARCHAR  ora_hcoil_id_22[17];
+static short    ora_hcoil_id_22Zi;
+//Unit[-]:wpdx 23.Limit:[-,-]
+static long     ora_wpdx_23;
+static short    ora_wpdx_23Zi;
+//Unit[-]:ti23.Limit:[-,-]
+static long     ora_ti_23;
+static short    ora_ti_23Zi;
+//Unit[-]:Hot coil Id23.Limit:[-,-]
+static long     ora_plength_23;
+static short    ora_plength_23Zi;
+//Unit[-]:length23.Limit:[-,-]
+static VARCHAR  ora_hcoil_id_23[17];
+static short    ora_hcoil_id_23Zi;
+//Unit[-]:wpdx 24.Limit:[-,-]
+static long     ora_wpdx_24;
+static short    ora_wpdx_24Zi;
+//Unit[-]:ti24.Limit:[-,-]
+static long     ora_ti_24;
+static short    ora_ti_24Zi;
+//Unit[-]:Hot coil Id24.Limit:[-,-]
+static long     ora_plength_24;
+static short    ora_plength_24Zi;
+//Unit[-]:length24.Limit:[-,-]
+static VARCHAR  ora_hcoil_id_24[17];
+static short    ora_hcoil_id_24Zi;
+//Unit[-]:create time.Limit:[-,-]
+static VARCHAR  ora_toc[15];
+static short    ora_tocZi;
+//Unit[-]:modify time.Limit:[-,-]
+static VARCHAR  ora_tom[15];
+static short    ora_tomZi;
+//Unit[-]:creator or modifyer.Limit:[-,-]
+static VARCHAR  ora_mop[121];
+static short    ora_mopZi;
+// Host arguments for Primary key
+static short    k_ora_samp_no;   // Unit[-]:Sampling no..Limit:[-,500000]
+
+EXEC SQL END DECLARE SECTION;    
+             
+// 				             
+//C O N S T R U C T O R S    
+//=======================    
+//                           
+ACTDT_TRKDAT::ACTDT_TRKDAT()
+{
+	initial();                                             
+}
+
+//					
+//C O P Y  -  C O N S T R U C T O R 
+//==================================
+ACTDT_TRKDAT::ACTDT_TRKDAT(const ACTDT_TRKDAT &inst)
+{
+//----------------------------------------------------------
+	this->set_datee(inst.datee());
+//----------------------------------------------------------
+	this->set_timee(inst.timee());
+//----------------------------------------------------------
+	this->set_samp_no(inst.samp_no());
+//----------------------------------------------------------
+	this->set_wpdx_1(inst.wpdx_1());
+	this->set_wpdx_1Zi(inst.wpdx_1Zi());
+//----------------------------------------------------------
+	this->set_ti_1(inst.ti_1());
+	this->set_ti_1Zi(inst.ti_1Zi());
+//----------------------------------------------------------
+	this->set_plength_1(inst.plength_1());
+	this->set_plength_1Zi(inst.plength_1Zi());
+//----------------------------------------------------------
+	this->set_hcoil_id_1(inst.hcoil_id_1());
+	this->set_hcoil_id_1Zi(inst.hcoil_id_1Zi());
+//----------------------------------------------------------
+	this->set_wpdx_2(inst.wpdx_2());
+	this->set_wpdx_2Zi(inst.wpdx_2Zi());
+//----------------------------------------------------------
+	this->set_ti_2(inst.ti_2());
+	this->set_ti_2Zi(inst.ti_2Zi());
+//----------------------------------------------------------
+	this->set_plength_2(inst.plength_2());
+	this->set_plength_2Zi(inst.plength_2Zi());
+//----------------------------------------------------------
+	this->set_hcoil_id_2(inst.hcoil_id_2());
+	this->set_hcoil_id_2Zi(inst.hcoil_id_2Zi());
+//----------------------------------------------------------
+	this->set_wpdx_3(inst.wpdx_3());
+	this->set_wpdx_3Zi(inst.wpdx_3Zi());
+//----------------------------------------------------------
+	this->set_ti_3(inst.ti_3());
+	this->set_ti_3Zi(inst.ti_3Zi());
+//----------------------------------------------------------
+	this->set_plength_3(inst.plength_3());
+	this->set_plength_3Zi(inst.plength_3Zi());
+//----------------------------------------------------------
+	this->set_hcoil_id_3(inst.hcoil_id_3());
+	this->set_hcoil_id_3Zi(inst.hcoil_id_3Zi());
+//----------------------------------------------------------
+	this->set_wpdx_4(inst.wpdx_4());
+	this->set_wpdx_4Zi(inst.wpdx_4Zi());
+//----------------------------------------------------------
+	this->set_ti_4(inst.ti_4());
+	this->set_ti_4Zi(inst.ti_4Zi());
+//----------------------------------------------------------
+	this->set_plength_4(inst.plength_4());
+	this->set_plength_4Zi(inst.plength_4Zi());
+//----------------------------------------------------------
+	this->set_hcoil_id_4(inst.hcoil_id_4());
+	this->set_hcoil_id_4Zi(inst.hcoil_id_4Zi());
+//----------------------------------------------------------
+	this->set_wpdx_5(inst.wpdx_5());
+	this->set_wpdx_5Zi(inst.wpdx_5Zi());
+//----------------------------------------------------------
+	this->set_ti_5(inst.ti_5());
+	this->set_ti_5Zi(inst.ti_5Zi());
+//----------------------------------------------------------
+	this->set_plength_5(inst.plength_5());
+	this->set_plength_5Zi(inst.plength_5Zi());
+//----------------------------------------------------------
+	this->set_hcoil_id_5(inst.hcoil_id_5());
+	this->set_hcoil_id_5Zi(inst.hcoil_id_5Zi());
+//----------------------------------------------------------
+	this->set_wpdx_6(inst.wpdx_6());
+	this->set_wpdx_6Zi(inst.wpdx_6Zi());
+//----------------------------------------------------------
+	this->set_ti_6(inst.ti_6());
+	this->set_ti_6Zi(inst.ti_6Zi());
+//----------------------------------------------------------
+	this->set_plength_6(inst.plength_6());
+	this->set_plength_6Zi(inst.plength_6Zi());
+//----------------------------------------------------------
+	this->set_hcoil_id_6(inst.hcoil_id_6());
+	this->set_hcoil_id_6Zi(inst.hcoil_id_6Zi());
+//----------------------------------------------------------
+	this->set_wpdx_7(inst.wpdx_7());
+	this->set_wpdx_7Zi(inst.wpdx_7Zi());
+//----------------------------------------------------------
+	this->set_ti_7(inst.ti_7());
+	this->set_ti_7Zi(inst.ti_7Zi());
+//----------------------------------------------------------
+	this->set_plength_7(inst.plength_7());
+	this->set_plength_7Zi(inst.plength_7Zi());
+//----------------------------------------------------------
+	this->set_hcoil_id_7(inst.hcoil_id_7());
+	this->set_hcoil_id_7Zi(inst.hcoil_id_7Zi());
+//----------------------------------------------------------
+	this->set_wpdx_8(inst.wpdx_8());
+	this->set_wpdx_8Zi(inst.wpdx_8Zi());
+//----------------------------------------------------------
+	this->set_ti_8(inst.ti_8());
+	this->set_ti_8Zi(inst.ti_8Zi());
+//----------------------------------------------------------
+	this->set_plength_8(inst.plength_8());
+	this->set_plength_8Zi(inst.plength_8Zi());
+//----------------------------------------------------------
+	this->set_hcoil_id_8(inst.hcoil_id_8());
+	this->set_hcoil_id_8Zi(inst.hcoil_id_8Zi());
+//----------------------------------------------------------
+	this->set_wpdx_9(inst.wpdx_9());
+	this->set_wpdx_9Zi(inst.wpdx_9Zi());
+//----------------------------------------------------------
+	this->set_ti_9(inst.ti_9());
+	this->set_ti_9Zi(inst.ti_9Zi());
+//----------------------------------------------------------
+	this->set_plength_9(inst.plength_9());
+	this->set_plength_9Zi(inst.plength_9Zi());
+//----------------------------------------------------------
+	this->set_hcoil_id_9(inst.hcoil_id_9());
+	this->set_hcoil_id_9Zi(inst.hcoil_id_9Zi());
+//----------------------------------------------------------
+	this->set_wpdx_10(inst.wpdx_10());
+	this->set_wpdx_10Zi(inst.wpdx_10Zi());
+//----------------------------------------------------------
+	this->set_ti_10(inst.ti_10());
+	this->set_ti_10Zi(inst.ti_10Zi());
+//----------------------------------------------------------
+	this->set_plength_10(inst.plength_10());
+	this->set_plength_10Zi(inst.plength_10Zi());
+//----------------------------------------------------------
+	this->set_hcoil_id_10(inst.hcoil_id_10());
+	this->set_hcoil_id_10Zi(inst.hcoil_id_10Zi());
+//----------------------------------------------------------
+	this->set_wpdx_11(inst.wpdx_11());
+	this->set_wpdx_11Zi(inst.wpdx_11Zi());
+//----------------------------------------------------------
+	this->set_ti_11(inst.ti_11());
+	this->set_ti_11Zi(inst.ti_11Zi());
+//----------------------------------------------------------
+	this->set_plength_11(inst.plength_11());
+	this->set_plength_11Zi(inst.plength_11Zi());
+//----------------------------------------------------------
+	this->set_hcoil_id_11(inst.hcoil_id_11());
+	this->set_hcoil_id_11Zi(inst.hcoil_id_11Zi());
+//----------------------------------------------------------
+	this->set_wpdx_12(inst.wpdx_12());
+	this->set_wpdx_12Zi(inst.wpdx_12Zi());
+//----------------------------------------------------------
+	this->set_ti_12(inst.ti_12());
+	this->set_ti_12Zi(inst.ti_12Zi());
+//----------------------------------------------------------
+	this->set_plength_12(inst.plength_12());
+	this->set_plength_12Zi(inst.plength_12Zi());
+//----------------------------------------------------------
+	this->set_hcoil_id_12(inst.hcoil_id_12());
+	this->set_hcoil_id_12Zi(inst.hcoil_id_12Zi());
+//----------------------------------------------------------
+	this->set_wpdx_13(inst.wpdx_13());
+	this->set_wpdx_13Zi(inst.wpdx_13Zi());
+//----------------------------------------------------------
+	this->set_ti_13(inst.ti_13());
+	this->set_ti_13Zi(inst.ti_13Zi());
+//----------------------------------------------------------
+	this->set_plength_13(inst.plength_13());
+	this->set_plength_13Zi(inst.plength_13Zi());
+//----------------------------------------------------------
+	this->set_hcoil_id_13(inst.hcoil_id_13());
+	this->set_hcoil_id_13Zi(inst.hcoil_id_13Zi());
+//----------------------------------------------------------
+	this->set_wpdx_14(inst.wpdx_14());
+	this->set_wpdx_14Zi(inst.wpdx_14Zi());
+//----------------------------------------------------------
+	this->set_ti_14(inst.ti_14());
+	this->set_ti_14Zi(inst.ti_14Zi());
+//----------------------------------------------------------
+	this->set_plength_14(inst.plength_14());
+	this->set_plength_14Zi(inst.plength_14Zi());
+//----------------------------------------------------------
+	this->set_hcoil_id_14(inst.hcoil_id_14());
+	this->set_hcoil_id_14Zi(inst.hcoil_id_14Zi());
+//----------------------------------------------------------
+	this->set_wpdx_15(inst.wpdx_15());
+	this->set_wpdx_15Zi(inst.wpdx_15Zi());
+//----------------------------------------------------------
+	this->set_ti_15(inst.ti_15());
+	this->set_ti_15Zi(inst.ti_15Zi());
+//----------------------------------------------------------
+	this->set_plength_15(inst.plength_15());
+	this->set_plength_15Zi(inst.plength_15Zi());
+//----------------------------------------------------------
+	this->set_hcoil_id_15(inst.hcoil_id_15());
+	this->set_hcoil_id_15Zi(inst.hcoil_id_15Zi());
+//----------------------------------------------------------
+	this->set_wpdx_16(inst.wpdx_16());
+	this->set_wpdx_16Zi(inst.wpdx_16Zi());
+//----------------------------------------------------------
+	this->set_ti_16(inst.ti_16());
+	this->set_ti_16Zi(inst.ti_16Zi());
+//----------------------------------------------------------
+	this->set_plength_16(inst.plength_16());
+	this->set_plength_16Zi(inst.plength_16Zi());
+//----------------------------------------------------------
+	this->set_hcoil_id_16(inst.hcoil_id_16());
+	this->set_hcoil_id_16Zi(inst.hcoil_id_16Zi());
+//----------------------------------------------------------
+	this->set_wpdx_17(inst.wpdx_17());
+	this->set_wpdx_17Zi(inst.wpdx_17Zi());
+//----------------------------------------------------------
+	this->set_ti_17(inst.ti_17());
+	this->set_ti_17Zi(inst.ti_17Zi());
+//----------------------------------------------------------
+	this->set_plength_17(inst.plength_17());
+	this->set_plength_17Zi(inst.plength_17Zi());
+//----------------------------------------------------------
+	this->set_hcoil_id_17(inst.hcoil_id_17());
+	this->set_hcoil_id_17Zi(inst.hcoil_id_17Zi());
+//----------------------------------------------------------
+	this->set_wpdx_18(inst.wpdx_18());
+	this->set_wpdx_18Zi(inst.wpdx_18Zi());
+//----------------------------------------------------------
+	this->set_ti_18(inst.ti_18());
+	this->set_ti_18Zi(inst.ti_18Zi());
+//----------------------------------------------------------
+	this->set_plength_18(inst.plength_18());
+	this->set_plength_18Zi(inst.plength_18Zi());
+//----------------------------------------------------------
+	this->set_hcoil_id_18(inst.hcoil_id_18());
+	this->set_hcoil_id_18Zi(inst.hcoil_id_18Zi());
+//----------------------------------------------------------
+	this->set_wpdx_19(inst.wpdx_19());
+	this->set_wpdx_19Zi(inst.wpdx_19Zi());
+//----------------------------------------------------------
+	this->set_ti_19(inst.ti_19());
+	this->set_ti_19Zi(inst.ti_19Zi());
+//----------------------------------------------------------
+	this->set_plength_19(inst.plength_19());
+	this->set_plength_19Zi(inst.plength_19Zi());
+//----------------------------------------------------------
+	this->set_hcoil_id_19(inst.hcoil_id_19());
+	this->set_hcoil_id_19Zi(inst.hcoil_id_19Zi());
+//----------------------------------------------------------
+	this->set_wpdx_20(inst.wpdx_20());
+	this->set_wpdx_20Zi(inst.wpdx_20Zi());
+//----------------------------------------------------------
+	this->set_ti_20(inst.ti_20());
+	this->set_ti_20Zi(inst.ti_20Zi());
+//----------------------------------------------------------
+	this->set_plength_20(inst.plength_20());
+	this->set_plength_20Zi(inst.plength_20Zi());
+//----------------------------------------------------------
+	this->set_hcoil_id_20(inst.hcoil_id_20());
+	this->set_hcoil_id_20Zi(inst.hcoil_id_20Zi());
+//----------------------------------------------------------
+	this->set_wpdx_21(inst.wpdx_21());
+	this->set_wpdx_21Zi(inst.wpdx_21Zi());
+//----------------------------------------------------------
+	this->set_ti_21(inst.ti_21());
+	this->set_ti_21Zi(inst.ti_21Zi());
+//----------------------------------------------------------
+	this->set_plength_21(inst.plength_21());
+	this->set_plength_21Zi(inst.plength_21Zi());
+//----------------------------------------------------------
+	this->set_hcoil_id_21(inst.hcoil_id_21());
+	this->set_hcoil_id_21Zi(inst.hcoil_id_21Zi());
+//----------------------------------------------------------
+	this->set_wpdx_22(inst.wpdx_22());
+	this->set_wpdx_22Zi(inst.wpdx_22Zi());
+//----------------------------------------------------------
+	this->set_ti_22(inst.ti_22());
+	this->set_ti_22Zi(inst.ti_22Zi());
+//----------------------------------------------------------
+	this->set_plength_22(inst.plength_22());
+	this->set_plength_22Zi(inst.plength_22Zi());
+//----------------------------------------------------------
+	this->set_hcoil_id_22(inst.hcoil_id_22());
+	this->set_hcoil_id_22Zi(inst.hcoil_id_22Zi());
+//----------------------------------------------------------
+	this->set_wpdx_23(inst.wpdx_23());
+	this->set_wpdx_23Zi(inst.wpdx_23Zi());
+//----------------------------------------------------------
+	this->set_ti_23(inst.ti_23());
+	this->set_ti_23Zi(inst.ti_23Zi());
+//----------------------------------------------------------
+	this->set_plength_23(inst.plength_23());
+	this->set_plength_23Zi(inst.plength_23Zi());
+//----------------------------------------------------------
+	this->set_hcoil_id_23(inst.hcoil_id_23());
+	this->set_hcoil_id_23Zi(inst.hcoil_id_23Zi());
+//----------------------------------------------------------
+	this->set_wpdx_24(inst.wpdx_24());
+	this->set_wpdx_24Zi(inst.wpdx_24Zi());
+//----------------------------------------------------------
+	this->set_ti_24(inst.ti_24());
+	this->set_ti_24Zi(inst.ti_24Zi());
+//----------------------------------------------------------
+	this->set_plength_24(inst.plength_24());
+	this->set_plength_24Zi(inst.plength_24Zi());
+//----------------------------------------------------------
+	this->set_hcoil_id_24(inst.hcoil_id_24());
+	this->set_hcoil_id_24Zi(inst.hcoil_id_24Zi());
+//----------------------------------------------------------
+	this->set_toc(inst.toc());
+	this->set_tocZi(inst.tocZi());
+//----------------------------------------------------------
+	this->set_tom(inst.tom());
+	this->set_tomZi(inst.tomZi());
+//----------------------------------------------------------
+	this->set_mop(inst.mop());
+	this->set_mopZi(inst.mopZi());
+}
+
+//					
+//C O N S T R U C T O R -W I T H P A R A M E T E R S
+//===================================================
+//					
+ACTDT_TRKDAT::ACTDT_TRKDAT(short arg1)
+{
+	initial();					               
+	setPrimKey (arg1);    
+	//read DB record                           
+	dbAccess = true;                           
+	dbMessage = readDB();                      
+	if ( dbMessage != NULL ) dbAccess = false; 
+}
+
+//D E S T R U C T O R S  
+//=======================
+//                       
+ACTDT_TRKDAT::~ACTDT_TRKDAT()
+{
+}
+
+//initialise all member variables
+void ACTDT_TRKDAT::initial()
+{
+	set_datee("");
+	set_timee("");
+	set_samp_no(0);
+	set_wpdx_1(0);
+	set_wpdx_1Zi(-1);
+	set_ti_1(0);
+	set_ti_1Zi(-1);
+	set_plength_1(0);
+	set_plength_1Zi(-1);
+	set_hcoil_id_1("");
+	set_hcoil_id_1Zi(-1);
+	set_wpdx_2(0);
+	set_wpdx_2Zi(-1);
+	set_ti_2(0);
+	set_ti_2Zi(-1);
+	set_plength_2(0);
+	set_plength_2Zi(-1);
+	set_hcoil_id_2("");
+	set_hcoil_id_2Zi(-1);
+	set_wpdx_3(0);
+	set_wpdx_3Zi(-1);
+	set_ti_3(0);
+	set_ti_3Zi(-1);
+	set_plength_3(0);
+	set_plength_3Zi(-1);
+	set_hcoil_id_3("");
+	set_hcoil_id_3Zi(-1);
+	set_wpdx_4(0);
+	set_wpdx_4Zi(-1);
+	set_ti_4(0);
+	set_ti_4Zi(-1);
+	set_plength_4(0);
+	set_plength_4Zi(-1);
+	set_hcoil_id_4("");
+	set_hcoil_id_4Zi(-1);
+	set_wpdx_5(0);
+	set_wpdx_5Zi(-1);
+	set_ti_5(0);
+	set_ti_5Zi(-1);
+	set_plength_5(0);
+	set_plength_5Zi(-1);
+	set_hcoil_id_5("");
+	set_hcoil_id_5Zi(-1);
+	set_wpdx_6(0);
+	set_wpdx_6Zi(-1);
+	set_ti_6(0);
+	set_ti_6Zi(-1);
+	set_plength_6(0);
+	set_plength_6Zi(-1);
+	set_hcoil_id_6("");
+	set_hcoil_id_6Zi(-1);
+	set_wpdx_7(0);
+	set_wpdx_7Zi(-1);
+	set_ti_7(0);
+	set_ti_7Zi(-1);
+	set_plength_7(0);
+	set_plength_7Zi(-1);
+	set_hcoil_id_7("");
+	set_hcoil_id_7Zi(-1);
+	set_wpdx_8(0);
+	set_wpdx_8Zi(-1);
+	set_ti_8(0);
+	set_ti_8Zi(-1);
+	set_plength_8(0);
+	set_plength_8Zi(-1);
+	set_hcoil_id_8("");
+	set_hcoil_id_8Zi(-1);
+	set_wpdx_9(0);
+	set_wpdx_9Zi(-1);
+	set_ti_9(0);
+	set_ti_9Zi(-1);
+	set_plength_9(0);
+	set_plength_9Zi(-1);
+	set_hcoil_id_9("");
+	set_hcoil_id_9Zi(-1);
+	set_wpdx_10(0);
+	set_wpdx_10Zi(-1);
+	set_ti_10(0);
+	set_ti_10Zi(-1);
+	set_plength_10(0);
+	set_plength_10Zi(-1);
+	set_hcoil_id_10("");
+	set_hcoil_id_10Zi(-1);
+	set_wpdx_11(0);
+	set_wpdx_11Zi(-1);
+	set_ti_11(0);
+	set_ti_11Zi(-1);
+	set_plength_11(0);
+	set_plength_11Zi(-1);
+	set_hcoil_id_11("");
+	set_hcoil_id_11Zi(-1);
+	set_wpdx_12(0);
+	set_wpdx_12Zi(-1);
+	set_ti_12(0);
+	set_ti_12Zi(-1);
+	set_plength_12(0);
+	set_plength_12Zi(-1);
+	set_hcoil_id_12("");
+	set_hcoil_id_12Zi(-1);
+	set_wpdx_13(0);
+	set_wpdx_13Zi(-1);
+	set_ti_13(0);
+	set_ti_13Zi(-1);
+	set_plength_13(0);
+	set_plength_13Zi(-1);
+	set_hcoil_id_13("");
+	set_hcoil_id_13Zi(-1);
+	set_wpdx_14(0);
+	set_wpdx_14Zi(-1);
+	set_ti_14(0);
+	set_ti_14Zi(-1);
+	set_plength_14(0);
+	set_plength_14Zi(-1);
+	set_hcoil_id_14("");
+	set_hcoil_id_14Zi(-1);
+	set_wpdx_15(0);
+	set_wpdx_15Zi(-1);
+	set_ti_15(0);
+	set_ti_15Zi(-1);
+	set_plength_15(0);
+	set_plength_15Zi(-1);
+	set_hcoil_id_15("");
+	set_hcoil_id_15Zi(-1);
+	set_wpdx_16(0);
+	set_wpdx_16Zi(-1);
+	set_ti_16(0);
+	set_ti_16Zi(-1);
+	set_plength_16(0);
+	set_plength_16Zi(-1);
+	set_hcoil_id_16("");
+	set_hcoil_id_16Zi(-1);
+	set_wpdx_17(0);
+	set_wpdx_17Zi(-1);
+	set_ti_17(0);
+	set_ti_17Zi(-1);
+	set_plength_17(0);
+	set_plength_17Zi(-1);
+	set_hcoil_id_17("");
+	set_hcoil_id_17Zi(-1);
+	set_wpdx_18(0);
+	set_wpdx_18Zi(-1);
+	set_ti_18(0);
+	set_ti_18Zi(-1);
+	set_plength_18(0);
+	set_plength_18Zi(-1);
+	set_hcoil_id_18("");
+	set_hcoil_id_18Zi(-1);
+	set_wpdx_19(0);
+	set_wpdx_19Zi(-1);
+	set_ti_19(0);
+	set_ti_19Zi(-1);
+	set_plength_19(0);
+	set_plength_19Zi(-1);
+	set_hcoil_id_19("");
+	set_hcoil_id_19Zi(-1);
+	set_wpdx_20(0);
+	set_wpdx_20Zi(-1);
+	set_ti_20(0);
+	set_ti_20Zi(-1);
+	set_plength_20(0);
+	set_plength_20Zi(-1);
+	set_hcoil_id_20("");
+	set_hcoil_id_20Zi(-1);
+	set_wpdx_21(0);
+	set_wpdx_21Zi(-1);
+	set_ti_21(0);
+	set_ti_21Zi(-1);
+	set_plength_21(0);
+	set_plength_21Zi(-1);
+	set_hcoil_id_21("");
+	set_hcoil_id_21Zi(-1);
+	set_wpdx_22(0);
+	set_wpdx_22Zi(-1);
+	set_ti_22(0);
+	set_ti_22Zi(-1);
+	set_plength_22(0);
+	set_plength_22Zi(-1);
+	set_hcoil_id_22("");
+	set_hcoil_id_22Zi(-1);
+	set_wpdx_23(0);
+	set_wpdx_23Zi(-1);
+	set_ti_23(0);
+	set_ti_23Zi(-1);
+	set_plength_23(0);
+	set_plength_23Zi(-1);
+	set_hcoil_id_23("");
+	set_hcoil_id_23Zi(-1);
+	set_wpdx_24(0);
+	set_wpdx_24Zi(-1);
+	set_ti_24(0);
+	set_ti_24Zi(-1);
+	set_plength_24(0);
+	set_plength_24Zi(-1);
+	set_hcoil_id_24("");
+	set_hcoil_id_24Zi(-1);
+	set_toc("");
+	set_tocZi(-1);
+	set_tom("");
+	set_tomZi(-1);
+	set_mop("");
+	set_mopZi(-1);
+	//initialies Primary key members
+	set_k_samp_no(0);
+// Initial Oracle Options
+	oraca.oradbgf  = 1; // gather debug informations       
+	oraca.oracchf  = 1; // gather cursor cache informations
+	oraca.orahchf  = 1; // check heap                      
+	oraca.orastxtf = 3; // always save last sql-statement  
+	                                                       
+	EXEC ORACLE OPTION (ORACA=YES);                        
+	EXEC ORACLE OPTION (HOLD_CURSOR=YES);                  
+	EXEC ORACLE OPTION (RELEASE_CURSOR=NO);                
+	EXEC ORACLE OPTION (MAXOPENCURSORS=50);                
+	pCatch = CatchDbaxError::instance();                   
+	                                                       
+}
+
+//read a single entry from DB.
+char* ACTDT_TRKDAT::readDB()
+{
+	//
+	//copy the host variables (k_...) to Oracle Host Keys (k_ora_..)
+	//
+		copyKeyToHost();
+	//
+	// Do SELECT
+	//
+	EXEC SQL SELECT 
+		datee,
+		timee,
+		samp_no,
+		wpdx_1,
+		ti_1,
+		plength_1,
+		hcoil_id_1,
+		wpdx_2,
+		ti_2,
+		plength_2,
+		hcoil_id_2,
+		wpdx_3,
+		ti_3,
+		plength_3,
+		hcoil_id_3,
+		wpdx_4,
+		ti_4,
+		plength_4,
+		hcoil_id_4,
+		wpdx_5,
+		ti_5,
+		plength_5,
+		hcoil_id_5,
+		wpdx_6,
+		ti_6,
+		plength_6,
+		hcoil_id_6,
+		wpdx_7,
+		ti_7,
+		plength_7,
+		hcoil_id_7,
+		wpdx_8,
+		ti_8,
+		plength_8,
+		hcoil_id_8,
+		wpdx_9,
+		ti_9,
+		plength_9,
+		hcoil_id_9,
+		wpdx_10,
+		ti_10,
+		plength_10,
+		hcoil_id_10,
+		wpdx_11,
+		ti_11,
+		plength_11,
+		hcoil_id_11,
+		wpdx_12,
+		ti_12,
+		plength_12,
+		hcoil_id_12,
+		wpdx_13,
+		ti_13,
+		plength_13,
+		hcoil_id_13,
+		wpdx_14,
+		ti_14,
+		plength_14,
+		hcoil_id_14,
+		wpdx_15,
+		ti_15,
+		plength_15,
+		hcoil_id_15,
+		wpdx_16,
+		ti_16,
+		plength_16,
+		hcoil_id_16,
+		wpdx_17,
+		ti_17,
+		plength_17,
+		hcoil_id_17,
+		wpdx_18,
+		ti_18,
+		plength_18,
+		hcoil_id_18,
+		wpdx_19,
+		ti_19,
+		plength_19,
+		hcoil_id_19,
+		wpdx_20,
+		ti_20,
+		plength_20,
+		hcoil_id_20,
+		wpdx_21,
+		ti_21,
+		plength_21,
+		hcoil_id_21,
+		wpdx_22,
+		ti_22,
+		plength_22,
+		hcoil_id_22,
+		wpdx_23,
+		ti_23,
+		plength_23,
+		hcoil_id_23,
+		wpdx_24,
+		ti_24,
+		plength_24,
+		hcoil_id_24,
+		TO_CHAR(toc , 'YYYYMMDDHH24MISS'),
+		TO_CHAR(tom , 'YYYYMMDDHH24MISS'),
+		mop
+	INTO
+		:ora_datee,
+		:ora_timee,
+		:ora_samp_no,
+		:ora_wpdx_1:ora_wpdx_1Zi,
+		:ora_ti_1:ora_ti_1Zi,
+		:ora_plength_1:ora_plength_1Zi,
+		:ora_hcoil_id_1:ora_hcoil_id_1Zi,
+		:ora_wpdx_2:ora_wpdx_2Zi,
+		:ora_ti_2:ora_ti_2Zi,
+		:ora_plength_2:ora_plength_2Zi,
+		:ora_hcoil_id_2:ora_hcoil_id_2Zi,
+		:ora_wpdx_3:ora_wpdx_3Zi,
+		:ora_ti_3:ora_ti_3Zi,
+		:ora_plength_3:ora_plength_3Zi,
+		:ora_hcoil_id_3:ora_hcoil_id_3Zi,
+		:ora_wpdx_4:ora_wpdx_4Zi,
+		:ora_ti_4:ora_ti_4Zi,
+		:ora_plength_4:ora_plength_4Zi,
+		:ora_hcoil_id_4:ora_hcoil_id_4Zi,
+		:ora_wpdx_5:ora_wpdx_5Zi,
+		:ora_ti_5:ora_ti_5Zi,
+		:ora_plength_5:ora_plength_5Zi,
+		:ora_hcoil_id_5:ora_hcoil_id_5Zi,
+		:ora_wpdx_6:ora_wpdx_6Zi,
+		:ora_ti_6:ora_ti_6Zi,
+		:ora_plength_6:ora_plength_6Zi,
+		:ora_hcoil_id_6:ora_hcoil_id_6Zi,
+		:ora_wpdx_7:ora_wpdx_7Zi,
+		:ora_ti_7:ora_ti_7Zi,
+		:ora_plength_7:ora_plength_7Zi,
+		:ora_hcoil_id_7:ora_hcoil_id_7Zi,
+		:ora_wpdx_8:ora_wpdx_8Zi,
+		:ora_ti_8:ora_ti_8Zi,
+		:ora_plength_8:ora_plength_8Zi,
+		:ora_hcoil_id_8:ora_hcoil_id_8Zi,
+		:ora_wpdx_9:ora_wpdx_9Zi,
+		:ora_ti_9:ora_ti_9Zi,
+		:ora_plength_9:ora_plength_9Zi,
+		:ora_hcoil_id_9:ora_hcoil_id_9Zi,
+		:ora_wpdx_10:ora_wpdx_10Zi,
+		:ora_ti_10:ora_ti_10Zi,
+		:ora_plength_10:ora_plength_10Zi,
+		:ora_hcoil_id_10:ora_hcoil_id_10Zi,
+		:ora_wpdx_11:ora_wpdx_11Zi,
+		:ora_ti_11:ora_ti_11Zi,
+		:ora_plength_11:ora_plength_11Zi,
+		:ora_hcoil_id_11:ora_hcoil_id_11Zi,
+		:ora_wpdx_12:ora_wpdx_12Zi,
+		:ora_ti_12:ora_ti_12Zi,
+		:ora_plength_12:ora_plength_12Zi,
+		:ora_hcoil_id_12:ora_hcoil_id_12Zi,
+		:ora_wpdx_13:ora_wpdx_13Zi,
+		:ora_ti_13:ora_ti_13Zi,
+		:ora_plength_13:ora_plength_13Zi,
+		:ora_hcoil_id_13:ora_hcoil_id_13Zi,
+		:ora_wpdx_14:ora_wpdx_14Zi,
+		:ora_ti_14:ora_ti_14Zi,
+		:ora_plength_14:ora_plength_14Zi,
+		:ora_hcoil_id_14:ora_hcoil_id_14Zi,
+		:ora_wpdx_15:ora_wpdx_15Zi,
+		:ora_ti_15:ora_ti_15Zi,
+		:ora_plength_15:ora_plength_15Zi,
+		:ora_hcoil_id_15:ora_hcoil_id_15Zi,
+		:ora_wpdx_16:ora_wpdx_16Zi,
+		:ora_ti_16:ora_ti_16Zi,
+		:ora_plength_16:ora_plength_16Zi,
+		:ora_hcoil_id_16:ora_hcoil_id_16Zi,
+		:ora_wpdx_17:ora_wpdx_17Zi,
+		:ora_ti_17:ora_ti_17Zi,
+		:ora_plength_17:ora_plength_17Zi,
+		:ora_hcoil_id_17:ora_hcoil_id_17Zi,
+		:ora_wpdx_18:ora_wpdx_18Zi,
+		:ora_ti_18:ora_ti_18Zi,
+		:ora_plength_18:ora_plength_18Zi,
+		:ora_hcoil_id_18:ora_hcoil_id_18Zi,
+		:ora_wpdx_19:ora_wpdx_19Zi,
+		:ora_ti_19:ora_ti_19Zi,
+		:ora_plength_19:ora_plength_19Zi,
+		:ora_hcoil_id_19:ora_hcoil_id_19Zi,
+		:ora_wpdx_20:ora_wpdx_20Zi,
+		:ora_ti_20:ora_ti_20Zi,
+		:ora_plength_20:ora_plength_20Zi,
+		:ora_hcoil_id_20:ora_hcoil_id_20Zi,
+		:ora_wpdx_21:ora_wpdx_21Zi,
+		:ora_ti_21:ora_ti_21Zi,
+		:ora_plength_21:ora_plength_21Zi,
+		:ora_hcoil_id_21:ora_hcoil_id_21Zi,
+		:ora_wpdx_22:ora_wpdx_22Zi,
+		:ora_ti_22:ora_ti_22Zi,
+		:ora_plength_22:ora_plength_22Zi,
+		:ora_hcoil_id_22:ora_hcoil_id_22Zi,
+		:ora_wpdx_23:ora_wpdx_23Zi,
+		:ora_ti_23:ora_ti_23Zi,
+		:ora_plength_23:ora_plength_23Zi,
+		:ora_hcoil_id_23:ora_hcoil_id_23Zi,
+		:ora_wpdx_24:ora_wpdx_24Zi,
+		:ora_ti_24:ora_ti_24Zi,
+		:ora_plength_24:ora_plength_24Zi,
+		:ora_hcoil_id_24:ora_hcoil_id_24Zi,
+		:ora_toc:ora_tocZi,
+		:ora_tom:ora_tomZi,
+		:ora_mop:ora_mopZi
+	FROM ACTDT_TRKDAT
+	WHERE
+				samp_no         = :k_ora_samp_no ;
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	//
+	// copy host variables into Class attributes
+	//
+	copyOracleToAttribute();
+	return ( NULL );
+}
+
+//updates a single entry from DB
+char* ACTDT_TRKDAT::updateDB()
+{
+	//
+	//copy the host variables (k_...) to Oracle Host Keys (k_ora_..)
+	//
+		copyKeyToHost();
+	//copy the attributes ( ...) to Oracle Hosts( ora_..)
+	//
+		copyAttributeToOracle();
+	//
+	// Do UPDATE
+	//
+	EXEC SQL UPDATE ACTDT_TRKDAT
+	SET 
+		datee               =:ora_datee,
+		timee               =:ora_timee,
+		samp_no             =:ora_samp_no,
+		wpdx_1              =:ora_wpdx_1:ora_wpdx_1Zi,
+		ti_1                =:ora_ti_1:ora_ti_1Zi,
+		plength_1           =:ora_plength_1:ora_plength_1Zi,
+		hcoil_id_1          =:ora_hcoil_id_1:ora_hcoil_id_1Zi,
+		wpdx_2              =:ora_wpdx_2:ora_wpdx_2Zi,
+		ti_2                =:ora_ti_2:ora_ti_2Zi,
+		plength_2           =:ora_plength_2:ora_plength_2Zi,
+		hcoil_id_2          =:ora_hcoil_id_2:ora_hcoil_id_2Zi,
+		wpdx_3              =:ora_wpdx_3:ora_wpdx_3Zi,
+		ti_3                =:ora_ti_3:ora_ti_3Zi,
+		plength_3           =:ora_plength_3:ora_plength_3Zi,
+		hcoil_id_3          =:ora_hcoil_id_3:ora_hcoil_id_3Zi,
+		wpdx_4              =:ora_wpdx_4:ora_wpdx_4Zi,
+		ti_4                =:ora_ti_4:ora_ti_4Zi,
+		plength_4           =:ora_plength_4:ora_plength_4Zi,
+		hcoil_id_4          =:ora_hcoil_id_4:ora_hcoil_id_4Zi,
+		wpdx_5              =:ora_wpdx_5:ora_wpdx_5Zi,
+		ti_5                =:ora_ti_5:ora_ti_5Zi,
+		plength_5           =:ora_plength_5:ora_plength_5Zi,
+		hcoil_id_5          =:ora_hcoil_id_5:ora_hcoil_id_5Zi,
+		wpdx_6              =:ora_wpdx_6:ora_wpdx_6Zi,
+		ti_6                =:ora_ti_6:ora_ti_6Zi,
+		plength_6           =:ora_plength_6:ora_plength_6Zi,
+		hcoil_id_6          =:ora_hcoil_id_6:ora_hcoil_id_6Zi,
+		wpdx_7              =:ora_wpdx_7:ora_wpdx_7Zi,
+		ti_7                =:ora_ti_7:ora_ti_7Zi,
+		plength_7           =:ora_plength_7:ora_plength_7Zi,
+		hcoil_id_7          =:ora_hcoil_id_7:ora_hcoil_id_7Zi,
+		wpdx_8              =:ora_wpdx_8:ora_wpdx_8Zi,
+		ti_8                =:ora_ti_8:ora_ti_8Zi,
+		plength_8           =:ora_plength_8:ora_plength_8Zi,
+		hcoil_id_8          =:ora_hcoil_id_8:ora_hcoil_id_8Zi,
+		wpdx_9              =:ora_wpdx_9:ora_wpdx_9Zi,
+		ti_9                =:ora_ti_9:ora_ti_9Zi,
+		plength_9           =:ora_plength_9:ora_plength_9Zi,
+		hcoil_id_9          =:ora_hcoil_id_9:ora_hcoil_id_9Zi,
+		wpdx_10             =:ora_wpdx_10:ora_wpdx_10Zi,
+		ti_10               =:ora_ti_10:ora_ti_10Zi,
+		plength_10          =:ora_plength_10:ora_plength_10Zi,
+		hcoil_id_10         =:ora_hcoil_id_10:ora_hcoil_id_10Zi,
+		wpdx_11             =:ora_wpdx_11:ora_wpdx_11Zi,
+		ti_11               =:ora_ti_11:ora_ti_11Zi,
+		plength_11          =:ora_plength_11:ora_plength_11Zi,
+		hcoil_id_11         =:ora_hcoil_id_11:ora_hcoil_id_11Zi,
+		wpdx_12             =:ora_wpdx_12:ora_wpdx_12Zi,
+		ti_12               =:ora_ti_12:ora_ti_12Zi,
+		plength_12          =:ora_plength_12:ora_plength_12Zi,
+		hcoil_id_12         =:ora_hcoil_id_12:ora_hcoil_id_12Zi,
+		wpdx_13             =:ora_wpdx_13:ora_wpdx_13Zi,
+		ti_13               =:ora_ti_13:ora_ti_13Zi,
+		plength_13          =:ora_plength_13:ora_plength_13Zi,
+		hcoil_id_13         =:ora_hcoil_id_13:ora_hcoil_id_13Zi,
+		wpdx_14             =:ora_wpdx_14:ora_wpdx_14Zi,
+		ti_14               =:ora_ti_14:ora_ti_14Zi,
+		plength_14          =:ora_plength_14:ora_plength_14Zi,
+		hcoil_id_14         =:ora_hcoil_id_14:ora_hcoil_id_14Zi,
+		wpdx_15             =:ora_wpdx_15:ora_wpdx_15Zi,
+		ti_15               =:ora_ti_15:ora_ti_15Zi,
+		plength_15          =:ora_plength_15:ora_plength_15Zi,
+		hcoil_id_15         =:ora_hcoil_id_15:ora_hcoil_id_15Zi,
+		wpdx_16             =:ora_wpdx_16:ora_wpdx_16Zi,
+		ti_16               =:ora_ti_16:ora_ti_16Zi,
+		plength_16          =:ora_plength_16:ora_plength_16Zi,
+		hcoil_id_16         =:ora_hcoil_id_16:ora_hcoil_id_16Zi,
+		wpdx_17             =:ora_wpdx_17:ora_wpdx_17Zi,
+		ti_17               =:ora_ti_17:ora_ti_17Zi,
+		plength_17          =:ora_plength_17:ora_plength_17Zi,
+		hcoil_id_17         =:ora_hcoil_id_17:ora_hcoil_id_17Zi,
+		wpdx_18             =:ora_wpdx_18:ora_wpdx_18Zi,
+		ti_18               =:ora_ti_18:ora_ti_18Zi,
+		plength_18          =:ora_plength_18:ora_plength_18Zi,
+		hcoil_id_18         =:ora_hcoil_id_18:ora_hcoil_id_18Zi,
+		wpdx_19             =:ora_wpdx_19:ora_wpdx_19Zi,
+		ti_19               =:ora_ti_19:ora_ti_19Zi,
+		plength_19          =:ora_plength_19:ora_plength_19Zi,
+		hcoil_id_19         =:ora_hcoil_id_19:ora_hcoil_id_19Zi,
+		wpdx_20             =:ora_wpdx_20:ora_wpdx_20Zi,
+		ti_20               =:ora_ti_20:ora_ti_20Zi,
+		plength_20          =:ora_plength_20:ora_plength_20Zi,
+		hcoil_id_20         =:ora_hcoil_id_20:ora_hcoil_id_20Zi,
+		wpdx_21             =:ora_wpdx_21:ora_wpdx_21Zi,
+		ti_21               =:ora_ti_21:ora_ti_21Zi,
+		plength_21          =:ora_plength_21:ora_plength_21Zi,
+		hcoil_id_21         =:ora_hcoil_id_21:ora_hcoil_id_21Zi,
+		wpdx_22             =:ora_wpdx_22:ora_wpdx_22Zi,
+		ti_22               =:ora_ti_22:ora_ti_22Zi,
+		plength_22          =:ora_plength_22:ora_plength_22Zi,
+		hcoil_id_22         =:ora_hcoil_id_22:ora_hcoil_id_22Zi,
+		wpdx_23             =:ora_wpdx_23:ora_wpdx_23Zi,
+		ti_23               =:ora_ti_23:ora_ti_23Zi,
+		plength_23          =:ora_plength_23:ora_plength_23Zi,
+		hcoil_id_23         =:ora_hcoil_id_23:ora_hcoil_id_23Zi,
+		wpdx_24             =:ora_wpdx_24:ora_wpdx_24Zi,
+		ti_24               =:ora_ti_24:ora_ti_24Zi,
+		plength_24          =:ora_plength_24:ora_plength_24Zi,
+		hcoil_id_24         =:ora_hcoil_id_24:ora_hcoil_id_24Zi,
+		toc                 =TO_DATE( :ora_toc:ora_tocZi,'YYYYMMDDHH24MISS'),
+		tom                 =TO_DATE( :ora_tom:ora_tomZi,'YYYYMMDDHH24MISS'),
+		mop                 =:ora_mop:ora_mopZi
+	WHERE
+		samp_no         = :k_ora_samp_no ;
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//inserts a single entry from DB
+char* ACTDT_TRKDAT::insertDB()
+{
+	//
+	//copy the attributes ( ...) to Oracle Hosts( ora_..) 
+	//
+		copyAttributeToOracle();
+	//
+	// Do INSERT
+	//
+	EXEC SQL INSERT INTO ACTDT_TRKDAT
+	(
+		datee,
+		timee,
+		samp_no,
+		wpdx_1,
+		ti_1,
+		plength_1,
+		hcoil_id_1,
+		wpdx_2,
+		ti_2,
+		plength_2,
+		hcoil_id_2,
+		wpdx_3,
+		ti_3,
+		plength_3,
+		hcoil_id_3,
+		wpdx_4,
+		ti_4,
+		plength_4,
+		hcoil_id_4,
+		wpdx_5,
+		ti_5,
+		plength_5,
+		hcoil_id_5,
+		wpdx_6,
+		ti_6,
+		plength_6,
+		hcoil_id_6,
+		wpdx_7,
+		ti_7,
+		plength_7,
+		hcoil_id_7,
+		wpdx_8,
+		ti_8,
+		plength_8,
+		hcoil_id_8,
+		wpdx_9,
+		ti_9,
+		plength_9,
+		hcoil_id_9,
+		wpdx_10,
+		ti_10,
+		plength_10,
+		hcoil_id_10,
+		wpdx_11,
+		ti_11,
+		plength_11,
+		hcoil_id_11,
+		wpdx_12,
+		ti_12,
+		plength_12,
+		hcoil_id_12,
+		wpdx_13,
+		ti_13,
+		plength_13,
+		hcoil_id_13,
+		wpdx_14,
+		ti_14,
+		plength_14,
+		hcoil_id_14,
+		wpdx_15,
+		ti_15,
+		plength_15,
+		hcoil_id_15,
+		wpdx_16,
+		ti_16,
+		plength_16,
+		hcoil_id_16,
+		wpdx_17,
+		ti_17,
+		plength_17,
+		hcoil_id_17,
+		wpdx_18,
+		ti_18,
+		plength_18,
+		hcoil_id_18,
+		wpdx_19,
+		ti_19,
+		plength_19,
+		hcoil_id_19,
+		wpdx_20,
+		ti_20,
+		plength_20,
+		hcoil_id_20,
+		wpdx_21,
+		ti_21,
+		plength_21,
+		hcoil_id_21,
+		wpdx_22,
+		ti_22,
+		plength_22,
+		hcoil_id_22,
+		wpdx_23,
+		ti_23,
+		plength_23,
+		hcoil_id_23,
+		wpdx_24,
+		ti_24,
+		plength_24,
+		hcoil_id_24,
+		toc,
+		tom,
+		mop
+	)
+
+	VALUES
+	(
+		:ora_datee,
+		:ora_timee,
+		:ora_samp_no,
+		:ora_wpdx_1:ora_wpdx_1Zi,
+		:ora_ti_1:ora_ti_1Zi,
+		:ora_plength_1:ora_plength_1Zi,
+		:ora_hcoil_id_1:ora_hcoil_id_1Zi,
+		:ora_wpdx_2:ora_wpdx_2Zi,
+		:ora_ti_2:ora_ti_2Zi,
+		:ora_plength_2:ora_plength_2Zi,
+		:ora_hcoil_id_2:ora_hcoil_id_2Zi,
+		:ora_wpdx_3:ora_wpdx_3Zi,
+		:ora_ti_3:ora_ti_3Zi,
+		:ora_plength_3:ora_plength_3Zi,
+		:ora_hcoil_id_3:ora_hcoil_id_3Zi,
+		:ora_wpdx_4:ora_wpdx_4Zi,
+		:ora_ti_4:ora_ti_4Zi,
+		:ora_plength_4:ora_plength_4Zi,
+		:ora_hcoil_id_4:ora_hcoil_id_4Zi,
+		:ora_wpdx_5:ora_wpdx_5Zi,
+		:ora_ti_5:ora_ti_5Zi,
+		:ora_plength_5:ora_plength_5Zi,
+		:ora_hcoil_id_5:ora_hcoil_id_5Zi,
+		:ora_wpdx_6:ora_wpdx_6Zi,
+		:ora_ti_6:ora_ti_6Zi,
+		:ora_plength_6:ora_plength_6Zi,
+		:ora_hcoil_id_6:ora_hcoil_id_6Zi,
+		:ora_wpdx_7:ora_wpdx_7Zi,
+		:ora_ti_7:ora_ti_7Zi,
+		:ora_plength_7:ora_plength_7Zi,
+		:ora_hcoil_id_7:ora_hcoil_id_7Zi,
+		:ora_wpdx_8:ora_wpdx_8Zi,
+		:ora_ti_8:ora_ti_8Zi,
+		:ora_plength_8:ora_plength_8Zi,
+		:ora_hcoil_id_8:ora_hcoil_id_8Zi,
+		:ora_wpdx_9:ora_wpdx_9Zi,
+		:ora_ti_9:ora_ti_9Zi,
+		:ora_plength_9:ora_plength_9Zi,
+		:ora_hcoil_id_9:ora_hcoil_id_9Zi,
+		:ora_wpdx_10:ora_wpdx_10Zi,
+		:ora_ti_10:ora_ti_10Zi,
+		:ora_plength_10:ora_plength_10Zi,
+		:ora_hcoil_id_10:ora_hcoil_id_10Zi,
+		:ora_wpdx_11:ora_wpdx_11Zi,
+		:ora_ti_11:ora_ti_11Zi,
+		:ora_plength_11:ora_plength_11Zi,
+		:ora_hcoil_id_11:ora_hcoil_id_11Zi,
+		:ora_wpdx_12:ora_wpdx_12Zi,
+		:ora_ti_12:ora_ti_12Zi,
+		:ora_plength_12:ora_plength_12Zi,
+		:ora_hcoil_id_12:ora_hcoil_id_12Zi,
+		:ora_wpdx_13:ora_wpdx_13Zi,
+		:ora_ti_13:ora_ti_13Zi,
+		:ora_plength_13:ora_plength_13Zi,
+		:ora_hcoil_id_13:ora_hcoil_id_13Zi,
+		:ora_wpdx_14:ora_wpdx_14Zi,
+		:ora_ti_14:ora_ti_14Zi,
+		:ora_plength_14:ora_plength_14Zi,
+		:ora_hcoil_id_14:ora_hcoil_id_14Zi,
+		:ora_wpdx_15:ora_wpdx_15Zi,
+		:ora_ti_15:ora_ti_15Zi,
+		:ora_plength_15:ora_plength_15Zi,
+		:ora_hcoil_id_15:ora_hcoil_id_15Zi,
+		:ora_wpdx_16:ora_wpdx_16Zi,
+		:ora_ti_16:ora_ti_16Zi,
+		:ora_plength_16:ora_plength_16Zi,
+		:ora_hcoil_id_16:ora_hcoil_id_16Zi,
+		:ora_wpdx_17:ora_wpdx_17Zi,
+		:ora_ti_17:ora_ti_17Zi,
+		:ora_plength_17:ora_plength_17Zi,
+		:ora_hcoil_id_17:ora_hcoil_id_17Zi,
+		:ora_wpdx_18:ora_wpdx_18Zi,
+		:ora_ti_18:ora_ti_18Zi,
+		:ora_plength_18:ora_plength_18Zi,
+		:ora_hcoil_id_18:ora_hcoil_id_18Zi,
+		:ora_wpdx_19:ora_wpdx_19Zi,
+		:ora_ti_19:ora_ti_19Zi,
+		:ora_plength_19:ora_plength_19Zi,
+		:ora_hcoil_id_19:ora_hcoil_id_19Zi,
+		:ora_wpdx_20:ora_wpdx_20Zi,
+		:ora_ti_20:ora_ti_20Zi,
+		:ora_plength_20:ora_plength_20Zi,
+		:ora_hcoil_id_20:ora_hcoil_id_20Zi,
+		:ora_wpdx_21:ora_wpdx_21Zi,
+		:ora_ti_21:ora_ti_21Zi,
+		:ora_plength_21:ora_plength_21Zi,
+		:ora_hcoil_id_21:ora_hcoil_id_21Zi,
+		:ora_wpdx_22:ora_wpdx_22Zi,
+		:ora_ti_22:ora_ti_22Zi,
+		:ora_plength_22:ora_plength_22Zi,
+		:ora_hcoil_id_22:ora_hcoil_id_22Zi,
+		:ora_wpdx_23:ora_wpdx_23Zi,
+		:ora_ti_23:ora_ti_23Zi,
+		:ora_plength_23:ora_plength_23Zi,
+		:ora_hcoil_id_23:ora_hcoil_id_23Zi,
+		:ora_wpdx_24:ora_wpdx_24Zi,
+		:ora_ti_24:ora_ti_24Zi,
+		:ora_plength_24:ora_plength_24Zi,
+		:ora_hcoil_id_24:ora_hcoil_id_24Zi,
+		TO_DATE( :ora_toc:ora_tocZi,'YYYYMMDDHH24MISS'),
+		TO_DATE( :ora_tom:ora_tomZi,'YYYYMMDDHH24MISS'),
+		:ora_mop:ora_mopZi
+	);
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//this methode tries to update a DB record,when the update fails.
+char* ACTDT_TRKDAT::storeDB()
+{
+	char* ret = NULL;
+	setKeysFromRecord();
+	ret=updateDB();
+	if(ret != NULL)
+	{
+		ret=insertDB();
+		if(ret != NULL)
+		{
+			dbAccess = false;
+			return(ret);
+		}
+	}
+	return(ret);
+}
+
+//deletes a single entry from DB
+char* ACTDT_TRKDAT::deleteDB()
+{
+//
+//copy the host variables (k_...) to Oracle Host Keys (k_ora_..)
+//
+	copyKeyToHost();
+
+//
+// Do Delete 
+//
+	EXEC SQL DELETE FROM ACTDT_TRKDAT
+	WHERE
+				samp_no         = :k_ora_samp_no ;
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+// Executes the SQL DELETE with a where clause
+char* ACTDT_TRKDAT::deleteDB(const char* where,long* count)
+{
+	*(count) = -1L;
+// Create dynamic statement.
+//
+	strcpy((char*)dynstr.arr,"DELETE");
+	strcat((char*)dynstr.arr," FROM ACTDT_TRKDAT");
+	if ( where != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, where );
+	}
+
+	dynstr.len = strlen( (char*) dynstr.arr);
+	EXEC SQL EXECUTE IMMEDIATE :dynstr;
+	oracleSqlCode = sqlca.sqlcode;
+		oracleRowsProcessed = sqlca.sqlerrd[2];
+	if (sqlca.sqlcode == 0 )
+		*(count) = sqlca.sqlerrd[2];
+	else 
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//openSetDB data with where condition and sort order.
+char* ACTDT_TRKDAT::openSetDB(const char* where,char* order)
+{
+//
+// Create dynamic statement.
+//
+	strcpy((char*)dynstr.arr,"SELECT ");
+	strcat((char*)dynstr.arr,"datee,");
+	strcat((char*)dynstr.arr,"timee,");
+	strcat((char*)dynstr.arr,"samp_no,");
+	strcat((char*)dynstr.arr,"wpdx_1,");
+	strcat((char*)dynstr.arr,"ti_1,");
+	strcat((char*)dynstr.arr,"plength_1,");
+	strcat((char*)dynstr.arr,"hcoil_id_1,");
+	strcat((char*)dynstr.arr,"wpdx_2,");
+	strcat((char*)dynstr.arr,"ti_2,");
+	strcat((char*)dynstr.arr,"plength_2,");
+	strcat((char*)dynstr.arr,"hcoil_id_2,");
+	strcat((char*)dynstr.arr,"wpdx_3,");
+	strcat((char*)dynstr.arr,"ti_3,");
+	strcat((char*)dynstr.arr,"plength_3,");
+	strcat((char*)dynstr.arr,"hcoil_id_3,");
+	strcat((char*)dynstr.arr,"wpdx_4,");
+	strcat((char*)dynstr.arr,"ti_4,");
+	strcat((char*)dynstr.arr,"plength_4,");
+	strcat((char*)dynstr.arr,"hcoil_id_4,");
+	strcat((char*)dynstr.arr,"wpdx_5,");
+	strcat((char*)dynstr.arr,"ti_5,");
+	strcat((char*)dynstr.arr,"plength_5,");
+	strcat((char*)dynstr.arr,"hcoil_id_5,");
+	strcat((char*)dynstr.arr,"wpdx_6,");
+	strcat((char*)dynstr.arr,"ti_6,");
+	strcat((char*)dynstr.arr,"plength_6,");
+	strcat((char*)dynstr.arr,"hcoil_id_6,");
+	strcat((char*)dynstr.arr,"wpdx_7,");
+	strcat((char*)dynstr.arr,"ti_7,");
+	strcat((char*)dynstr.arr,"plength_7,");
+	strcat((char*)dynstr.arr,"hcoil_id_7,");
+	strcat((char*)dynstr.arr,"wpdx_8,");
+	strcat((char*)dynstr.arr,"ti_8,");
+	strcat((char*)dynstr.arr,"plength_8,");
+	strcat((char*)dynstr.arr,"hcoil_id_8,");
+	strcat((char*)dynstr.arr,"wpdx_9,");
+	strcat((char*)dynstr.arr,"ti_9,");
+	strcat((char*)dynstr.arr,"plength_9,");
+	strcat((char*)dynstr.arr,"hcoil_id_9,");
+	strcat((char*)dynstr.arr,"wpdx_10,");
+	strcat((char*)dynstr.arr,"ti_10,");
+	strcat((char*)dynstr.arr,"plength_10,");
+	strcat((char*)dynstr.arr,"hcoil_id_10,");
+	strcat((char*)dynstr.arr,"wpdx_11,");
+	strcat((char*)dynstr.arr,"ti_11,");
+	strcat((char*)dynstr.arr,"plength_11,");
+	strcat((char*)dynstr.arr,"hcoil_id_11,");
+	strcat((char*)dynstr.arr,"wpdx_12,");
+	strcat((char*)dynstr.arr,"ti_12,");
+	strcat((char*)dynstr.arr,"plength_12,");
+	strcat((char*)dynstr.arr,"hcoil_id_12,");
+	strcat((char*)dynstr.arr,"wpdx_13,");
+	strcat((char*)dynstr.arr,"ti_13,");
+	strcat((char*)dynstr.arr,"plength_13,");
+	strcat((char*)dynstr.arr,"hcoil_id_13,");
+	strcat((char*)dynstr.arr,"wpdx_14,");
+	strcat((char*)dynstr.arr,"ti_14,");
+	strcat((char*)dynstr.arr,"plength_14,");
+	strcat((char*)dynstr.arr,"hcoil_id_14,");
+	strcat((char*)dynstr.arr,"wpdx_15,");
+	strcat((char*)dynstr.arr,"ti_15,");
+	strcat((char*)dynstr.arr,"plength_15,");
+	strcat((char*)dynstr.arr,"hcoil_id_15,");
+	strcat((char*)dynstr.arr,"wpdx_16,");
+	strcat((char*)dynstr.arr,"ti_16,");
+	strcat((char*)dynstr.arr,"plength_16,");
+	strcat((char*)dynstr.arr,"hcoil_id_16,");
+	strcat((char*)dynstr.arr,"wpdx_17,");
+	strcat((char*)dynstr.arr,"ti_17,");
+	strcat((char*)dynstr.arr,"plength_17,");
+	strcat((char*)dynstr.arr,"hcoil_id_17,");
+	strcat((char*)dynstr.arr,"wpdx_18,");
+	strcat((char*)dynstr.arr,"ti_18,");
+	strcat((char*)dynstr.arr,"plength_18,");
+	strcat((char*)dynstr.arr,"hcoil_id_18,");
+	strcat((char*)dynstr.arr,"wpdx_19,");
+	strcat((char*)dynstr.arr,"ti_19,");
+	strcat((char*)dynstr.arr,"plength_19,");
+	strcat((char*)dynstr.arr,"hcoil_id_19,");
+	strcat((char*)dynstr.arr,"wpdx_20,");
+	strcat((char*)dynstr.arr,"ti_20,");
+	strcat((char*)dynstr.arr,"plength_20,");
+	strcat((char*)dynstr.arr,"hcoil_id_20,");
+	strcat((char*)dynstr.arr,"wpdx_21,");
+	strcat((char*)dynstr.arr,"ti_21,");
+	strcat((char*)dynstr.arr,"plength_21,");
+	strcat((char*)dynstr.arr,"hcoil_id_21,");
+	strcat((char*)dynstr.arr,"wpdx_22,");
+	strcat((char*)dynstr.arr,"ti_22,");
+	strcat((char*)dynstr.arr,"plength_22,");
+	strcat((char*)dynstr.arr,"hcoil_id_22,");
+	strcat((char*)dynstr.arr,"wpdx_23,");
+	strcat((char*)dynstr.arr,"ti_23,");
+	strcat((char*)dynstr.arr,"plength_23,");
+	strcat((char*)dynstr.arr,"hcoil_id_23,");
+	strcat((char*)dynstr.arr,"wpdx_24,");
+	strcat((char*)dynstr.arr,"ti_24,");
+	strcat((char*)dynstr.arr,"plength_24,");
+	strcat((char*)dynstr.arr,"hcoil_id_24,");
+	strcat((char*)dynstr.arr,"TO_CHAR(toc , 'YYYYMMDDHH24MISS'),");
+	strcat((char*)dynstr.arr,"TO_CHAR(tom , 'YYYYMMDDHH24MISS'),");
+	strcat((char*)dynstr.arr,"mop");
+
+	strcat((char*)dynstr.arr," FROM ACTDT_TRKDAT ");
+	if ( where != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, where);
+	}
+	if ( order != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, order);
+	}
+
+	dynstr.len = strlen( (char*) dynstr.arr);
+	EXEC SQL PREPARE set_ACTDT_TRKDAT FROM :dynstr;
+	if (sqlca.sqlcode == 0 )
+	{
+		EXEC SQL DECLARE cu_ACTDT_TRKDAT CURSOR FOR set_ACTDT_TRKDAT;
+		if (sqlca.sqlcode == 0 )
+			EXEC SQL OPEN cu_ACTDT_TRKDAT;
+	}
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	cuFl = OPENED;
+	return ( NULL );
+}
+
+//Executes the SQL FETCH Statement .
+char* ACTDT_TRKDAT::getSetDB()
+{
+	if ( cuFl != OPENED ) return ("No open Cursor Table:Me");
+	EXEC SQL FETCH cu_ACTDT_TRKDAT INTO
+		:ora_datee,
+		:ora_timee,
+		:ora_samp_no,
+		:ora_wpdx_1:ora_wpdx_1Zi,
+		:ora_ti_1:ora_ti_1Zi,
+		:ora_plength_1:ora_plength_1Zi,
+		:ora_hcoil_id_1:ora_hcoil_id_1Zi,
+		:ora_wpdx_2:ora_wpdx_2Zi,
+		:ora_ti_2:ora_ti_2Zi,
+		:ora_plength_2:ora_plength_2Zi,
+		:ora_hcoil_id_2:ora_hcoil_id_2Zi,
+		:ora_wpdx_3:ora_wpdx_3Zi,
+		:ora_ti_3:ora_ti_3Zi,
+		:ora_plength_3:ora_plength_3Zi,
+		:ora_hcoil_id_3:ora_hcoil_id_3Zi,
+		:ora_wpdx_4:ora_wpdx_4Zi,
+		:ora_ti_4:ora_ti_4Zi,
+		:ora_plength_4:ora_plength_4Zi,
+		:ora_hcoil_id_4:ora_hcoil_id_4Zi,
+		:ora_wpdx_5:ora_wpdx_5Zi,
+		:ora_ti_5:ora_ti_5Zi,
+		:ora_plength_5:ora_plength_5Zi,
+		:ora_hcoil_id_5:ora_hcoil_id_5Zi,
+		:ora_wpdx_6:ora_wpdx_6Zi,
+		:ora_ti_6:ora_ti_6Zi,
+		:ora_plength_6:ora_plength_6Zi,
+		:ora_hcoil_id_6:ora_hcoil_id_6Zi,
+		:ora_wpdx_7:ora_wpdx_7Zi,
+		:ora_ti_7:ora_ti_7Zi,
+		:ora_plength_7:ora_plength_7Zi,
+		:ora_hcoil_id_7:ora_hcoil_id_7Zi,
+		:ora_wpdx_8:ora_wpdx_8Zi,
+		:ora_ti_8:ora_ti_8Zi,
+		:ora_plength_8:ora_plength_8Zi,
+		:ora_hcoil_id_8:ora_hcoil_id_8Zi,
+		:ora_wpdx_9:ora_wpdx_9Zi,
+		:ora_ti_9:ora_ti_9Zi,
+		:ora_plength_9:ora_plength_9Zi,
+		:ora_hcoil_id_9:ora_hcoil_id_9Zi,
+		:ora_wpdx_10:ora_wpdx_10Zi,
+		:ora_ti_10:ora_ti_10Zi,
+		:ora_plength_10:ora_plength_10Zi,
+		:ora_hcoil_id_10:ora_hcoil_id_10Zi,
+		:ora_wpdx_11:ora_wpdx_11Zi,
+		:ora_ti_11:ora_ti_11Zi,
+		:ora_plength_11:ora_plength_11Zi,
+		:ora_hcoil_id_11:ora_hcoil_id_11Zi,
+		:ora_wpdx_12:ora_wpdx_12Zi,
+		:ora_ti_12:ora_ti_12Zi,
+		:ora_plength_12:ora_plength_12Zi,
+		:ora_hcoil_id_12:ora_hcoil_id_12Zi,
+		:ora_wpdx_13:ora_wpdx_13Zi,
+		:ora_ti_13:ora_ti_13Zi,
+		:ora_plength_13:ora_plength_13Zi,
+		:ora_hcoil_id_13:ora_hcoil_id_13Zi,
+		:ora_wpdx_14:ora_wpdx_14Zi,
+		:ora_ti_14:ora_ti_14Zi,
+		:ora_plength_14:ora_plength_14Zi,
+		:ora_hcoil_id_14:ora_hcoil_id_14Zi,
+		:ora_wpdx_15:ora_wpdx_15Zi,
+		:ora_ti_15:ora_ti_15Zi,
+		:ora_plength_15:ora_plength_15Zi,
+		:ora_hcoil_id_15:ora_hcoil_id_15Zi,
+		:ora_wpdx_16:ora_wpdx_16Zi,
+		:ora_ti_16:ora_ti_16Zi,
+		:ora_plength_16:ora_plength_16Zi,
+		:ora_hcoil_id_16:ora_hcoil_id_16Zi,
+		:ora_wpdx_17:ora_wpdx_17Zi,
+		:ora_ti_17:ora_ti_17Zi,
+		:ora_plength_17:ora_plength_17Zi,
+		:ora_hcoil_id_17:ora_hcoil_id_17Zi,
+		:ora_wpdx_18:ora_wpdx_18Zi,
+		:ora_ti_18:ora_ti_18Zi,
+		:ora_plength_18:ora_plength_18Zi,
+		:ora_hcoil_id_18:ora_hcoil_id_18Zi,
+		:ora_wpdx_19:ora_wpdx_19Zi,
+		:ora_ti_19:ora_ti_19Zi,
+		:ora_plength_19:ora_plength_19Zi,
+		:ora_hcoil_id_19:ora_hcoil_id_19Zi,
+		:ora_wpdx_20:ora_wpdx_20Zi,
+		:ora_ti_20:ora_ti_20Zi,
+		:ora_plength_20:ora_plength_20Zi,
+		:ora_hcoil_id_20:ora_hcoil_id_20Zi,
+		:ora_wpdx_21:ora_wpdx_21Zi,
+		:ora_ti_21:ora_ti_21Zi,
+		:ora_plength_21:ora_plength_21Zi,
+		:ora_hcoil_id_21:ora_hcoil_id_21Zi,
+		:ora_wpdx_22:ora_wpdx_22Zi,
+		:ora_ti_22:ora_ti_22Zi,
+		:ora_plength_22:ora_plength_22Zi,
+		:ora_hcoil_id_22:ora_hcoil_id_22Zi,
+		:ora_wpdx_23:ora_wpdx_23Zi,
+		:ora_ti_23:ora_ti_23Zi,
+		:ora_plength_23:ora_plength_23Zi,
+		:ora_hcoil_id_23:ora_hcoil_id_23Zi,
+		:ora_wpdx_24:ora_wpdx_24Zi,
+		:ora_ti_24:ora_ti_24Zi,
+		:ora_plength_24:ora_plength_24Zi,
+		:ora_hcoil_id_24:ora_hcoil_id_24Zi,
+		:ora_toc:ora_tocZi,
+		:ora_tom:ora_tomZi,
+		:ora_mop:ora_mopZi;
+
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		pCatch->catchError(sqlca.sqlcode);
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		return (char*) sqlca.sqlerrm.sqlerrmc ;
+	}
+	//
+	// copy host variables into Class attributes
+	//
+	copyOracleToAttribute();
+	copyHostToKey();
+	return ( NULL );
+}
+
+//Close a Oracle Cursor
+char* ACTDT_TRKDAT::closeSetDB()
+{
+	EXEC SQL CLOSE cu_ACTDT_TRKDAT;
+	oracleSqlCode = sqlca.sqlcode;         
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		pCatch->catchError(sqlca.sqlcode);
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		return (char*) sqlca.sqlerrm.sqlerrmc ;
+	}
+	cuFl = CLOSED;
+	return ( NULL );
+}
+
+//Executes the SQL count(key) for a where clause
+char* ACTDT_TRKDAT::countDB(const char* where,long* count)
+{
+	*(count) = -1L;
+//
+// Create dynamic statement. 
+//
+	strncpy((char*)dynstr.arr,"SELECT count(samp_no)", sizeof(dynstr.arr));
+	strcat((char*)dynstr.arr," FROM ACTDT_TRKDAT");
+	if ( where != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, where );
+	}
+	dynstr.len = strlen( (char*) dynstr.arr);
+	EXEC SQL PREPARE c_ACTDT_TRKDAT FROM :dynstr;
+	
+	if (sqlca.sqlcode == 0 )
+	{
+		EXEC SQL DECLARE ct_ACTDT_TRKDAT CURSOR FOR c_ACTDT_TRKDAT;
+		if (sqlca.sqlcode == 0 )
+		{
+			EXEC SQL OPEN ct_ACTDT_TRKDAT;
+			if (sqlca.sqlcode == 0 )			{
+				EXEC SQL FETCH ct_ACTDT_TRKDAT INTO :rowCnt;
+				if (sqlca.sqlcode == 0 )
+				*(count) = rowCnt;
+			}
+			EXEC SQL CLOSE ct_ACTDT_TRKDAT;
+		}
+	}
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//private methode copy Attribute to Oracle
+//copys Object attributes into Oracle Host variables.
+void ACTDT_TRKDAT::copyAttributeToOracle()
+{
+	char* ptrStr;
+	ptrStr = this->datee();
+	if( strlen(ptrStr)< sizeof(ora_datee.arr))
+	{
+		strncpy((char*)ora_datee.arr, ptrStr, sizeof(ora_datee.arr));
+		ora_datee.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_datee.len = 0;
+	ptrStr = this->timee();
+	if( strlen(ptrStr)< sizeof(ora_timee.arr))
+	{
+		strncpy((char*)ora_timee.arr, ptrStr, sizeof(ora_timee.arr));
+		ora_timee.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_timee.len = 0;
+	ora_samp_no = this->samp_no();
+	ora_wpdx_1 = this->wpdx_1();
+	ora_wpdx_1Zi = this->wpdx_1Zi();
+	ora_ti_1 = this->ti_1();
+	ora_ti_1Zi = this->ti_1Zi();
+	ora_plength_1 = this->plength_1();
+	ora_plength_1Zi = this->plength_1Zi();
+	ptrStr = this->hcoil_id_1();
+	if( strlen(ptrStr)< sizeof(ora_hcoil_id_1.arr))
+	{
+		strncpy((char*)ora_hcoil_id_1.arr, ptrStr, sizeof(ora_hcoil_id_1.arr));
+		ora_hcoil_id_1.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_hcoil_id_1.len = 0;
+	ora_hcoil_id_1Zi = this->hcoil_id_1Zi();
+	ora_wpdx_2 = this->wpdx_2();
+	ora_wpdx_2Zi = this->wpdx_2Zi();
+	ora_ti_2 = this->ti_2();
+	ora_ti_2Zi = this->ti_2Zi();
+	ora_plength_2 = this->plength_2();
+	ora_plength_2Zi = this->plength_2Zi();
+	ptrStr = this->hcoil_id_2();
+	if( strlen(ptrStr)< sizeof(ora_hcoil_id_2.arr))
+	{
+		strncpy((char*)ora_hcoil_id_2.arr, ptrStr, sizeof(ora_hcoil_id_2.arr));
+		ora_hcoil_id_2.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_hcoil_id_2.len = 0;
+	ora_hcoil_id_2Zi = this->hcoil_id_2Zi();
+	ora_wpdx_3 = this->wpdx_3();
+	ora_wpdx_3Zi = this->wpdx_3Zi();
+	ora_ti_3 = this->ti_3();
+	ora_ti_3Zi = this->ti_3Zi();
+	ora_plength_3 = this->plength_3();
+	ora_plength_3Zi = this->plength_3Zi();
+	ptrStr = this->hcoil_id_3();
+	if( strlen(ptrStr)< sizeof(ora_hcoil_id_3.arr))
+	{
+		strncpy((char*)ora_hcoil_id_3.arr, ptrStr, sizeof(ora_hcoil_id_3.arr));
+		ora_hcoil_id_3.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_hcoil_id_3.len = 0;
+	ora_hcoil_id_3Zi = this->hcoil_id_3Zi();
+	ora_wpdx_4 = this->wpdx_4();
+	ora_wpdx_4Zi = this->wpdx_4Zi();
+	ora_ti_4 = this->ti_4();
+	ora_ti_4Zi = this->ti_4Zi();
+	ora_plength_4 = this->plength_4();
+	ora_plength_4Zi = this->plength_4Zi();
+	ptrStr = this->hcoil_id_4();
+	if( strlen(ptrStr)< sizeof(ora_hcoil_id_4.arr))
+	{
+		strncpy((char*)ora_hcoil_id_4.arr, ptrStr, sizeof(ora_hcoil_id_4.arr));
+		ora_hcoil_id_4.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_hcoil_id_4.len = 0;
+	ora_hcoil_id_4Zi = this->hcoil_id_4Zi();
+	ora_wpdx_5 = this->wpdx_5();
+	ora_wpdx_5Zi = this->wpdx_5Zi();
+	ora_ti_5 = this->ti_5();
+	ora_ti_5Zi = this->ti_5Zi();
+	ora_plength_5 = this->plength_5();
+	ora_plength_5Zi = this->plength_5Zi();
+	ptrStr = this->hcoil_id_5();
+	if( strlen(ptrStr)< sizeof(ora_hcoil_id_5.arr))
+	{
+		strncpy((char*)ora_hcoil_id_5.arr, ptrStr, sizeof(ora_hcoil_id_5.arr));
+		ora_hcoil_id_5.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_hcoil_id_5.len = 0;
+	ora_hcoil_id_5Zi = this->hcoil_id_5Zi();
+	ora_wpdx_6 = this->wpdx_6();
+	ora_wpdx_6Zi = this->wpdx_6Zi();
+	ora_ti_6 = this->ti_6();
+	ora_ti_6Zi = this->ti_6Zi();
+	ora_plength_6 = this->plength_6();
+	ora_plength_6Zi = this->plength_6Zi();
+	ptrStr = this->hcoil_id_6();
+	if( strlen(ptrStr)< sizeof(ora_hcoil_id_6.arr))
+	{
+		strncpy((char*)ora_hcoil_id_6.arr, ptrStr, sizeof(ora_hcoil_id_6.arr));
+		ora_hcoil_id_6.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_hcoil_id_6.len = 0;
+	ora_hcoil_id_6Zi = this->hcoil_id_6Zi();
+	ora_wpdx_7 = this->wpdx_7();
+	ora_wpdx_7Zi = this->wpdx_7Zi();
+	ora_ti_7 = this->ti_7();
+	ora_ti_7Zi = this->ti_7Zi();
+	ora_plength_7 = this->plength_7();
+	ora_plength_7Zi = this->plength_7Zi();
+	ptrStr = this->hcoil_id_7();
+	if( strlen(ptrStr)< sizeof(ora_hcoil_id_7.arr))
+	{
+		strncpy((char*)ora_hcoil_id_7.arr, ptrStr, sizeof(ora_hcoil_id_7.arr));
+		ora_hcoil_id_7.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_hcoil_id_7.len = 0;
+	ora_hcoil_id_7Zi = this->hcoil_id_7Zi();
+	ora_wpdx_8 = this->wpdx_8();
+	ora_wpdx_8Zi = this->wpdx_8Zi();
+	ora_ti_8 = this->ti_8();
+	ora_ti_8Zi = this->ti_8Zi();
+	ora_plength_8 = this->plength_8();
+	ora_plength_8Zi = this->plength_8Zi();
+	ptrStr = this->hcoil_id_8();
+	if( strlen(ptrStr)< sizeof(ora_hcoil_id_8.arr))
+	{
+		strncpy((char*)ora_hcoil_id_8.arr, ptrStr, sizeof(ora_hcoil_id_8.arr));
+		ora_hcoil_id_8.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_hcoil_id_8.len = 0;
+	ora_hcoil_id_8Zi = this->hcoil_id_8Zi();
+	ora_wpdx_9 = this->wpdx_9();
+	ora_wpdx_9Zi = this->wpdx_9Zi();
+	ora_ti_9 = this->ti_9();
+	ora_ti_9Zi = this->ti_9Zi();
+	ora_plength_9 = this->plength_9();
+	ora_plength_9Zi = this->plength_9Zi();
+	ptrStr = this->hcoil_id_9();
+	if( strlen(ptrStr)< sizeof(ora_hcoil_id_9.arr))
+	{
+		strncpy((char*)ora_hcoil_id_9.arr, ptrStr, sizeof(ora_hcoil_id_9.arr));
+		ora_hcoil_id_9.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_hcoil_id_9.len = 0;
+	ora_hcoil_id_9Zi = this->hcoil_id_9Zi();
+	ora_wpdx_10 = this->wpdx_10();
+	ora_wpdx_10Zi = this->wpdx_10Zi();
+	ora_ti_10 = this->ti_10();
+	ora_ti_10Zi = this->ti_10Zi();
+	ora_plength_10 = this->plength_10();
+	ora_plength_10Zi = this->plength_10Zi();
+	ptrStr = this->hcoil_id_10();
+	if( strlen(ptrStr)< sizeof(ora_hcoil_id_10.arr))
+	{
+		strncpy((char*)ora_hcoil_id_10.arr, ptrStr, sizeof(ora_hcoil_id_10.arr));
+		ora_hcoil_id_10.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_hcoil_id_10.len = 0;
+	ora_hcoil_id_10Zi = this->hcoil_id_10Zi();
+	ora_wpdx_11 = this->wpdx_11();
+	ora_wpdx_11Zi = this->wpdx_11Zi();
+	ora_ti_11 = this->ti_11();
+	ora_ti_11Zi = this->ti_11Zi();
+	ora_plength_11 = this->plength_11();
+	ora_plength_11Zi = this->plength_11Zi();
+	ptrStr = this->hcoil_id_11();
+	if( strlen(ptrStr)< sizeof(ora_hcoil_id_11.arr))
+	{
+		strncpy((char*)ora_hcoil_id_11.arr, ptrStr, sizeof(ora_hcoil_id_11.arr));
+		ora_hcoil_id_11.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_hcoil_id_11.len = 0;
+	ora_hcoil_id_11Zi = this->hcoil_id_11Zi();
+	ora_wpdx_12 = this->wpdx_12();
+	ora_wpdx_12Zi = this->wpdx_12Zi();
+	ora_ti_12 = this->ti_12();
+	ora_ti_12Zi = this->ti_12Zi();
+	ora_plength_12 = this->plength_12();
+	ora_plength_12Zi = this->plength_12Zi();
+	ptrStr = this->hcoil_id_12();
+	if( strlen(ptrStr)< sizeof(ora_hcoil_id_12.arr))
+	{
+		strncpy((char*)ora_hcoil_id_12.arr, ptrStr, sizeof(ora_hcoil_id_12.arr));
+		ora_hcoil_id_12.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_hcoil_id_12.len = 0;
+	ora_hcoil_id_12Zi = this->hcoil_id_12Zi();
+	ora_wpdx_13 = this->wpdx_13();
+	ora_wpdx_13Zi = this->wpdx_13Zi();
+	ora_ti_13 = this->ti_13();
+	ora_ti_13Zi = this->ti_13Zi();
+	ora_plength_13 = this->plength_13();
+	ora_plength_13Zi = this->plength_13Zi();
+	ptrStr = this->hcoil_id_13();
+	if( strlen(ptrStr)< sizeof(ora_hcoil_id_13.arr))
+	{
+		strncpy((char*)ora_hcoil_id_13.arr, ptrStr, sizeof(ora_hcoil_id_13.arr));
+		ora_hcoil_id_13.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_hcoil_id_13.len = 0;
+	ora_hcoil_id_13Zi = this->hcoil_id_13Zi();
+	ora_wpdx_14 = this->wpdx_14();
+	ora_wpdx_14Zi = this->wpdx_14Zi();
+	ora_ti_14 = this->ti_14();
+	ora_ti_14Zi = this->ti_14Zi();
+	ora_plength_14 = this->plength_14();
+	ora_plength_14Zi = this->plength_14Zi();
+	ptrStr = this->hcoil_id_14();
+	if( strlen(ptrStr)< sizeof(ora_hcoil_id_14.arr))
+	{
+		strncpy((char*)ora_hcoil_id_14.arr, ptrStr, sizeof(ora_hcoil_id_14.arr));
+		ora_hcoil_id_14.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_hcoil_id_14.len = 0;
+	ora_hcoil_id_14Zi = this->hcoil_id_14Zi();
+	ora_wpdx_15 = this->wpdx_15();
+	ora_wpdx_15Zi = this->wpdx_15Zi();
+	ora_ti_15 = this->ti_15();
+	ora_ti_15Zi = this->ti_15Zi();
+	ora_plength_15 = this->plength_15();
+	ora_plength_15Zi = this->plength_15Zi();
+	ptrStr = this->hcoil_id_15();
+	if( strlen(ptrStr)< sizeof(ora_hcoil_id_15.arr))
+	{
+		strncpy((char*)ora_hcoil_id_15.arr, ptrStr, sizeof(ora_hcoil_id_15.arr));
+		ora_hcoil_id_15.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_hcoil_id_15.len = 0;
+	ora_hcoil_id_15Zi = this->hcoil_id_15Zi();
+	ora_wpdx_16 = this->wpdx_16();
+	ora_wpdx_16Zi = this->wpdx_16Zi();
+	ora_ti_16 = this->ti_16();
+	ora_ti_16Zi = this->ti_16Zi();
+	ora_plength_16 = this->plength_16();
+	ora_plength_16Zi = this->plength_16Zi();
+	ptrStr = this->hcoil_id_16();
+	if( strlen(ptrStr)< sizeof(ora_hcoil_id_16.arr))
+	{
+		strncpy((char*)ora_hcoil_id_16.arr, ptrStr, sizeof(ora_hcoil_id_16.arr));
+		ora_hcoil_id_16.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_hcoil_id_16.len = 0;
+	ora_hcoil_id_16Zi = this->hcoil_id_16Zi();
+	ora_wpdx_17 = this->wpdx_17();
+	ora_wpdx_17Zi = this->wpdx_17Zi();
+	ora_ti_17 = this->ti_17();
+	ora_ti_17Zi = this->ti_17Zi();
+	ora_plength_17 = this->plength_17();
+	ora_plength_17Zi = this->plength_17Zi();
+	ptrStr = this->hcoil_id_17();
+	if( strlen(ptrStr)< sizeof(ora_hcoil_id_17.arr))
+	{
+		strncpy((char*)ora_hcoil_id_17.arr, ptrStr, sizeof(ora_hcoil_id_17.arr));
+		ora_hcoil_id_17.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_hcoil_id_17.len = 0;
+	ora_hcoil_id_17Zi = this->hcoil_id_17Zi();
+	ora_wpdx_18 = this->wpdx_18();
+	ora_wpdx_18Zi = this->wpdx_18Zi();
+	ora_ti_18 = this->ti_18();
+	ora_ti_18Zi = this->ti_18Zi();
+	ora_plength_18 = this->plength_18();
+	ora_plength_18Zi = this->plength_18Zi();
+	ptrStr = this->hcoil_id_18();
+	if( strlen(ptrStr)< sizeof(ora_hcoil_id_18.arr))
+	{
+		strncpy((char*)ora_hcoil_id_18.arr, ptrStr, sizeof(ora_hcoil_id_18.arr));
+		ora_hcoil_id_18.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_hcoil_id_18.len = 0;
+	ora_hcoil_id_18Zi = this->hcoil_id_18Zi();
+	ora_wpdx_19 = this->wpdx_19();
+	ora_wpdx_19Zi = this->wpdx_19Zi();
+	ora_ti_19 = this->ti_19();
+	ora_ti_19Zi = this->ti_19Zi();
+	ora_plength_19 = this->plength_19();
+	ora_plength_19Zi = this->plength_19Zi();
+	ptrStr = this->hcoil_id_19();
+	if( strlen(ptrStr)< sizeof(ora_hcoil_id_19.arr))
+	{
+		strncpy((char*)ora_hcoil_id_19.arr, ptrStr, sizeof(ora_hcoil_id_19.arr));
+		ora_hcoil_id_19.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_hcoil_id_19.len = 0;
+	ora_hcoil_id_19Zi = this->hcoil_id_19Zi();
+	ora_wpdx_20 = this->wpdx_20();
+	ora_wpdx_20Zi = this->wpdx_20Zi();
+	ora_ti_20 = this->ti_20();
+	ora_ti_20Zi = this->ti_20Zi();
+	ora_plength_20 = this->plength_20();
+	ora_plength_20Zi = this->plength_20Zi();
+	ptrStr = this->hcoil_id_20();
+	if( strlen(ptrStr)< sizeof(ora_hcoil_id_20.arr))
+	{
+		strncpy((char*)ora_hcoil_id_20.arr, ptrStr, sizeof(ora_hcoil_id_20.arr));
+		ora_hcoil_id_20.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_hcoil_id_20.len = 0;
+	ora_hcoil_id_20Zi = this->hcoil_id_20Zi();
+	ora_wpdx_21 = this->wpdx_21();
+	ora_wpdx_21Zi = this->wpdx_21Zi();
+	ora_ti_21 = this->ti_21();
+	ora_ti_21Zi = this->ti_21Zi();
+	ora_plength_21 = this->plength_21();
+	ora_plength_21Zi = this->plength_21Zi();
+	ptrStr = this->hcoil_id_21();
+	if( strlen(ptrStr)< sizeof(ora_hcoil_id_21.arr))
+	{
+		strncpy((char*)ora_hcoil_id_21.arr, ptrStr, sizeof(ora_hcoil_id_21.arr));
+		ora_hcoil_id_21.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_hcoil_id_21.len = 0;
+	ora_hcoil_id_21Zi = this->hcoil_id_21Zi();
+	ora_wpdx_22 = this->wpdx_22();
+	ora_wpdx_22Zi = this->wpdx_22Zi();
+	ora_ti_22 = this->ti_22();
+	ora_ti_22Zi = this->ti_22Zi();
+	ora_plength_22 = this->plength_22();
+	ora_plength_22Zi = this->plength_22Zi();
+	ptrStr = this->hcoil_id_22();
+	if( strlen(ptrStr)< sizeof(ora_hcoil_id_22.arr))
+	{
+		strncpy((char*)ora_hcoil_id_22.arr, ptrStr, sizeof(ora_hcoil_id_22.arr));
+		ora_hcoil_id_22.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_hcoil_id_22.len = 0;
+	ora_hcoil_id_22Zi = this->hcoil_id_22Zi();
+	ora_wpdx_23 = this->wpdx_23();
+	ora_wpdx_23Zi = this->wpdx_23Zi();
+	ora_ti_23 = this->ti_23();
+	ora_ti_23Zi = this->ti_23Zi();
+	ora_plength_23 = this->plength_23();
+	ora_plength_23Zi = this->plength_23Zi();
+	ptrStr = this->hcoil_id_23();
+	if( strlen(ptrStr)< sizeof(ora_hcoil_id_23.arr))
+	{
+		strncpy((char*)ora_hcoil_id_23.arr, ptrStr, sizeof(ora_hcoil_id_23.arr));
+		ora_hcoil_id_23.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_hcoil_id_23.len = 0;
+	ora_hcoil_id_23Zi = this->hcoil_id_23Zi();
+	ora_wpdx_24 = this->wpdx_24();
+	ora_wpdx_24Zi = this->wpdx_24Zi();
+	ora_ti_24 = this->ti_24();
+	ora_ti_24Zi = this->ti_24Zi();
+	ora_plength_24 = this->plength_24();
+	ora_plength_24Zi = this->plength_24Zi();
+	ptrStr = this->hcoil_id_24();
+	if( strlen(ptrStr)< sizeof(ora_hcoil_id_24.arr))
+	{
+		strncpy((char*)ora_hcoil_id_24.arr, ptrStr, sizeof(ora_hcoil_id_24.arr));
+		ora_hcoil_id_24.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_hcoil_id_24.len = 0;
+	ora_hcoil_id_24Zi = this->hcoil_id_24Zi();
+	ptrStr = this->toc();
+	if( strlen(ptrStr)< sizeof(ora_toc.arr))
+	{
+		strncpy((char*)ora_toc.arr, ptrStr, sizeof(ora_toc.arr));
+		ora_toc.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_toc.len = 0;
+	ora_tocZi = this->tocZi();
+	ptrStr = this->tom();
+	if( strlen(ptrStr)< sizeof(ora_tom.arr))
+	{
+		strncpy((char*)ora_tom.arr, ptrStr, sizeof(ora_tom.arr));
+		ora_tom.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_tom.len = 0;
+	ora_tomZi = this->tomZi();
+	ptrStr = this->mop();
+	if( strlen(ptrStr)< sizeof(ora_mop.arr))
+	{
+		strncpy((char*)ora_mop.arr, ptrStr, sizeof(ora_mop.arr));
+		ora_mop.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_mop.len = 0;
+	ora_mopZi = this->mopZi();
+}
+
+//private methode copy Oracle to Attribute
+//copys Oracle Host variables into Object attributes.
+void ACTDT_TRKDAT::copyOracleToAttribute()
+{
+	ora_datee.arr[ora_datee.len] = '\0';
+	this->set_datee((char*) ora_datee.arr);
+	ora_timee.arr[ora_timee.len] = '\0';
+	this->set_timee((char*) ora_timee.arr);
+	this->set_samp_no((short)ora_samp_no);
+	this->set_wpdx_1((long)ora_wpdx_1);
+	this->set_wpdx_1Zi((short)ora_wpdx_1Zi);
+	this->set_ti_1((long)ora_ti_1);
+	this->set_ti_1Zi((short)ora_ti_1Zi);
+	this->set_plength_1((long)ora_plength_1);
+	this->set_plength_1Zi((short)ora_plength_1Zi);
+	ora_hcoil_id_1.arr[ora_hcoil_id_1.len] = '\0';
+	this->set_hcoil_id_1((char*) ora_hcoil_id_1.arr);
+	this->set_hcoil_id_1Zi((short)ora_hcoil_id_1Zi);
+	this->set_wpdx_2((long)ora_wpdx_2);
+	this->set_wpdx_2Zi((short)ora_wpdx_2Zi);
+	this->set_ti_2((long)ora_ti_2);
+	this->set_ti_2Zi((short)ora_ti_2Zi);
+	this->set_plength_2((long)ora_plength_2);
+	this->set_plength_2Zi((short)ora_plength_2Zi);
+	ora_hcoil_id_2.arr[ora_hcoil_id_2.len] = '\0';
+	this->set_hcoil_id_2((char*) ora_hcoil_id_2.arr);
+	this->set_hcoil_id_2Zi((short)ora_hcoil_id_2Zi);
+	this->set_wpdx_3((long)ora_wpdx_3);
+	this->set_wpdx_3Zi((short)ora_wpdx_3Zi);
+	this->set_ti_3((long)ora_ti_3);
+	this->set_ti_3Zi((short)ora_ti_3Zi);
+	this->set_plength_3((long)ora_plength_3);
+	this->set_plength_3Zi((short)ora_plength_3Zi);
+	ora_hcoil_id_3.arr[ora_hcoil_id_3.len] = '\0';
+	this->set_hcoil_id_3((char*) ora_hcoil_id_3.arr);
+	this->set_hcoil_id_3Zi((short)ora_hcoil_id_3Zi);
+	this->set_wpdx_4((long)ora_wpdx_4);
+	this->set_wpdx_4Zi((short)ora_wpdx_4Zi);
+	this->set_ti_4((long)ora_ti_4);
+	this->set_ti_4Zi((short)ora_ti_4Zi);
+	this->set_plength_4((long)ora_plength_4);
+	this->set_plength_4Zi((short)ora_plength_4Zi);
+	ora_hcoil_id_4.arr[ora_hcoil_id_4.len] = '\0';
+	this->set_hcoil_id_4((char*) ora_hcoil_id_4.arr);
+	this->set_hcoil_id_4Zi((short)ora_hcoil_id_4Zi);
+	this->set_wpdx_5((long)ora_wpdx_5);
+	this->set_wpdx_5Zi((short)ora_wpdx_5Zi);
+	this->set_ti_5((long)ora_ti_5);
+	this->set_ti_5Zi((short)ora_ti_5Zi);
+	this->set_plength_5((long)ora_plength_5);
+	this->set_plength_5Zi((short)ora_plength_5Zi);
+	ora_hcoil_id_5.arr[ora_hcoil_id_5.len] = '\0';
+	this->set_hcoil_id_5((char*) ora_hcoil_id_5.arr);
+	this->set_hcoil_id_5Zi((short)ora_hcoil_id_5Zi);
+	this->set_wpdx_6((long)ora_wpdx_6);
+	this->set_wpdx_6Zi((short)ora_wpdx_6Zi);
+	this->set_ti_6((long)ora_ti_6);
+	this->set_ti_6Zi((short)ora_ti_6Zi);
+	this->set_plength_6((long)ora_plength_6);
+	this->set_plength_6Zi((short)ora_plength_6Zi);
+	ora_hcoil_id_6.arr[ora_hcoil_id_6.len] = '\0';
+	this->set_hcoil_id_6((char*) ora_hcoil_id_6.arr);
+	this->set_hcoil_id_6Zi((short)ora_hcoil_id_6Zi);
+	this->set_wpdx_7((long)ora_wpdx_7);
+	this->set_wpdx_7Zi((short)ora_wpdx_7Zi);
+	this->set_ti_7((long)ora_ti_7);
+	this->set_ti_7Zi((short)ora_ti_7Zi);
+	this->set_plength_7((long)ora_plength_7);
+	this->set_plength_7Zi((short)ora_plength_7Zi);
+	ora_hcoil_id_7.arr[ora_hcoil_id_7.len] = '\0';
+	this->set_hcoil_id_7((char*) ora_hcoil_id_7.arr);
+	this->set_hcoil_id_7Zi((short)ora_hcoil_id_7Zi);
+	this->set_wpdx_8((long)ora_wpdx_8);
+	this->set_wpdx_8Zi((short)ora_wpdx_8Zi);
+	this->set_ti_8((long)ora_ti_8);
+	this->set_ti_8Zi((short)ora_ti_8Zi);
+	this->set_plength_8((long)ora_plength_8);
+	this->set_plength_8Zi((short)ora_plength_8Zi);
+	ora_hcoil_id_8.arr[ora_hcoil_id_8.len] = '\0';
+	this->set_hcoil_id_8((char*) ora_hcoil_id_8.arr);
+	this->set_hcoil_id_8Zi((short)ora_hcoil_id_8Zi);
+	this->set_wpdx_9((long)ora_wpdx_9);
+	this->set_wpdx_9Zi((short)ora_wpdx_9Zi);
+	this->set_ti_9((long)ora_ti_9);
+	this->set_ti_9Zi((short)ora_ti_9Zi);
+	this->set_plength_9((long)ora_plength_9);
+	this->set_plength_9Zi((short)ora_plength_9Zi);
+	ora_hcoil_id_9.arr[ora_hcoil_id_9.len] = '\0';
+	this->set_hcoil_id_9((char*) ora_hcoil_id_9.arr);
+	this->set_hcoil_id_9Zi((short)ora_hcoil_id_9Zi);
+	this->set_wpdx_10((long)ora_wpdx_10);
+	this->set_wpdx_10Zi((short)ora_wpdx_10Zi);
+	this->set_ti_10((long)ora_ti_10);
+	this->set_ti_10Zi((short)ora_ti_10Zi);
+	this->set_plength_10((long)ora_plength_10);
+	this->set_plength_10Zi((short)ora_plength_10Zi);
+	ora_hcoil_id_10.arr[ora_hcoil_id_10.len] = '\0';
+	this->set_hcoil_id_10((char*) ora_hcoil_id_10.arr);
+	this->set_hcoil_id_10Zi((short)ora_hcoil_id_10Zi);
+	this->set_wpdx_11((long)ora_wpdx_11);
+	this->set_wpdx_11Zi((short)ora_wpdx_11Zi);
+	this->set_ti_11((long)ora_ti_11);
+	this->set_ti_11Zi((short)ora_ti_11Zi);
+	this->set_plength_11((long)ora_plength_11);
+	this->set_plength_11Zi((short)ora_plength_11Zi);
+	ora_hcoil_id_11.arr[ora_hcoil_id_11.len] = '\0';
+	this->set_hcoil_id_11((char*) ora_hcoil_id_11.arr);
+	this->set_hcoil_id_11Zi((short)ora_hcoil_id_11Zi);
+	this->set_wpdx_12((long)ora_wpdx_12);
+	this->set_wpdx_12Zi((short)ora_wpdx_12Zi);
+	this->set_ti_12((long)ora_ti_12);
+	this->set_ti_12Zi((short)ora_ti_12Zi);
+	this->set_plength_12((long)ora_plength_12);
+	this->set_plength_12Zi((short)ora_plength_12Zi);
+	ora_hcoil_id_12.arr[ora_hcoil_id_12.len] = '\0';
+	this->set_hcoil_id_12((char*) ora_hcoil_id_12.arr);
+	this->set_hcoil_id_12Zi((short)ora_hcoil_id_12Zi);
+	this->set_wpdx_13((long)ora_wpdx_13);
+	this->set_wpdx_13Zi((short)ora_wpdx_13Zi);
+	this->set_ti_13((long)ora_ti_13);
+	this->set_ti_13Zi((short)ora_ti_13Zi);
+	this->set_plength_13((long)ora_plength_13);
+	this->set_plength_13Zi((short)ora_plength_13Zi);
+	ora_hcoil_id_13.arr[ora_hcoil_id_13.len] = '\0';
+	this->set_hcoil_id_13((char*) ora_hcoil_id_13.arr);
+	this->set_hcoil_id_13Zi((short)ora_hcoil_id_13Zi);
+	this->set_wpdx_14((long)ora_wpdx_14);
+	this->set_wpdx_14Zi((short)ora_wpdx_14Zi);
+	this->set_ti_14((long)ora_ti_14);
+	this->set_ti_14Zi((short)ora_ti_14Zi);
+	this->set_plength_14((long)ora_plength_14);
+	this->set_plength_14Zi((short)ora_plength_14Zi);
+	ora_hcoil_id_14.arr[ora_hcoil_id_14.len] = '\0';
+	this->set_hcoil_id_14((char*) ora_hcoil_id_14.arr);
+	this->set_hcoil_id_14Zi((short)ora_hcoil_id_14Zi);
+	this->set_wpdx_15((long)ora_wpdx_15);
+	this->set_wpdx_15Zi((short)ora_wpdx_15Zi);
+	this->set_ti_15((long)ora_ti_15);
+	this->set_ti_15Zi((short)ora_ti_15Zi);
+	this->set_plength_15((long)ora_plength_15);
+	this->set_plength_15Zi((short)ora_plength_15Zi);
+	ora_hcoil_id_15.arr[ora_hcoil_id_15.len] = '\0';
+	this->set_hcoil_id_15((char*) ora_hcoil_id_15.arr);
+	this->set_hcoil_id_15Zi((short)ora_hcoil_id_15Zi);
+	this->set_wpdx_16((long)ora_wpdx_16);
+	this->set_wpdx_16Zi((short)ora_wpdx_16Zi);
+	this->set_ti_16((long)ora_ti_16);
+	this->set_ti_16Zi((short)ora_ti_16Zi);
+	this->set_plength_16((long)ora_plength_16);
+	this->set_plength_16Zi((short)ora_plength_16Zi);
+	ora_hcoil_id_16.arr[ora_hcoil_id_16.len] = '\0';
+	this->set_hcoil_id_16((char*) ora_hcoil_id_16.arr);
+	this->set_hcoil_id_16Zi((short)ora_hcoil_id_16Zi);
+	this->set_wpdx_17((long)ora_wpdx_17);
+	this->set_wpdx_17Zi((short)ora_wpdx_17Zi);
+	this->set_ti_17((long)ora_ti_17);
+	this->set_ti_17Zi((short)ora_ti_17Zi);
+	this->set_plength_17((long)ora_plength_17);
+	this->set_plength_17Zi((short)ora_plength_17Zi);
+	ora_hcoil_id_17.arr[ora_hcoil_id_17.len] = '\0';
+	this->set_hcoil_id_17((char*) ora_hcoil_id_17.arr);
+	this->set_hcoil_id_17Zi((short)ora_hcoil_id_17Zi);
+	this->set_wpdx_18((long)ora_wpdx_18);
+	this->set_wpdx_18Zi((short)ora_wpdx_18Zi);
+	this->set_ti_18((long)ora_ti_18);
+	this->set_ti_18Zi((short)ora_ti_18Zi);
+	this->set_plength_18((long)ora_plength_18);
+	this->set_plength_18Zi((short)ora_plength_18Zi);
+	ora_hcoil_id_18.arr[ora_hcoil_id_18.len] = '\0';
+	this->set_hcoil_id_18((char*) ora_hcoil_id_18.arr);
+	this->set_hcoil_id_18Zi((short)ora_hcoil_id_18Zi);
+	this->set_wpdx_19((long)ora_wpdx_19);
+	this->set_wpdx_19Zi((short)ora_wpdx_19Zi);
+	this->set_ti_19((long)ora_ti_19);
+	this->set_ti_19Zi((short)ora_ti_19Zi);
+	this->set_plength_19((long)ora_plength_19);
+	this->set_plength_19Zi((short)ora_plength_19Zi);
+	ora_hcoil_id_19.arr[ora_hcoil_id_19.len] = '\0';
+	this->set_hcoil_id_19((char*) ora_hcoil_id_19.arr);
+	this->set_hcoil_id_19Zi((short)ora_hcoil_id_19Zi);
+	this->set_wpdx_20((long)ora_wpdx_20);
+	this->set_wpdx_20Zi((short)ora_wpdx_20Zi);
+	this->set_ti_20((long)ora_ti_20);
+	this->set_ti_20Zi((short)ora_ti_20Zi);
+	this->set_plength_20((long)ora_plength_20);
+	this->set_plength_20Zi((short)ora_plength_20Zi);
+	ora_hcoil_id_20.arr[ora_hcoil_id_20.len] = '\0';
+	this->set_hcoil_id_20((char*) ora_hcoil_id_20.arr);
+	this->set_hcoil_id_20Zi((short)ora_hcoil_id_20Zi);
+	this->set_wpdx_21((long)ora_wpdx_21);
+	this->set_wpdx_21Zi((short)ora_wpdx_21Zi);
+	this->set_ti_21((long)ora_ti_21);
+	this->set_ti_21Zi((short)ora_ti_21Zi);
+	this->set_plength_21((long)ora_plength_21);
+	this->set_plength_21Zi((short)ora_plength_21Zi);
+	ora_hcoil_id_21.arr[ora_hcoil_id_21.len] = '\0';
+	this->set_hcoil_id_21((char*) ora_hcoil_id_21.arr);
+	this->set_hcoil_id_21Zi((short)ora_hcoil_id_21Zi);
+	this->set_wpdx_22((long)ora_wpdx_22);
+	this->set_wpdx_22Zi((short)ora_wpdx_22Zi);
+	this->set_ti_22((long)ora_ti_22);
+	this->set_ti_22Zi((short)ora_ti_22Zi);
+	this->set_plength_22((long)ora_plength_22);
+	this->set_plength_22Zi((short)ora_plength_22Zi);
+	ora_hcoil_id_22.arr[ora_hcoil_id_22.len] = '\0';
+	this->set_hcoil_id_22((char*) ora_hcoil_id_22.arr);
+	this->set_hcoil_id_22Zi((short)ora_hcoil_id_22Zi);
+	this->set_wpdx_23((long)ora_wpdx_23);
+	this->set_wpdx_23Zi((short)ora_wpdx_23Zi);
+	this->set_ti_23((long)ora_ti_23);
+	this->set_ti_23Zi((short)ora_ti_23Zi);
+	this->set_plength_23((long)ora_plength_23);
+	this->set_plength_23Zi((short)ora_plength_23Zi);
+	ora_hcoil_id_23.arr[ora_hcoil_id_23.len] = '\0';
+	this->set_hcoil_id_23((char*) ora_hcoil_id_23.arr);
+	this->set_hcoil_id_23Zi((short)ora_hcoil_id_23Zi);
+	this->set_wpdx_24((long)ora_wpdx_24);
+	this->set_wpdx_24Zi((short)ora_wpdx_24Zi);
+	this->set_ti_24((long)ora_ti_24);
+	this->set_ti_24Zi((short)ora_ti_24Zi);
+	this->set_plength_24((long)ora_plength_24);
+	this->set_plength_24Zi((short)ora_plength_24Zi);
+	ora_hcoil_id_24.arr[ora_hcoil_id_24.len] = '\0';
+	this->set_hcoil_id_24((char*) ora_hcoil_id_24.arr);
+	this->set_hcoil_id_24Zi((short)ora_hcoil_id_24Zi);
+	ora_toc.arr[ora_toc.len] = '\0';
+	this->set_toc((char*) ora_toc.arr);
+	this->set_tocZi((short)ora_tocZi);
+	ora_tom.arr[ora_tom.len] = '\0';
+	this->set_tom((char*) ora_tom.arr);
+	this->set_tomZi((short)ora_tomZi);
+	ora_mop.arr[ora_mop.len] = '\0';
+	this->set_mop((char*) ora_mop.arr);
+	this->set_mopZi((short)ora_mopZi);
+}
+
+//private methode copy Key to host
+//copys Object attributes into Oralce Key variables.
+void ACTDT_TRKDAT::copyKeyToHost()
+{
+	char* ptrStr;
+	k_ora_samp_no = this->k_samp_no();
+}
+
+//private methode copy Host to Key
+// copys Oracle Host Key variables into Object Key attributes.
+void ACTDT_TRKDAT::copyHostToKey()
+{
+	this->set_k_samp_no((short)ora_samp_no);
+}
+
+//private methode log Oracle message information
+void ACTDT_TRKDAT::logOraMessageInfo()
+{
+	LOG d("ACTDT_TRKDAT::logOraMessageInfo()");
+	sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+	oraca.orastxt.orastxtc[oraca.orastxt.orastxtl] = '\0';
+	oraca.orasfnm.orasfnmc[oraca.orasfnm.orasfnml] = '\0';
+	
+	//* negating a error code submitted perhaps positively.
+	if (sqlca.sqlcode > 0) sqlca.sqlcode *= -1;
+	
+	//* Distribute fault text, SQL statement and file in the Debug System.
+	d << "ORA-Error: "<< sqlca.sqlerrm.sqlerrmc; d.Info();
+	d << "OracaText: "<< oraca.orastxt.orastxtc; d.Info();
+	d << "in line " << oraca.oraslnr << " in file " << oraca.orasfnm.orasfnmc; d.Info();
+}
+
+//this methode stores the unique key attributes
+void ACTDT_TRKDAT::setPrimKey(short arg1)
+{
+	s_k_samp_no = arg1;
+}
+
+//this methode stores the unique key attributes
+void ACTDT_TRKDAT::initInsertKeys(short arg1)
+{
+	setPrimKey(arg1);
+	s_samp_no = arg1;
+}
+
+//this methode set the unique key attributes from the DB Record Attributes
+void ACTDT_TRKDAT::setKeysFromRecord()
+{
+	set_k_samp_no( samp_no() );
+}
+
+//			         
+//O P E R A T O R  + 
+//===================
+//                   
+ACTDT_TRKDAT ACTDT_TRKDAT::operator+(const ACTDT_TRKDAT &inst) const
+{
+	ACTDT_TRKDAT ptrACTDT_TRKDAT(*this);
+//----------------------------------------------------------
+	ptrACTDT_TRKDAT.set_datee(inst.datee());
+//----------------------------------------------------------
+	ptrACTDT_TRKDAT.set_timee(inst.timee());
+//----------------------------------------------------------
+	ptrACTDT_TRKDAT.set_samp_no(inst.samp_no());
+//----------------------------------------------------------
+	if(inst.wpdx_1Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_wpdx_1(inst.wpdx_1());
+		ptrACTDT_TRKDAT.set_wpdx_1Zi(inst.wpdx_1Zi());
+	}
+//----------------------------------------------------------
+	if(inst.ti_1Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_ti_1(inst.ti_1());
+		ptrACTDT_TRKDAT.set_ti_1Zi(inst.ti_1Zi());
+	}
+//----------------------------------------------------------
+	if(inst.plength_1Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_plength_1(inst.plength_1());
+		ptrACTDT_TRKDAT.set_plength_1Zi(inst.plength_1Zi());
+	}
+//----------------------------------------------------------
+	if(inst.hcoil_id_1Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_hcoil_id_1(inst.hcoil_id_1());
+		ptrACTDT_TRKDAT.set_hcoil_id_1Zi(inst.hcoil_id_1Zi());
+	}
+//----------------------------------------------------------
+	if(inst.wpdx_2Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_wpdx_2(inst.wpdx_2());
+		ptrACTDT_TRKDAT.set_wpdx_2Zi(inst.wpdx_2Zi());
+	}
+//----------------------------------------------------------
+	if(inst.ti_2Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_ti_2(inst.ti_2());
+		ptrACTDT_TRKDAT.set_ti_2Zi(inst.ti_2Zi());
+	}
+//----------------------------------------------------------
+	if(inst.plength_2Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_plength_2(inst.plength_2());
+		ptrACTDT_TRKDAT.set_plength_2Zi(inst.plength_2Zi());
+	}
+//----------------------------------------------------------
+	if(inst.hcoil_id_2Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_hcoil_id_2(inst.hcoil_id_2());
+		ptrACTDT_TRKDAT.set_hcoil_id_2Zi(inst.hcoil_id_2Zi());
+	}
+//----------------------------------------------------------
+	if(inst.wpdx_3Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_wpdx_3(inst.wpdx_3());
+		ptrACTDT_TRKDAT.set_wpdx_3Zi(inst.wpdx_3Zi());
+	}
+//----------------------------------------------------------
+	if(inst.ti_3Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_ti_3(inst.ti_3());
+		ptrACTDT_TRKDAT.set_ti_3Zi(inst.ti_3Zi());
+	}
+//----------------------------------------------------------
+	if(inst.plength_3Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_plength_3(inst.plength_3());
+		ptrACTDT_TRKDAT.set_plength_3Zi(inst.plength_3Zi());
+	}
+//----------------------------------------------------------
+	if(inst.hcoil_id_3Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_hcoil_id_3(inst.hcoil_id_3());
+		ptrACTDT_TRKDAT.set_hcoil_id_3Zi(inst.hcoil_id_3Zi());
+	}
+//----------------------------------------------------------
+	if(inst.wpdx_4Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_wpdx_4(inst.wpdx_4());
+		ptrACTDT_TRKDAT.set_wpdx_4Zi(inst.wpdx_4Zi());
+	}
+//----------------------------------------------------------
+	if(inst.ti_4Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_ti_4(inst.ti_4());
+		ptrACTDT_TRKDAT.set_ti_4Zi(inst.ti_4Zi());
+	}
+//----------------------------------------------------------
+	if(inst.plength_4Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_plength_4(inst.plength_4());
+		ptrACTDT_TRKDAT.set_plength_4Zi(inst.plength_4Zi());
+	}
+//----------------------------------------------------------
+	if(inst.hcoil_id_4Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_hcoil_id_4(inst.hcoil_id_4());
+		ptrACTDT_TRKDAT.set_hcoil_id_4Zi(inst.hcoil_id_4Zi());
+	}
+//----------------------------------------------------------
+	if(inst.wpdx_5Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_wpdx_5(inst.wpdx_5());
+		ptrACTDT_TRKDAT.set_wpdx_5Zi(inst.wpdx_5Zi());
+	}
+//----------------------------------------------------------
+	if(inst.ti_5Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_ti_5(inst.ti_5());
+		ptrACTDT_TRKDAT.set_ti_5Zi(inst.ti_5Zi());
+	}
+//----------------------------------------------------------
+	if(inst.plength_5Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_plength_5(inst.plength_5());
+		ptrACTDT_TRKDAT.set_plength_5Zi(inst.plength_5Zi());
+	}
+//----------------------------------------------------------
+	if(inst.hcoil_id_5Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_hcoil_id_5(inst.hcoil_id_5());
+		ptrACTDT_TRKDAT.set_hcoil_id_5Zi(inst.hcoil_id_5Zi());
+	}
+//----------------------------------------------------------
+	if(inst.wpdx_6Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_wpdx_6(inst.wpdx_6());
+		ptrACTDT_TRKDAT.set_wpdx_6Zi(inst.wpdx_6Zi());
+	}
+//----------------------------------------------------------
+	if(inst.ti_6Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_ti_6(inst.ti_6());
+		ptrACTDT_TRKDAT.set_ti_6Zi(inst.ti_6Zi());
+	}
+//----------------------------------------------------------
+	if(inst.plength_6Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_plength_6(inst.plength_6());
+		ptrACTDT_TRKDAT.set_plength_6Zi(inst.plength_6Zi());
+	}
+//----------------------------------------------------------
+	if(inst.hcoil_id_6Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_hcoil_id_6(inst.hcoil_id_6());
+		ptrACTDT_TRKDAT.set_hcoil_id_6Zi(inst.hcoil_id_6Zi());
+	}
+//----------------------------------------------------------
+	if(inst.wpdx_7Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_wpdx_7(inst.wpdx_7());
+		ptrACTDT_TRKDAT.set_wpdx_7Zi(inst.wpdx_7Zi());
+	}
+//----------------------------------------------------------
+	if(inst.ti_7Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_ti_7(inst.ti_7());
+		ptrACTDT_TRKDAT.set_ti_7Zi(inst.ti_7Zi());
+	}
+//----------------------------------------------------------
+	if(inst.plength_7Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_plength_7(inst.plength_7());
+		ptrACTDT_TRKDAT.set_plength_7Zi(inst.plength_7Zi());
+	}
+//----------------------------------------------------------
+	if(inst.hcoil_id_7Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_hcoil_id_7(inst.hcoil_id_7());
+		ptrACTDT_TRKDAT.set_hcoil_id_7Zi(inst.hcoil_id_7Zi());
+	}
+//----------------------------------------------------------
+	if(inst.wpdx_8Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_wpdx_8(inst.wpdx_8());
+		ptrACTDT_TRKDAT.set_wpdx_8Zi(inst.wpdx_8Zi());
+	}
+//----------------------------------------------------------
+	if(inst.ti_8Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_ti_8(inst.ti_8());
+		ptrACTDT_TRKDAT.set_ti_8Zi(inst.ti_8Zi());
+	}
+//----------------------------------------------------------
+	if(inst.plength_8Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_plength_8(inst.plength_8());
+		ptrACTDT_TRKDAT.set_plength_8Zi(inst.plength_8Zi());
+	}
+//----------------------------------------------------------
+	if(inst.hcoil_id_8Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_hcoil_id_8(inst.hcoil_id_8());
+		ptrACTDT_TRKDAT.set_hcoil_id_8Zi(inst.hcoil_id_8Zi());
+	}
+//----------------------------------------------------------
+	if(inst.wpdx_9Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_wpdx_9(inst.wpdx_9());
+		ptrACTDT_TRKDAT.set_wpdx_9Zi(inst.wpdx_9Zi());
+	}
+//----------------------------------------------------------
+	if(inst.ti_9Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_ti_9(inst.ti_9());
+		ptrACTDT_TRKDAT.set_ti_9Zi(inst.ti_9Zi());
+	}
+//----------------------------------------------------------
+	if(inst.plength_9Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_plength_9(inst.plength_9());
+		ptrACTDT_TRKDAT.set_plength_9Zi(inst.plength_9Zi());
+	}
+//----------------------------------------------------------
+	if(inst.hcoil_id_9Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_hcoil_id_9(inst.hcoil_id_9());
+		ptrACTDT_TRKDAT.set_hcoil_id_9Zi(inst.hcoil_id_9Zi());
+	}
+//----------------------------------------------------------
+	if(inst.wpdx_10Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_wpdx_10(inst.wpdx_10());
+		ptrACTDT_TRKDAT.set_wpdx_10Zi(inst.wpdx_10Zi());
+	}
+//----------------------------------------------------------
+	if(inst.ti_10Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_ti_10(inst.ti_10());
+		ptrACTDT_TRKDAT.set_ti_10Zi(inst.ti_10Zi());
+	}
+//----------------------------------------------------------
+	if(inst.plength_10Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_plength_10(inst.plength_10());
+		ptrACTDT_TRKDAT.set_plength_10Zi(inst.plength_10Zi());
+	}
+//----------------------------------------------------------
+	if(inst.hcoil_id_10Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_hcoil_id_10(inst.hcoil_id_10());
+		ptrACTDT_TRKDAT.set_hcoil_id_10Zi(inst.hcoil_id_10Zi());
+	}
+//----------------------------------------------------------
+	if(inst.wpdx_11Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_wpdx_11(inst.wpdx_11());
+		ptrACTDT_TRKDAT.set_wpdx_11Zi(inst.wpdx_11Zi());
+	}
+//----------------------------------------------------------
+	if(inst.ti_11Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_ti_11(inst.ti_11());
+		ptrACTDT_TRKDAT.set_ti_11Zi(inst.ti_11Zi());
+	}
+//----------------------------------------------------------
+	if(inst.plength_11Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_plength_11(inst.plength_11());
+		ptrACTDT_TRKDAT.set_plength_11Zi(inst.plength_11Zi());
+	}
+//----------------------------------------------------------
+	if(inst.hcoil_id_11Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_hcoil_id_11(inst.hcoil_id_11());
+		ptrACTDT_TRKDAT.set_hcoil_id_11Zi(inst.hcoil_id_11Zi());
+	}
+//----------------------------------------------------------
+	if(inst.wpdx_12Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_wpdx_12(inst.wpdx_12());
+		ptrACTDT_TRKDAT.set_wpdx_12Zi(inst.wpdx_12Zi());
+	}
+//----------------------------------------------------------
+	if(inst.ti_12Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_ti_12(inst.ti_12());
+		ptrACTDT_TRKDAT.set_ti_12Zi(inst.ti_12Zi());
+	}
+//----------------------------------------------------------
+	if(inst.plength_12Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_plength_12(inst.plength_12());
+		ptrACTDT_TRKDAT.set_plength_12Zi(inst.plength_12Zi());
+	}
+//----------------------------------------------------------
+	if(inst.hcoil_id_12Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_hcoil_id_12(inst.hcoil_id_12());
+		ptrACTDT_TRKDAT.set_hcoil_id_12Zi(inst.hcoil_id_12Zi());
+	}
+//----------------------------------------------------------
+	if(inst.wpdx_13Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_wpdx_13(inst.wpdx_13());
+		ptrACTDT_TRKDAT.set_wpdx_13Zi(inst.wpdx_13Zi());
+	}
+//----------------------------------------------------------
+	if(inst.ti_13Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_ti_13(inst.ti_13());
+		ptrACTDT_TRKDAT.set_ti_13Zi(inst.ti_13Zi());
+	}
+//----------------------------------------------------------
+	if(inst.plength_13Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_plength_13(inst.plength_13());
+		ptrACTDT_TRKDAT.set_plength_13Zi(inst.plength_13Zi());
+	}
+//----------------------------------------------------------
+	if(inst.hcoil_id_13Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_hcoil_id_13(inst.hcoil_id_13());
+		ptrACTDT_TRKDAT.set_hcoil_id_13Zi(inst.hcoil_id_13Zi());
+	}
+//----------------------------------------------------------
+	if(inst.wpdx_14Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_wpdx_14(inst.wpdx_14());
+		ptrACTDT_TRKDAT.set_wpdx_14Zi(inst.wpdx_14Zi());
+	}
+//----------------------------------------------------------
+	if(inst.ti_14Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_ti_14(inst.ti_14());
+		ptrACTDT_TRKDAT.set_ti_14Zi(inst.ti_14Zi());
+	}
+//----------------------------------------------------------
+	if(inst.plength_14Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_plength_14(inst.plength_14());
+		ptrACTDT_TRKDAT.set_plength_14Zi(inst.plength_14Zi());
+	}
+//----------------------------------------------------------
+	if(inst.hcoil_id_14Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_hcoil_id_14(inst.hcoil_id_14());
+		ptrACTDT_TRKDAT.set_hcoil_id_14Zi(inst.hcoil_id_14Zi());
+	}
+//----------------------------------------------------------
+	if(inst.wpdx_15Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_wpdx_15(inst.wpdx_15());
+		ptrACTDT_TRKDAT.set_wpdx_15Zi(inst.wpdx_15Zi());
+	}
+//----------------------------------------------------------
+	if(inst.ti_15Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_ti_15(inst.ti_15());
+		ptrACTDT_TRKDAT.set_ti_15Zi(inst.ti_15Zi());
+	}
+//----------------------------------------------------------
+	if(inst.plength_15Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_plength_15(inst.plength_15());
+		ptrACTDT_TRKDAT.set_plength_15Zi(inst.plength_15Zi());
+	}
+//----------------------------------------------------------
+	if(inst.hcoil_id_15Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_hcoil_id_15(inst.hcoil_id_15());
+		ptrACTDT_TRKDAT.set_hcoil_id_15Zi(inst.hcoil_id_15Zi());
+	}
+//----------------------------------------------------------
+	if(inst.wpdx_16Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_wpdx_16(inst.wpdx_16());
+		ptrACTDT_TRKDAT.set_wpdx_16Zi(inst.wpdx_16Zi());
+	}
+//----------------------------------------------------------
+	if(inst.ti_16Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_ti_16(inst.ti_16());
+		ptrACTDT_TRKDAT.set_ti_16Zi(inst.ti_16Zi());
+	}
+//----------------------------------------------------------
+	if(inst.plength_16Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_plength_16(inst.plength_16());
+		ptrACTDT_TRKDAT.set_plength_16Zi(inst.plength_16Zi());
+	}
+//----------------------------------------------------------
+	if(inst.hcoil_id_16Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_hcoil_id_16(inst.hcoil_id_16());
+		ptrACTDT_TRKDAT.set_hcoil_id_16Zi(inst.hcoil_id_16Zi());
+	}
+//----------------------------------------------------------
+	if(inst.wpdx_17Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_wpdx_17(inst.wpdx_17());
+		ptrACTDT_TRKDAT.set_wpdx_17Zi(inst.wpdx_17Zi());
+	}
+//----------------------------------------------------------
+	if(inst.ti_17Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_ti_17(inst.ti_17());
+		ptrACTDT_TRKDAT.set_ti_17Zi(inst.ti_17Zi());
+	}
+//----------------------------------------------------------
+	if(inst.plength_17Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_plength_17(inst.plength_17());
+		ptrACTDT_TRKDAT.set_plength_17Zi(inst.plength_17Zi());
+	}
+//----------------------------------------------------------
+	if(inst.hcoil_id_17Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_hcoil_id_17(inst.hcoil_id_17());
+		ptrACTDT_TRKDAT.set_hcoil_id_17Zi(inst.hcoil_id_17Zi());
+	}
+//----------------------------------------------------------
+	if(inst.wpdx_18Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_wpdx_18(inst.wpdx_18());
+		ptrACTDT_TRKDAT.set_wpdx_18Zi(inst.wpdx_18Zi());
+	}
+//----------------------------------------------------------
+	if(inst.ti_18Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_ti_18(inst.ti_18());
+		ptrACTDT_TRKDAT.set_ti_18Zi(inst.ti_18Zi());
+	}
+//----------------------------------------------------------
+	if(inst.plength_18Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_plength_18(inst.plength_18());
+		ptrACTDT_TRKDAT.set_plength_18Zi(inst.plength_18Zi());
+	}
+//----------------------------------------------------------
+	if(inst.hcoil_id_18Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_hcoil_id_18(inst.hcoil_id_18());
+		ptrACTDT_TRKDAT.set_hcoil_id_18Zi(inst.hcoil_id_18Zi());
+	}
+//----------------------------------------------------------
+	if(inst.wpdx_19Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_wpdx_19(inst.wpdx_19());
+		ptrACTDT_TRKDAT.set_wpdx_19Zi(inst.wpdx_19Zi());
+	}
+//----------------------------------------------------------
+	if(inst.ti_19Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_ti_19(inst.ti_19());
+		ptrACTDT_TRKDAT.set_ti_19Zi(inst.ti_19Zi());
+	}
+//----------------------------------------------------------
+	if(inst.plength_19Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_plength_19(inst.plength_19());
+		ptrACTDT_TRKDAT.set_plength_19Zi(inst.plength_19Zi());
+	}
+//----------------------------------------------------------
+	if(inst.hcoil_id_19Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_hcoil_id_19(inst.hcoil_id_19());
+		ptrACTDT_TRKDAT.set_hcoil_id_19Zi(inst.hcoil_id_19Zi());
+	}
+//----------------------------------------------------------
+	if(inst.wpdx_20Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_wpdx_20(inst.wpdx_20());
+		ptrACTDT_TRKDAT.set_wpdx_20Zi(inst.wpdx_20Zi());
+	}
+//----------------------------------------------------------
+	if(inst.ti_20Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_ti_20(inst.ti_20());
+		ptrACTDT_TRKDAT.set_ti_20Zi(inst.ti_20Zi());
+	}
+//----------------------------------------------------------
+	if(inst.plength_20Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_plength_20(inst.plength_20());
+		ptrACTDT_TRKDAT.set_plength_20Zi(inst.plength_20Zi());
+	}
+//----------------------------------------------------------
+	if(inst.hcoil_id_20Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_hcoil_id_20(inst.hcoil_id_20());
+		ptrACTDT_TRKDAT.set_hcoil_id_20Zi(inst.hcoil_id_20Zi());
+	}
+//----------------------------------------------------------
+	if(inst.wpdx_21Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_wpdx_21(inst.wpdx_21());
+		ptrACTDT_TRKDAT.set_wpdx_21Zi(inst.wpdx_21Zi());
+	}
+//----------------------------------------------------------
+	if(inst.ti_21Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_ti_21(inst.ti_21());
+		ptrACTDT_TRKDAT.set_ti_21Zi(inst.ti_21Zi());
+	}
+//----------------------------------------------------------
+	if(inst.plength_21Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_plength_21(inst.plength_21());
+		ptrACTDT_TRKDAT.set_plength_21Zi(inst.plength_21Zi());
+	}
+//----------------------------------------------------------
+	if(inst.hcoil_id_21Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_hcoil_id_21(inst.hcoil_id_21());
+		ptrACTDT_TRKDAT.set_hcoil_id_21Zi(inst.hcoil_id_21Zi());
+	}
+//----------------------------------------------------------
+	if(inst.wpdx_22Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_wpdx_22(inst.wpdx_22());
+		ptrACTDT_TRKDAT.set_wpdx_22Zi(inst.wpdx_22Zi());
+	}
+//----------------------------------------------------------
+	if(inst.ti_22Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_ti_22(inst.ti_22());
+		ptrACTDT_TRKDAT.set_ti_22Zi(inst.ti_22Zi());
+	}
+//----------------------------------------------------------
+	if(inst.plength_22Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_plength_22(inst.plength_22());
+		ptrACTDT_TRKDAT.set_plength_22Zi(inst.plength_22Zi());
+	}
+//----------------------------------------------------------
+	if(inst.hcoil_id_22Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_hcoil_id_22(inst.hcoil_id_22());
+		ptrACTDT_TRKDAT.set_hcoil_id_22Zi(inst.hcoil_id_22Zi());
+	}
+//----------------------------------------------------------
+	if(inst.wpdx_23Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_wpdx_23(inst.wpdx_23());
+		ptrACTDT_TRKDAT.set_wpdx_23Zi(inst.wpdx_23Zi());
+	}
+//----------------------------------------------------------
+	if(inst.ti_23Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_ti_23(inst.ti_23());
+		ptrACTDT_TRKDAT.set_ti_23Zi(inst.ti_23Zi());
+	}
+//----------------------------------------------------------
+	if(inst.plength_23Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_plength_23(inst.plength_23());
+		ptrACTDT_TRKDAT.set_plength_23Zi(inst.plength_23Zi());
+	}
+//----------------------------------------------------------
+	if(inst.hcoil_id_23Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_hcoil_id_23(inst.hcoil_id_23());
+		ptrACTDT_TRKDAT.set_hcoil_id_23Zi(inst.hcoil_id_23Zi());
+	}
+//----------------------------------------------------------
+	if(inst.wpdx_24Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_wpdx_24(inst.wpdx_24());
+		ptrACTDT_TRKDAT.set_wpdx_24Zi(inst.wpdx_24Zi());
+	}
+//----------------------------------------------------------
+	if(inst.ti_24Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_ti_24(inst.ti_24());
+		ptrACTDT_TRKDAT.set_ti_24Zi(inst.ti_24Zi());
+	}
+//----------------------------------------------------------
+	if(inst.plength_24Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_plength_24(inst.plength_24());
+		ptrACTDT_TRKDAT.set_plength_24Zi(inst.plength_24Zi());
+	}
+//----------------------------------------------------------
+	if(inst.hcoil_id_24Zi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_hcoil_id_24(inst.hcoil_id_24());
+		ptrACTDT_TRKDAT.set_hcoil_id_24Zi(inst.hcoil_id_24Zi());
+	}
+//----------------------------------------------------------
+	if(inst.tocZi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_toc(inst.toc());
+		ptrACTDT_TRKDAT.set_tocZi(inst.tocZi());
+	}
+//----------------------------------------------------------
+	if(inst.tomZi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_tom(inst.tom());
+		ptrACTDT_TRKDAT.set_tomZi(inst.tomZi());
+	}
+//----------------------------------------------------------
+	if(inst.mopZi() != -1)
+	{
+		ptrACTDT_TRKDAT.set_mop(inst.mop());
+		ptrACTDT_TRKDAT.set_mopZi(inst.mopZi());
+	}
+	return( ptrACTDT_TRKDAT );
+}
+
+//			         
+//O P E R A T O R  = 
+//===================
+//                   
+const ACTDT_TRKDAT& ACTDT_TRKDAT::operator=(const ACTDT_TRKDAT &inst)
+{
+//----------------------------------------------------------
+	this->set_datee(inst.datee());
+//----------------------------------------------------------
+	this->set_timee(inst.timee());
+//----------------------------------------------------------
+	this->set_samp_no(inst.samp_no());
+//----------------------------------------------------------
+	this->set_wpdx_1(inst.wpdx_1());
+	this->set_wpdx_1Zi(inst.wpdx_1Zi());
+//----------------------------------------------------------
+	this->set_ti_1(inst.ti_1());
+	this->set_ti_1Zi(inst.ti_1Zi());
+//----------------------------------------------------------
+	this->set_plength_1(inst.plength_1());
+	this->set_plength_1Zi(inst.plength_1Zi());
+//----------------------------------------------------------
+	this->set_hcoil_id_1(inst.hcoil_id_1());
+	this->set_hcoil_id_1Zi(inst.hcoil_id_1Zi());
+//----------------------------------------------------------
+	this->set_wpdx_2(inst.wpdx_2());
+	this->set_wpdx_2Zi(inst.wpdx_2Zi());
+//----------------------------------------------------------
+	this->set_ti_2(inst.ti_2());
+	this->set_ti_2Zi(inst.ti_2Zi());
+//----------------------------------------------------------
+	this->set_plength_2(inst.plength_2());
+	this->set_plength_2Zi(inst.plength_2Zi());
+//----------------------------------------------------------
+	this->set_hcoil_id_2(inst.hcoil_id_2());
+	this->set_hcoil_id_2Zi(inst.hcoil_id_2Zi());
+//----------------------------------------------------------
+	this->set_wpdx_3(inst.wpdx_3());
+	this->set_wpdx_3Zi(inst.wpdx_3Zi());
+//----------------------------------------------------------
+	this->set_ti_3(inst.ti_3());
+	this->set_ti_3Zi(inst.ti_3Zi());
+//----------------------------------------------------------
+	this->set_plength_3(inst.plength_3());
+	this->set_plength_3Zi(inst.plength_3Zi());
+//----------------------------------------------------------
+	this->set_hcoil_id_3(inst.hcoil_id_3());
+	this->set_hcoil_id_3Zi(inst.hcoil_id_3Zi());
+//----------------------------------------------------------
+	this->set_wpdx_4(inst.wpdx_4());
+	this->set_wpdx_4Zi(inst.wpdx_4Zi());
+//----------------------------------------------------------
+	this->set_ti_4(inst.ti_4());
+	this->set_ti_4Zi(inst.ti_4Zi());
+//----------------------------------------------------------
+	this->set_plength_4(inst.plength_4());
+	this->set_plength_4Zi(inst.plength_4Zi());
+//----------------------------------------------------------
+	this->set_hcoil_id_4(inst.hcoil_id_4());
+	this->set_hcoil_id_4Zi(inst.hcoil_id_4Zi());
+//----------------------------------------------------------
+	this->set_wpdx_5(inst.wpdx_5());
+	this->set_wpdx_5Zi(inst.wpdx_5Zi());
+//----------------------------------------------------------
+	this->set_ti_5(inst.ti_5());
+	this->set_ti_5Zi(inst.ti_5Zi());
+//----------------------------------------------------------
+	this->set_plength_5(inst.plength_5());
+	this->set_plength_5Zi(inst.plength_5Zi());
+//----------------------------------------------------------
+	this->set_hcoil_id_5(inst.hcoil_id_5());
+	this->set_hcoil_id_5Zi(inst.hcoil_id_5Zi());
+//----------------------------------------------------------
+	this->set_wpdx_6(inst.wpdx_6());
+	this->set_wpdx_6Zi(inst.wpdx_6Zi());
+//----------------------------------------------------------
+	this->set_ti_6(inst.ti_6());
+	this->set_ti_6Zi(inst.ti_6Zi());
+//----------------------------------------------------------
+	this->set_plength_6(inst.plength_6());
+	this->set_plength_6Zi(inst.plength_6Zi());
+//----------------------------------------------------------
+	this->set_hcoil_id_6(inst.hcoil_id_6());
+	this->set_hcoil_id_6Zi(inst.hcoil_id_6Zi());
+//----------------------------------------------------------
+	this->set_wpdx_7(inst.wpdx_7());
+	this->set_wpdx_7Zi(inst.wpdx_7Zi());
+//----------------------------------------------------------
+	this->set_ti_7(inst.ti_7());
+	this->set_ti_7Zi(inst.ti_7Zi());
+//----------------------------------------------------------
+	this->set_plength_7(inst.plength_7());
+	this->set_plength_7Zi(inst.plength_7Zi());
+//----------------------------------------------------------
+	this->set_hcoil_id_7(inst.hcoil_id_7());
+	this->set_hcoil_id_7Zi(inst.hcoil_id_7Zi());
+//----------------------------------------------------------
+	this->set_wpdx_8(inst.wpdx_8());
+	this->set_wpdx_8Zi(inst.wpdx_8Zi());
+//----------------------------------------------------------
+	this->set_ti_8(inst.ti_8());
+	this->set_ti_8Zi(inst.ti_8Zi());
+//----------------------------------------------------------
+	this->set_plength_8(inst.plength_8());
+	this->set_plength_8Zi(inst.plength_8Zi());
+//----------------------------------------------------------
+	this->set_hcoil_id_8(inst.hcoil_id_8());
+	this->set_hcoil_id_8Zi(inst.hcoil_id_8Zi());
+//----------------------------------------------------------
+	this->set_wpdx_9(inst.wpdx_9());
+	this->set_wpdx_9Zi(inst.wpdx_9Zi());
+//----------------------------------------------------------
+	this->set_ti_9(inst.ti_9());
+	this->set_ti_9Zi(inst.ti_9Zi());
+//----------------------------------------------------------
+	this->set_plength_9(inst.plength_9());
+	this->set_plength_9Zi(inst.plength_9Zi());
+//----------------------------------------------------------
+	this->set_hcoil_id_9(inst.hcoil_id_9());
+	this->set_hcoil_id_9Zi(inst.hcoil_id_9Zi());
+//----------------------------------------------------------
+	this->set_wpdx_10(inst.wpdx_10());
+	this->set_wpdx_10Zi(inst.wpdx_10Zi());
+//----------------------------------------------------------
+	this->set_ti_10(inst.ti_10());
+	this->set_ti_10Zi(inst.ti_10Zi());
+//----------------------------------------------------------
+	this->set_plength_10(inst.plength_10());
+	this->set_plength_10Zi(inst.plength_10Zi());
+//----------------------------------------------------------
+	this->set_hcoil_id_10(inst.hcoil_id_10());
+	this->set_hcoil_id_10Zi(inst.hcoil_id_10Zi());
+//----------------------------------------------------------
+	this->set_wpdx_11(inst.wpdx_11());
+	this->set_wpdx_11Zi(inst.wpdx_11Zi());
+//----------------------------------------------------------
+	this->set_ti_11(inst.ti_11());
+	this->set_ti_11Zi(inst.ti_11Zi());
+//----------------------------------------------------------
+	this->set_plength_11(inst.plength_11());
+	this->set_plength_11Zi(inst.plength_11Zi());
+//----------------------------------------------------------
+	this->set_hcoil_id_11(inst.hcoil_id_11());
+	this->set_hcoil_id_11Zi(inst.hcoil_id_11Zi());
+//----------------------------------------------------------
+	this->set_wpdx_12(inst.wpdx_12());
+	this->set_wpdx_12Zi(inst.wpdx_12Zi());
+//----------------------------------------------------------
+	this->set_ti_12(inst.ti_12());
+	this->set_ti_12Zi(inst.ti_12Zi());
+//----------------------------------------------------------
+	this->set_plength_12(inst.plength_12());
+	this->set_plength_12Zi(inst.plength_12Zi());
+//----------------------------------------------------------
+	this->set_hcoil_id_12(inst.hcoil_id_12());
+	this->set_hcoil_id_12Zi(inst.hcoil_id_12Zi());
+//----------------------------------------------------------
+	this->set_wpdx_13(inst.wpdx_13());
+	this->set_wpdx_13Zi(inst.wpdx_13Zi());
+//----------------------------------------------------------
+	this->set_ti_13(inst.ti_13());
+	this->set_ti_13Zi(inst.ti_13Zi());
+//----------------------------------------------------------
+	this->set_plength_13(inst.plength_13());
+	this->set_plength_13Zi(inst.plength_13Zi());
+//----------------------------------------------------------
+	this->set_hcoil_id_13(inst.hcoil_id_13());
+	this->set_hcoil_id_13Zi(inst.hcoil_id_13Zi());
+//----------------------------------------------------------
+	this->set_wpdx_14(inst.wpdx_14());
+	this->set_wpdx_14Zi(inst.wpdx_14Zi());
+//----------------------------------------------------------
+	this->set_ti_14(inst.ti_14());
+	this->set_ti_14Zi(inst.ti_14Zi());
+//----------------------------------------------------------
+	this->set_plength_14(inst.plength_14());
+	this->set_plength_14Zi(inst.plength_14Zi());
+//----------------------------------------------------------
+	this->set_hcoil_id_14(inst.hcoil_id_14());
+	this->set_hcoil_id_14Zi(inst.hcoil_id_14Zi());
+//----------------------------------------------------------
+	this->set_wpdx_15(inst.wpdx_15());
+	this->set_wpdx_15Zi(inst.wpdx_15Zi());
+//----------------------------------------------------------
+	this->set_ti_15(inst.ti_15());
+	this->set_ti_15Zi(inst.ti_15Zi());
+//----------------------------------------------------------
+	this->set_plength_15(inst.plength_15());
+	this->set_plength_15Zi(inst.plength_15Zi());
+//----------------------------------------------------------
+	this->set_hcoil_id_15(inst.hcoil_id_15());
+	this->set_hcoil_id_15Zi(inst.hcoil_id_15Zi());
+//----------------------------------------------------------
+	this->set_wpdx_16(inst.wpdx_16());
+	this->set_wpdx_16Zi(inst.wpdx_16Zi());
+//----------------------------------------------------------
+	this->set_ti_16(inst.ti_16());
+	this->set_ti_16Zi(inst.ti_16Zi());
+//----------------------------------------------------------
+	this->set_plength_16(inst.plength_16());
+	this->set_plength_16Zi(inst.plength_16Zi());
+//----------------------------------------------------------
+	this->set_hcoil_id_16(inst.hcoil_id_16());
+	this->set_hcoil_id_16Zi(inst.hcoil_id_16Zi());
+//----------------------------------------------------------
+	this->set_wpdx_17(inst.wpdx_17());
+	this->set_wpdx_17Zi(inst.wpdx_17Zi());
+//----------------------------------------------------------
+	this->set_ti_17(inst.ti_17());
+	this->set_ti_17Zi(inst.ti_17Zi());
+//----------------------------------------------------------
+	this->set_plength_17(inst.plength_17());
+	this->set_plength_17Zi(inst.plength_17Zi());
+//----------------------------------------------------------
+	this->set_hcoil_id_17(inst.hcoil_id_17());
+	this->set_hcoil_id_17Zi(inst.hcoil_id_17Zi());
+//----------------------------------------------------------
+	this->set_wpdx_18(inst.wpdx_18());
+	this->set_wpdx_18Zi(inst.wpdx_18Zi());
+//----------------------------------------------------------
+	this->set_ti_18(inst.ti_18());
+	this->set_ti_18Zi(inst.ti_18Zi());
+//----------------------------------------------------------
+	this->set_plength_18(inst.plength_18());
+	this->set_plength_18Zi(inst.plength_18Zi());
+//----------------------------------------------------------
+	this->set_hcoil_id_18(inst.hcoil_id_18());
+	this->set_hcoil_id_18Zi(inst.hcoil_id_18Zi());
+//----------------------------------------------------------
+	this->set_wpdx_19(inst.wpdx_19());
+	this->set_wpdx_19Zi(inst.wpdx_19Zi());
+//----------------------------------------------------------
+	this->set_ti_19(inst.ti_19());
+	this->set_ti_19Zi(inst.ti_19Zi());
+//----------------------------------------------------------
+	this->set_plength_19(inst.plength_19());
+	this->set_plength_19Zi(inst.plength_19Zi());
+//----------------------------------------------------------
+	this->set_hcoil_id_19(inst.hcoil_id_19());
+	this->set_hcoil_id_19Zi(inst.hcoil_id_19Zi());
+//----------------------------------------------------------
+	this->set_wpdx_20(inst.wpdx_20());
+	this->set_wpdx_20Zi(inst.wpdx_20Zi());
+//----------------------------------------------------------
+	this->set_ti_20(inst.ti_20());
+	this->set_ti_20Zi(inst.ti_20Zi());
+//----------------------------------------------------------
+	this->set_plength_20(inst.plength_20());
+	this->set_plength_20Zi(inst.plength_20Zi());
+//----------------------------------------------------------
+	this->set_hcoil_id_20(inst.hcoil_id_20());
+	this->set_hcoil_id_20Zi(inst.hcoil_id_20Zi());
+//----------------------------------------------------------
+	this->set_wpdx_21(inst.wpdx_21());
+	this->set_wpdx_21Zi(inst.wpdx_21Zi());
+//----------------------------------------------------------
+	this->set_ti_21(inst.ti_21());
+	this->set_ti_21Zi(inst.ti_21Zi());
+//----------------------------------------------------------
+	this->set_plength_21(inst.plength_21());
+	this->set_plength_21Zi(inst.plength_21Zi());
+//----------------------------------------------------------
+	this->set_hcoil_id_21(inst.hcoil_id_21());
+	this->set_hcoil_id_21Zi(inst.hcoil_id_21Zi());
+//----------------------------------------------------------
+	this->set_wpdx_22(inst.wpdx_22());
+	this->set_wpdx_22Zi(inst.wpdx_22Zi());
+//----------------------------------------------------------
+	this->set_ti_22(inst.ti_22());
+	this->set_ti_22Zi(inst.ti_22Zi());
+//----------------------------------------------------------
+	this->set_plength_22(inst.plength_22());
+	this->set_plength_22Zi(inst.plength_22Zi());
+//----------------------------------------------------------
+	this->set_hcoil_id_22(inst.hcoil_id_22());
+	this->set_hcoil_id_22Zi(inst.hcoil_id_22Zi());
+//----------------------------------------------------------
+	this->set_wpdx_23(inst.wpdx_23());
+	this->set_wpdx_23Zi(inst.wpdx_23Zi());
+//----------------------------------------------------------
+	this->set_ti_23(inst.ti_23());
+	this->set_ti_23Zi(inst.ti_23Zi());
+//----------------------------------------------------------
+	this->set_plength_23(inst.plength_23());
+	this->set_plength_23Zi(inst.plength_23Zi());
+//----------------------------------------------------------
+	this->set_hcoil_id_23(inst.hcoil_id_23());
+	this->set_hcoil_id_23Zi(inst.hcoil_id_23Zi());
+//----------------------------------------------------------
+	this->set_wpdx_24(inst.wpdx_24());
+	this->set_wpdx_24Zi(inst.wpdx_24Zi());
+//----------------------------------------------------------
+	this->set_ti_24(inst.ti_24());
+	this->set_ti_24Zi(inst.ti_24Zi());
+//----------------------------------------------------------
+	this->set_plength_24(inst.plength_24());
+	this->set_plength_24Zi(inst.plength_24Zi());
+//----------------------------------------------------------
+	this->set_hcoil_id_24(inst.hcoil_id_24());
+	this->set_hcoil_id_24Zi(inst.hcoil_id_24Zi());
+//----------------------------------------------------------
+	this->set_toc(inst.toc());
+	this->set_tocZi(inst.tocZi());
+//----------------------------------------------------------
+	this->set_tom(inst.tom());
+	this->set_tomZi(inst.tomZi());
+//----------------------------------------------------------
+	this->set_mop(inst.mop());
+	this->set_mopZi(inst.mopZi());
+	return(*this);
+}
+

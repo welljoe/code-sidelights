@@ -1,0 +1,967 @@
+/* *******************************************************************/
+/* *   File               :    UTILITY_COIL.pc
+/* *   Short Description  :    ORACLE DATABASE ACCESS
+/* * 		                   UTILITY DATA BY COILS
+/* *   Author             :    DB CODE Generator
+/* *   Created Date       :    13.06.2013
+/* *   Tech.Support       :    LiuWeiZhao. email:welljoe@hotmail.com 
+/* *******************************************************************/
+/* *   Copyright (c)  SGAI AI 2009   All Rights Reserved
+/* *******************************************************************/
+
+#include "LOG.h"
+#include "UTILITY_COIL.h"
+//
+// Declare ORACLE Host Variables
+//
+
+#define SQLCA_STORAGE_CLASS static
+#define ORACA_STORAGE_CLASS static
+EXEC SQL INCLUDE sqlca;
+EXEC SQL INCLUDE oraca;
+
+#define OPENED 1
+#define CLOSED 2
+EXEC SQL BEGIN DECLARE SECTION;
+/* ****************************************************************************** */
+/*                                                                                */
+/*                               define Oracle                                    */
+/*                               Host Variables                                   */
+/*                                                          .                     */
+/*                                                                                */
+/* ****************************************************************************** */
+
+static VARCHAR	dynstr[16000];
+static long		rowCnt;       
+static long		cuFl;         
+//Unit[-]:Product coil number.Limit:[-,-]
+static VARCHAR  ora_pcoil[17];
+//Unit[-]:Hot coil number.Limit:[-,-]
+static VARCHAR  ora_hcoil[2];
+//Unit[-]:Demineraized water flow sum  for one coil.Limit:[-,1]
+static short    ora_demwat;
+//Unit[-]:Steam flow sum  for one coil.Limit:[-,-]
+static short    ora_steam;
+static short    ora_steamZi;
+//Unit[-]:RECIRCUL. Water (supply) flow sum  for one coil.Limit:[-,-]
+static short    ora_recwat;
+static short    ora_recwatZi;
+//Unit[I]:POTABLE Water flow sum  for one coil.Limit:[-,-]
+static short    ora_potwat;
+static short    ora_potwatZi;
+//Unit[I]:COMPRESSED Air  ( PL) flow sum  for one coil.Limit:[-,-]
+static short    ora_compres;
+static short    ora_compresZi;
+//Unit[I]:Regene Acid flow (PL) flow sum  for one coil.Limit:[-,-]
+static short    ora_regacd;
+static short    ora_regacdZi;
+//Unit[I]:Waste Acid DISC. Flow (PL) flow sum  for one coil.Limit:[-,-]
+static short    ora_wasacd1;
+static short    ora_wasacd1Zi;
+//Unit[I]:Waste Acid flow (PL) flow sum  for one coil.Limit:[-,-]
+static short    ora_wasacd2;
+static short    ora_wasacd2Zi;
+//Unit[I]:Wash Water (PL) flow sum  for one coil.Limit:[-,-]
+static short    ora_waswat;
+static short    ora_waswatZi;
+//Unit[I]:Industrial Water flow sum  for one coil.Limit:[-,-]
+static short    ora_indwat;
+static short    ora_indwatZi;
+//Unit[I]:Weak Acid (PL) flow sum  for one coil.Limit:[-,-]
+static short    ora_weakacd;
+static short    ora_weakacdZi;
+//Unit[-]:create time.Limit:[-,-]
+static VARCHAR  ora_toc[15];
+static short    ora_tocZi;
+//Unit[-]:modify time.Limit:[-,-]
+static VARCHAR  ora_tom[15];
+static short    ora_tomZi;
+//Unit[-]:creator or modifyer.Limit:[-,-]
+static VARCHAR  ora_mop[121];
+static short    ora_mopZi;
+// Host arguments for Primary key
+static VARCHAR  k_ora_pcoil[17];   // Unit[-]:Product coil number.Limit:[-,-]
+
+EXEC SQL END DECLARE SECTION;        
+             
+// 				             
+//C O N S T R U C T O R S    
+//=======================    
+//                           
+UTILITY_COIL::UTILITY_COIL()
+{
+	initial();                                             
+}
+
+//					
+//C O P Y  -  C O N S T R U C T O R 
+//==================================
+UTILITY_COIL::UTILITY_COIL(const UTILITY_COIL &inst)
+{
+//----------------------------------------------------------
+	this->set_pcoil(inst.pcoil());
+//----------------------------------------------------------
+	this->set_hcoil(inst.hcoil());
+//----------------------------------------------------------
+	this->set_demwat(inst.demwat());
+//----------------------------------------------------------
+	this->set_steam(inst.steam());
+	this->set_steamZi(inst.steamZi());
+//----------------------------------------------------------
+	this->set_recwat(inst.recwat());
+	this->set_recwatZi(inst.recwatZi());
+//----------------------------------------------------------
+	this->set_potwat(inst.potwat());
+	this->set_potwatZi(inst.potwatZi());
+//----------------------------------------------------------
+	this->set_compres(inst.compres());
+	this->set_compresZi(inst.compresZi());
+//----------------------------------------------------------
+	this->set_regacd(inst.regacd());
+	this->set_regacdZi(inst.regacdZi());
+//----------------------------------------------------------
+	this->set_wasacd1(inst.wasacd1());
+	this->set_wasacd1Zi(inst.wasacd1Zi());
+//----------------------------------------------------------
+	this->set_wasacd2(inst.wasacd2());
+	this->set_wasacd2Zi(inst.wasacd2Zi());
+//----------------------------------------------------------
+	this->set_waswat(inst.waswat());
+	this->set_waswatZi(inst.waswatZi());
+//----------------------------------------------------------
+	this->set_indwat(inst.indwat());
+	this->set_indwatZi(inst.indwatZi());
+//----------------------------------------------------------
+	this->set_weakacd(inst.weakacd());
+	this->set_weakacdZi(inst.weakacdZi());
+//----------------------------------------------------------
+	this->set_toc(inst.toc());
+	this->set_tocZi(inst.tocZi());
+//----------------------------------------------------------
+	this->set_tom(inst.tom());
+	this->set_tomZi(inst.tomZi());
+//----------------------------------------------------------
+	this->set_mop(inst.mop());
+	this->set_mopZi(inst.mopZi());
+}
+
+//					
+//C O N S T R U C T O R -W I T H P A R A M E T E R S
+//===================================================
+//					
+UTILITY_COIL::UTILITY_COIL(char* arg1)
+{
+	initial();					               
+	setPrimKey (arg1);    
+	//read DB record                           
+	dbAccess = true;                           
+	dbMessage = readDB();                      
+	if ( dbMessage != NULL ) dbAccess = false; 
+}
+
+//D E S T R U C T O R S  
+//=======================
+//                       
+UTILITY_COIL::~UTILITY_COIL()
+{
+}
+
+//initialise all member variables
+void UTILITY_COIL::initial()
+{
+	set_pcoil("");
+	set_hcoil("");
+	set_demwat(0);
+	set_steam(0);
+	set_steamZi(-1);
+	set_recwat(0);
+	set_recwatZi(-1);
+	set_potwat(0);
+	set_potwatZi(-1);
+	set_compres(0);
+	set_compresZi(-1);
+	set_regacd(0);
+	set_regacdZi(-1);
+	set_wasacd1(0);
+	set_wasacd1Zi(-1);
+	set_wasacd2(0);
+	set_wasacd2Zi(-1);
+	set_waswat(0);
+	set_waswatZi(-1);
+	set_indwat(0);
+	set_indwatZi(-1);
+	set_weakacd(0);
+	set_weakacdZi(-1);
+	set_toc("");
+	set_tocZi(-1);
+	set_tom("");
+	set_tomZi(-1);
+	set_mop("");
+	set_mopZi(-1);
+	//initialies Primary key members
+	set_k_pcoil("");
+// Initial Oracle Options
+	oraca.oradbgf  = 1; // gather debug informations       
+	oraca.oracchf  = 1; // gather cursor cache informations
+	oraca.orahchf  = 1; // check heap                      
+	oraca.orastxtf = 3; // always save last sql-statement  
+	                                                       
+	EXEC ORACLE OPTION (ORACA=YES);                        
+	EXEC ORACLE OPTION (HOLD_CURSOR=YES);                  
+	EXEC ORACLE OPTION (RELEASE_CURSOR=NO);                
+	EXEC ORACLE OPTION (MAXOPENCURSORS=50);                
+	pCatch = CatchDbaxError::instance();                   
+	                                                       
+}
+
+//read a single entry from DB.
+char* UTILITY_COIL::readDB()
+{
+	//
+	//copy the host variables (k_...) to Oracle Host Keys (k_ora_..)
+	//
+		copyKeyToHost();
+	//
+	// Do SELECT
+	//
+	EXEC SQL SELECT 
+		pcoil,
+		hcoil,
+		demwat,
+		steam,
+		recwat,
+		potwat,
+		compres,
+		regacd,
+		wasacd1,
+		wasacd2,
+		waswat,
+		indwat,
+		weakacd,
+		TO_CHAR(toc , 'YYYYMMDDHH24MISS'),
+		TO_CHAR(tom , 'YYYYMMDDHH24MISS'),
+		mop
+	INTO
+		:ora_pcoil,
+		:ora_hcoil,
+		:ora_demwat,
+		:ora_steam:ora_steamZi,
+		:ora_recwat:ora_recwatZi,
+		:ora_potwat:ora_potwatZi,
+		:ora_compres:ora_compresZi,
+		:ora_regacd:ora_regacdZi,
+		:ora_wasacd1:ora_wasacd1Zi,
+		:ora_wasacd2:ora_wasacd2Zi,
+		:ora_waswat:ora_waswatZi,
+		:ora_indwat:ora_indwatZi,
+		:ora_weakacd:ora_weakacdZi,
+		:ora_toc:ora_tocZi,
+		:ora_tom:ora_tomZi,
+		:ora_mop:ora_mopZi
+	FROM UTILITY_COIL
+	WHERE
+				pcoil           = :k_ora_pcoil ;
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	//
+	// copy host variables into Class attributes
+	//
+	copyOracleToAttribute();
+	return ( NULL );
+}
+
+//updates a single entry from DB
+char* UTILITY_COIL::updateDB()
+{
+	//
+	//copy the host variables (k_...) to Oracle Host Keys (k_ora_..)
+	//
+		copyKeyToHost();
+	//copy the attributes ( ...) to Oracle Hosts( ora_..)
+	//
+		copyAttributeToOracle();
+	//
+	// Do UPDATE
+	//
+	EXEC SQL UPDATE UTILITY_COIL
+	SET 
+		pcoil               =:ora_pcoil,
+		hcoil               =:ora_hcoil,
+		demwat              =:ora_demwat,
+		steam               =:ora_steam:ora_steamZi,
+		recwat              =:ora_recwat:ora_recwatZi,
+		potwat              =:ora_potwat:ora_potwatZi,
+		compres             =:ora_compres:ora_compresZi,
+		regacd              =:ora_regacd:ora_regacdZi,
+		wasacd1             =:ora_wasacd1:ora_wasacd1Zi,
+		wasacd2             =:ora_wasacd2:ora_wasacd2Zi,
+		waswat              =:ora_waswat:ora_waswatZi,
+		indwat              =:ora_indwat:ora_indwatZi,
+		weakacd             =:ora_weakacd:ora_weakacdZi,
+		toc                 =TO_DATE( :ora_toc:ora_tocZi,'YYYYMMDDHH24MISS'),
+		tom                 =TO_DATE( :ora_tom:ora_tomZi,'YYYYMMDDHH24MISS'),
+		mop                 =:ora_mop:ora_mopZi
+	WHERE
+		pcoil           = :k_ora_pcoil ;
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//inserts a single entry from DB
+char* UTILITY_COIL::insertDB()
+{
+	//
+	//copy the attributes ( ...) to Oracle Hosts( ora_..) 
+	//
+		copyAttributeToOracle();
+	//
+	// Do INSERT
+	//
+	EXEC SQL INSERT INTO UTILITY_COIL
+	(
+		pcoil,
+		hcoil,
+		demwat,
+		steam,
+		recwat,
+		potwat,
+		compres,
+		regacd,
+		wasacd1,
+		wasacd2,
+		waswat,
+		indwat,
+		weakacd,
+		toc,
+		tom,
+		mop
+	)
+
+	VALUES
+	(
+		:ora_pcoil,
+		:ora_hcoil,
+		:ora_demwat,
+		:ora_steam:ora_steamZi,
+		:ora_recwat:ora_recwatZi,
+		:ora_potwat:ora_potwatZi,
+		:ora_compres:ora_compresZi,
+		:ora_regacd:ora_regacdZi,
+		:ora_wasacd1:ora_wasacd1Zi,
+		:ora_wasacd2:ora_wasacd2Zi,
+		:ora_waswat:ora_waswatZi,
+		:ora_indwat:ora_indwatZi,
+		:ora_weakacd:ora_weakacdZi,
+		TO_DATE( :ora_toc:ora_tocZi,'YYYYMMDDHH24MISS'),
+		TO_DATE( :ora_tom:ora_tomZi,'YYYYMMDDHH24MISS'),
+		:ora_mop:ora_mopZi
+	);
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//this methode tries to update a DB record,when the update fails.
+char* UTILITY_COIL::storeDB()
+{
+	char* ret = NULL;
+	setKeysFromRecord();
+	ret=updateDB();
+	if(ret != NULL)
+	{
+		ret=insertDB();
+		if(ret != NULL)
+		{
+			dbAccess = false;
+			return(ret);
+		}
+	}
+	return(ret);
+}
+
+//deletes a single entry from DB
+char* UTILITY_COIL::deleteDB()
+{
+//
+//copy the host variables (k_...) to Oracle Host Keys (k_ora_..)
+//
+	copyKeyToHost();
+
+//
+// Do Delete 
+//
+	EXEC SQL DELETE FROM UTILITY_COIL
+	WHERE
+				pcoil           = :k_ora_pcoil ;
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+// Executes the SQL DELETE with a where clause
+char* UTILITY_COIL::deleteDB(const char* where,long* count)
+{
+	*(count) = -1L;
+// Create dynamic statement.
+//
+	strcpy((char*)dynstr.arr,"DELETE");
+	strcat((char*)dynstr.arr," FROM UTILITY_COIL");
+	if ( where != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, where );
+	}
+
+	dynstr.len = strlen( (char*) dynstr.arr);
+	EXEC SQL EXECUTE IMMEDIATE :dynstr;
+	oracleSqlCode = sqlca.sqlcode;
+		oracleRowsProcessed = sqlca.sqlerrd[2];
+	if (sqlca.sqlcode == 0 )
+		*(count) = sqlca.sqlerrd[2];
+	else 
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//openSetDB data with where condition and sort order.
+char* UTILITY_COIL::openSetDB(const char* where,char* order)
+{
+//
+// Create dynamic statement.
+//
+	strcpy((char*)dynstr.arr,"SELECT ");
+	strcat((char*)dynstr.arr,"pcoil,");
+	strcat((char*)dynstr.arr,"hcoil,");
+	strcat((char*)dynstr.arr,"demwat,");
+	strcat((char*)dynstr.arr,"steam,");
+	strcat((char*)dynstr.arr,"recwat,");
+	strcat((char*)dynstr.arr,"potwat,");
+	strcat((char*)dynstr.arr,"compres,");
+	strcat((char*)dynstr.arr,"regacd,");
+	strcat((char*)dynstr.arr,"wasacd1,");
+	strcat((char*)dynstr.arr,"wasacd2,");
+	strcat((char*)dynstr.arr,"waswat,");
+	strcat((char*)dynstr.arr,"indwat,");
+	strcat((char*)dynstr.arr,"weakacd,");
+	strcat((char*)dynstr.arr,"TO_CHAR(toc , 'YYYYMMDDHH24MISS'),");
+	strcat((char*)dynstr.arr,"TO_CHAR(tom , 'YYYYMMDDHH24MISS'),");
+	strcat((char*)dynstr.arr,"mop");
+
+	strcat((char*)dynstr.arr," FROM UTILITY_COIL ");
+	if ( where != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, where);
+	}
+	if ( order != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, order);
+	}
+
+	dynstr.len = strlen( (char*) dynstr.arr);
+	EXEC SQL PREPARE set_UTILITY_COIL FROM :dynstr;
+	if (sqlca.sqlcode == 0 )
+	{
+		EXEC SQL DECLARE cu_UTILITY_COIL CURSOR FOR set_UTILITY_COIL;
+		if (sqlca.sqlcode == 0 )
+			EXEC SQL OPEN cu_UTILITY_COIL;
+	}
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	cuFl = OPENED;
+	return ( NULL );
+}
+
+//Executes the SQL FETCH Statement .
+char* UTILITY_COIL::getSetDB()
+{
+	if ( cuFl != OPENED ) return ("No open Cursor Table:Me");
+	EXEC SQL FETCH cu_UTILITY_COIL INTO
+		:ora_pcoil,
+		:ora_hcoil,
+		:ora_demwat,
+		:ora_steam:ora_steamZi,
+		:ora_recwat:ora_recwatZi,
+		:ora_potwat:ora_potwatZi,
+		:ora_compres:ora_compresZi,
+		:ora_regacd:ora_regacdZi,
+		:ora_wasacd1:ora_wasacd1Zi,
+		:ora_wasacd2:ora_wasacd2Zi,
+		:ora_waswat:ora_waswatZi,
+		:ora_indwat:ora_indwatZi,
+		:ora_weakacd:ora_weakacdZi,
+		:ora_toc:ora_tocZi,
+		:ora_tom:ora_tomZi,
+		:ora_mop:ora_mopZi;
+
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		pCatch->catchError(sqlca.sqlcode);
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		return (char*) sqlca.sqlerrm.sqlerrmc ;
+	}
+	//
+	// copy host variables into Class attributes
+	//
+	copyOracleToAttribute();
+	copyHostToKey();
+	return ( NULL );
+}
+
+//Close a Oracle Cursor
+char* UTILITY_COIL::closeSetDB()
+{
+	EXEC SQL CLOSE cu_UTILITY_COIL;
+	oracleSqlCode = sqlca.sqlcode;         
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		pCatch->catchError(sqlca.sqlcode);
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		return (char*) sqlca.sqlerrm.sqlerrmc ;
+	}
+	cuFl = CLOSED;
+	return ( NULL );
+}
+
+//Executes the SQL count(key) for a where clause
+char* UTILITY_COIL::countDB(const char* where,long* count)
+{
+	*(count) = -1L;
+//
+// Create dynamic statement. 
+//
+	strncpy((char*)dynstr.arr,"SELECT count(pcoil)", sizeof(dynstr.arr));
+	strcat((char*)dynstr.arr," FROM UTILITY_COIL");
+	if ( where != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, where );
+	}
+	dynstr.len = strlen( (char*) dynstr.arr);
+	EXEC SQL PREPARE c_UTILITY_COIL FROM :dynstr;
+	
+	if (sqlca.sqlcode == 0 )
+	{
+		EXEC SQL DECLARE ct_UTILITY_COIL CURSOR FOR c_UTILITY_COIL;
+		if (sqlca.sqlcode == 0 )
+		{
+			EXEC SQL OPEN ct_UTILITY_COIL;
+			if (sqlca.sqlcode == 0 )			{
+				EXEC SQL FETCH ct_UTILITY_COIL INTO :rowCnt;
+				if (sqlca.sqlcode == 0 )
+				*(count) = rowCnt;
+			}
+			EXEC SQL CLOSE ct_UTILITY_COIL;
+		}
+	}
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//private methode copy Attribute to Oracle
+//copys Object attributes into Oracle Host variables.
+void UTILITY_COIL::copyAttributeToOracle()
+{
+	char* ptrStr;
+	ptrStr = this->pcoil();
+	if( strlen(ptrStr)< sizeof(ora_pcoil.arr))
+	{
+		strncpy((char*)ora_pcoil.arr, ptrStr, sizeof(ora_pcoil.arr));
+		ora_pcoil.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_pcoil.len = 0;
+	ptrStr = this->hcoil();
+	if( strlen(ptrStr)< sizeof(ora_hcoil.arr))
+	{
+		strncpy((char*)ora_hcoil.arr, ptrStr, sizeof(ora_hcoil.arr));
+		ora_hcoil.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_hcoil.len = 0;
+	ora_demwat = this->demwat();
+	ora_steam = this->steam();
+	ora_steamZi = this->steamZi();
+	ora_recwat = this->recwat();
+	ora_recwatZi = this->recwatZi();
+	ora_potwat = this->potwat();
+	ora_potwatZi = this->potwatZi();
+	ora_compres = this->compres();
+	ora_compresZi = this->compresZi();
+	ora_regacd = this->regacd();
+	ora_regacdZi = this->regacdZi();
+	ora_wasacd1 = this->wasacd1();
+	ora_wasacd1Zi = this->wasacd1Zi();
+	ora_wasacd2 = this->wasacd2();
+	ora_wasacd2Zi = this->wasacd2Zi();
+	ora_waswat = this->waswat();
+	ora_waswatZi = this->waswatZi();
+	ora_indwat = this->indwat();
+	ora_indwatZi = this->indwatZi();
+	ora_weakacd = this->weakacd();
+	ora_weakacdZi = this->weakacdZi();
+	ptrStr = this->toc();
+	if( strlen(ptrStr)< sizeof(ora_toc.arr))
+	{
+		strncpy((char*)ora_toc.arr, ptrStr, sizeof(ora_toc.arr));
+		ora_toc.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_toc.len = 0;
+	ora_tocZi = this->tocZi();
+	ptrStr = this->tom();
+	if( strlen(ptrStr)< sizeof(ora_tom.arr))
+	{
+		strncpy((char*)ora_tom.arr, ptrStr, sizeof(ora_tom.arr));
+		ora_tom.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_tom.len = 0;
+	ora_tomZi = this->tomZi();
+	ptrStr = this->mop();
+	if( strlen(ptrStr)< sizeof(ora_mop.arr))
+	{
+		strncpy((char*)ora_mop.arr, ptrStr, sizeof(ora_mop.arr));
+		ora_mop.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_mop.len = 0;
+	ora_mopZi = this->mopZi();
+}
+
+//private methode copy Oracle to Attribute
+//copys Oracle Host variables into Object attributes.
+void UTILITY_COIL::copyOracleToAttribute()
+{
+	ora_pcoil.arr[ora_pcoil.len] = '\0';
+	this->set_pcoil((char*) ora_pcoil.arr);
+	ora_hcoil.arr[ora_hcoil.len] = '\0';
+	this->set_hcoil((char*) ora_hcoil.arr);
+	this->set_demwat((short)ora_demwat);
+	this->set_steam((short)ora_steam);
+	this->set_steamZi((short)ora_steamZi);
+	this->set_recwat((short)ora_recwat);
+	this->set_recwatZi((short)ora_recwatZi);
+	this->set_potwat((short)ora_potwat);
+	this->set_potwatZi((short)ora_potwatZi);
+	this->set_compres((short)ora_compres);
+	this->set_compresZi((short)ora_compresZi);
+	this->set_regacd((short)ora_regacd);
+	this->set_regacdZi((short)ora_regacdZi);
+	this->set_wasacd1((short)ora_wasacd1);
+	this->set_wasacd1Zi((short)ora_wasacd1Zi);
+	this->set_wasacd2((short)ora_wasacd2);
+	this->set_wasacd2Zi((short)ora_wasacd2Zi);
+	this->set_waswat((short)ora_waswat);
+	this->set_waswatZi((short)ora_waswatZi);
+	this->set_indwat((short)ora_indwat);
+	this->set_indwatZi((short)ora_indwatZi);
+	this->set_weakacd((short)ora_weakacd);
+	this->set_weakacdZi((short)ora_weakacdZi);
+	ora_toc.arr[ora_toc.len] = '\0';
+	this->set_toc((char*) ora_toc.arr);
+	this->set_tocZi((short)ora_tocZi);
+	ora_tom.arr[ora_tom.len] = '\0';
+	this->set_tom((char*) ora_tom.arr);
+	this->set_tomZi((short)ora_tomZi);
+	ora_mop.arr[ora_mop.len] = '\0';
+	this->set_mop((char*) ora_mop.arr);
+	this->set_mopZi((short)ora_mopZi);
+}
+
+//private methode copy Key to host
+//copys Object attributes into Oralce Key variables.
+void UTILITY_COIL::copyKeyToHost()
+{
+	char* ptrStr;
+	ptrStr = this->k_pcoil();
+	if( strlen(ptrStr)< sizeof(k_ora_pcoil.arr))
+	{
+		strncpy((char*)k_ora_pcoil.arr, ptrStr, sizeof(k_ora_pcoil.arr));
+		k_ora_pcoil.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		k_ora_pcoil.len = 0;
+}
+
+//private methode copy Host to Key
+// copys Oracle Host Key variables into Object Key attributes.
+void UTILITY_COIL::copyHostToKey()
+{
+	ora_pcoil.arr[ora_pcoil.len] = '\0';
+	this->set_k_pcoil((char*) ora_pcoil.arr);
+}
+
+//private methode log Oracle message information
+void UTILITY_COIL::logOraMessageInfo()
+{
+	LOG d("UTILITY_COIL::logOraMessageInfo()");
+	sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+	oraca.orastxt.orastxtc[oraca.orastxt.orastxtl] = '\0';
+	oraca.orasfnm.orasfnmc[oraca.orasfnm.orasfnml] = '\0';
+	
+	//* negating a error code submitted perhaps positively.
+	if (sqlca.sqlcode > 0) sqlca.sqlcode *= -1;
+	
+	//* Distribute fault text, SQL statement and file in the Debug System.
+	d << "ORA-Error: "<< sqlca.sqlerrm.sqlerrmc; d.Info();
+	d << "OracaText: "<< oraca.orastxt.orastxtc; d.Info();
+	d << "in line " << oraca.oraslnr << " in file " << oraca.orasfnm.orasfnmc; d.Info();
+}
+
+//this methode stores the unique key attributes
+void UTILITY_COIL::setPrimKey(char* arg1)
+{
+	strncpy( (char*)c_k_pcoil, arg1, sizeof(c_k_pcoil));
+	c_k_pcoil[sizeof(c_k_pcoil)-1] = '\0';
+}
+
+//this methode stores the unique key attributes
+void UTILITY_COIL::initInsertKeys(char* arg1)
+{
+	setPrimKey(arg1);
+	strncpy( (char*)c_pcoil, arg1, sizeof(c_pcoil));
+	c_pcoil[sizeof(c_pcoil)-1] = '\0';
+}
+
+//this methode set the unique key attributes from the DB Record Attributes
+void UTILITY_COIL::setKeysFromRecord()
+{
+	set_k_pcoil( pcoil() );
+}
+
+//			         
+//O P E R A T O R  + 
+//===================
+//                   
+UTILITY_COIL UTILITY_COIL::operator+(const UTILITY_COIL &inst) const
+{
+	UTILITY_COIL ptrUTILITY_COIL(*this);
+//----------------------------------------------------------
+	ptrUTILITY_COIL.set_pcoil(inst.pcoil());
+//----------------------------------------------------------
+	ptrUTILITY_COIL.set_hcoil(inst.hcoil());
+//----------------------------------------------------------
+	ptrUTILITY_COIL.set_demwat(inst.demwat());
+//----------------------------------------------------------
+	if(inst.steamZi() != -1)
+	{
+		ptrUTILITY_COIL.set_steam(inst.steam());
+		ptrUTILITY_COIL.set_steamZi(inst.steamZi());
+	}
+//----------------------------------------------------------
+	if(inst.recwatZi() != -1)
+	{
+		ptrUTILITY_COIL.set_recwat(inst.recwat());
+		ptrUTILITY_COIL.set_recwatZi(inst.recwatZi());
+	}
+//----------------------------------------------------------
+	if(inst.potwatZi() != -1)
+	{
+		ptrUTILITY_COIL.set_potwat(inst.potwat());
+		ptrUTILITY_COIL.set_potwatZi(inst.potwatZi());
+	}
+//----------------------------------------------------------
+	if(inst.compresZi() != -1)
+	{
+		ptrUTILITY_COIL.set_compres(inst.compres());
+		ptrUTILITY_COIL.set_compresZi(inst.compresZi());
+	}
+//----------------------------------------------------------
+	if(inst.regacdZi() != -1)
+	{
+		ptrUTILITY_COIL.set_regacd(inst.regacd());
+		ptrUTILITY_COIL.set_regacdZi(inst.regacdZi());
+	}
+//----------------------------------------------------------
+	if(inst.wasacd1Zi() != -1)
+	{
+		ptrUTILITY_COIL.set_wasacd1(inst.wasacd1());
+		ptrUTILITY_COIL.set_wasacd1Zi(inst.wasacd1Zi());
+	}
+//----------------------------------------------------------
+	if(inst.wasacd2Zi() != -1)
+	{
+		ptrUTILITY_COIL.set_wasacd2(inst.wasacd2());
+		ptrUTILITY_COIL.set_wasacd2Zi(inst.wasacd2Zi());
+	}
+//----------------------------------------------------------
+	if(inst.waswatZi() != -1)
+	{
+		ptrUTILITY_COIL.set_waswat(inst.waswat());
+		ptrUTILITY_COIL.set_waswatZi(inst.waswatZi());
+	}
+//----------------------------------------------------------
+	if(inst.indwatZi() != -1)
+	{
+		ptrUTILITY_COIL.set_indwat(inst.indwat());
+		ptrUTILITY_COIL.set_indwatZi(inst.indwatZi());
+	}
+//----------------------------------------------------------
+	if(inst.weakacdZi() != -1)
+	{
+		ptrUTILITY_COIL.set_weakacd(inst.weakacd());
+		ptrUTILITY_COIL.set_weakacdZi(inst.weakacdZi());
+	}
+//----------------------------------------------------------
+	if(inst.tocZi() != -1)
+	{
+		ptrUTILITY_COIL.set_toc(inst.toc());
+		ptrUTILITY_COIL.set_tocZi(inst.tocZi());
+	}
+//----------------------------------------------------------
+	if(inst.tomZi() != -1)
+	{
+		ptrUTILITY_COIL.set_tom(inst.tom());
+		ptrUTILITY_COIL.set_tomZi(inst.tomZi());
+	}
+//----------------------------------------------------------
+	if(inst.mopZi() != -1)
+	{
+		ptrUTILITY_COIL.set_mop(inst.mop());
+		ptrUTILITY_COIL.set_mopZi(inst.mopZi());
+	}
+	return( ptrUTILITY_COIL );
+}
+
+//			         
+//O P E R A T O R  = 
+//===================
+//                   
+const UTILITY_COIL& UTILITY_COIL::operator=(const UTILITY_COIL &inst)
+{
+//----------------------------------------------------------
+	this->set_pcoil(inst.pcoil());
+//----------------------------------------------------------
+	this->set_hcoil(inst.hcoil());
+//----------------------------------------------------------
+	this->set_demwat(inst.demwat());
+//----------------------------------------------------------
+	this->set_steam(inst.steam());
+	this->set_steamZi(inst.steamZi());
+//----------------------------------------------------------
+	this->set_recwat(inst.recwat());
+	this->set_recwatZi(inst.recwatZi());
+//----------------------------------------------------------
+	this->set_potwat(inst.potwat());
+	this->set_potwatZi(inst.potwatZi());
+//----------------------------------------------------------
+	this->set_compres(inst.compres());
+	this->set_compresZi(inst.compresZi());
+//----------------------------------------------------------
+	this->set_regacd(inst.regacd());
+	this->set_regacdZi(inst.regacdZi());
+//----------------------------------------------------------
+	this->set_wasacd1(inst.wasacd1());
+	this->set_wasacd1Zi(inst.wasacd1Zi());
+//----------------------------------------------------------
+	this->set_wasacd2(inst.wasacd2());
+	this->set_wasacd2Zi(inst.wasacd2Zi());
+//----------------------------------------------------------
+	this->set_waswat(inst.waswat());
+	this->set_waswatZi(inst.waswatZi());
+//----------------------------------------------------------
+	this->set_indwat(inst.indwat());
+	this->set_indwatZi(inst.indwatZi());
+//----------------------------------------------------------
+	this->set_weakacd(inst.weakacd());
+	this->set_weakacdZi(inst.weakacdZi());
+//----------------------------------------------------------
+	this->set_toc(inst.toc());
+	this->set_tocZi(inst.tocZi());
+//----------------------------------------------------------
+	this->set_tom(inst.tom());
+	this->set_tomZi(inst.tomZi());
+//----------------------------------------------------------
+	this->set_mop(inst.mop());
+	this->set_mopZi(inst.mopZi());
+	return(*this);
+}
+

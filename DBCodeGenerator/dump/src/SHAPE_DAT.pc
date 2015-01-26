@@ -1,0 +1,1855 @@
+/* *******************************************************************/
+/* *   File               :    SHAPE_DAT.pc
+/* *   Short Description  :    ORACLE DATABASE ACCESS
+/* * 		                   SHAPE TREND DATA TABLE(After cut)
+/* *   Author             :    DB CODE Generator
+/* *   Created Date       :    13.06.2013
+/* *   Tech.Support       :    LiuWeiZhao. email:welljoe@hotmail.com 
+/* *******************************************************************/
+/* *   Copyright (c)  SGAI AI 2009   All Rights Reserved
+/* *******************************************************************/
+
+#include "LOG.h"
+#include "SHAPE_DAT.h"
+//
+// Declare ORACLE Host Variables
+//
+
+#define SQLCA_STORAGE_CLASS static
+#define ORACA_STORAGE_CLASS static
+EXEC SQL INCLUDE sqlca;
+EXEC SQL INCLUDE oraca;
+
+#define OPENED 1
+#define CLOSED 2
+EXEC SQL BEGIN DECLARE SECTION;
+/* ****************************************************************************** */
+/*                                                                                */
+/*                               define Oracle                                    */
+/*                               Host Variables                                   */
+/*                                                          .                     */
+/*                                                                                */
+/* ****************************************************************************** */
+
+static VARCHAR	dynstr[16000];
+static long		rowCnt;       
+static long		cuFl;         
+//Unit[-]:Hot coil number.Limit:[-,-]
+static VARCHAR  ora_hcoil[17];
+//Unit[-]:Shape trend Data NO.Limit:[-,-]
+static short    ora_shpdtno;
+//Unit[-]:MeasPosition.Limit:[-,1]
+static short    ora_mespos;
+static short    ora_mesposZi;
+//Unit[-]:MeasTime.Limit:[-,-]
+static VARCHAR  ora_mestim[17];
+static short    ora_mestimZi;
+//Unit[-]:low.Limit:[-,-]
+static short    ora_low;
+static short    ora_lowZi;
+//Unit[I]:hight.Limit:[-,-]
+static short    ora_high;
+static short    ora_highZi;
+//Unit[I]:Shape trend Data.Limit:[-,-]
+static short    ora_shpdt1;
+static short    ora_shpdt1Zi;
+//Unit[I]:Shape trend Data.Limit:[-,-]
+static short    ora_shpdt2;
+static short    ora_shpdt2Zi;
+//Unit[I]:Shape trend Data.Limit:[-,-]
+static short    ora_shpdt3;
+static short    ora_shpdt3Zi;
+//Unit[I]:Shape trend Data.Limit:[-,-]
+static short    ora_shpdt4;
+static short    ora_shpdt4Zi;
+//Unit[I]:Shape trend Data.Limit:[-,-]
+static short    ora_shpdt5;
+static short    ora_shpdt5Zi;
+//Unit[I]:Shape trend Data.Limit:[-,-]
+static short    ora_shpdt6;
+static short    ora_shpdt6Zi;
+//Unit[I]:Shape trend Data.Limit:[-,-]
+static short    ora_shpdt7;
+static short    ora_shpdt7Zi;
+//Unit[I]:Shape trend Data.Limit:[-,-]
+static short    ora_shpdt8;
+static short    ora_shpdt8Zi;
+//Unit[I]:Shape trend Data.Limit:[-,-]
+static short    ora_shpdt9;
+static short    ora_shpdt9Zi;
+//Unit[I]:Shape trend Data.Limit:[-,-]
+static short    ora_shpdt10;
+static short    ora_shpdt10Zi;
+//Unit[I]:Shape trend Data.Limit:[-,-]
+static short    ora_shpdt11;
+static short    ora_shpdt11Zi;
+//Unit[I]:Shape trend Data.Limit:[-,-]
+static short    ora_shpdt12;
+static short    ora_shpdt12Zi;
+//Unit[I]:Shape trend Data.Limit:[-,-]
+static short    ora_shpdt13;
+static short    ora_shpdt13Zi;
+//Unit[I]:Shape trend Data.Limit:[-,-]
+static short    ora_shpdt14;
+static short    ora_shpdt14Zi;
+//Unit[I]:Shape trend Data.Limit:[-,-]
+static short    ora_shpdt15;
+static short    ora_shpdt15Zi;
+//Unit[I]:Shape trend Data.Limit:[-,-]
+static short    ora_shpdt16;
+static short    ora_shpdt16Zi;
+//Unit[I]:Shape trend Data.Limit:[-,-]
+static short    ora_shpdt17;
+static short    ora_shpdt17Zi;
+//Unit[I]:Shape trend Data.Limit:[-,-]
+static short    ora_shpdt18;
+static short    ora_shpdt18Zi;
+//Unit[I]:Shape trend Data.Limit:[-,-]
+static short    ora_shpdt19;
+static short    ora_shpdt19Zi;
+//Unit[I]:Shape trend Data.Limit:[-,-]
+static short    ora_shpdt20;
+static short    ora_shpdt20Zi;
+//Unit[I]:Shape trend Data.Limit:[-,-]
+static short    ora_shpdt21;
+static short    ora_shpdt21Zi;
+//Unit[I]:Shape trend Data.Limit:[-,-]
+static short    ora_shpdt22;
+static short    ora_shpdt22Zi;
+//Unit[I]:Shape trend Data.Limit:[-,-]
+static short    ora_shpdt23;
+static short    ora_shpdt23Zi;
+//Unit[I]:Shape trend Data.Limit:[-,-]
+static short    ora_shpdt24;
+static short    ora_shpdt24Zi;
+//Unit[I]:Shape trend Data.Limit:[-,-]
+static short    ora_shpdt25;
+static short    ora_shpdt25Zi;
+//Unit[I]:Shape trend Data.Limit:[-,-]
+static short    ora_shpdt26;
+static short    ora_shpdt26Zi;
+//Unit[I]:Shape trend Data.Limit:[-,-]
+static short    ora_shpdt27;
+static short    ora_shpdt27Zi;
+//Unit[I]:Shape trend Data.Limit:[-,-]
+static short    ora_shpdt28;
+static short    ora_shpdt28Zi;
+//Unit[I]:Shape trend Data.Limit:[-,-]
+static short    ora_shpdt29;
+static short    ora_shpdt29Zi;
+//Unit[I]:Shape trend Data.Limit:[-,-]
+static short    ora_shpdt30;
+static short    ora_shpdt30Zi;
+//Unit[I]:Shape trend Data.Limit:[-,-]
+static short    ora_shpdt31;
+static short    ora_shpdt31Zi;
+//Unit[I]:Shape trend Data.Limit:[-,-]
+static short    ora_shpdt32;
+static short    ora_shpdt32Zi;
+//Unit[I]:Shape trend Data.Limit:[-,-]
+static short    ora_shpdt33;
+static short    ora_shpdt33Zi;
+//Unit[I]:Shape trend Data.Limit:[-,-]
+static short    ora_shpdt34;
+static short    ora_shpdt34Zi;
+//Unit[-]:Shape trend Data.Limit:[-,-]
+static short    ora_shpdt35;
+static short    ora_shpdt35Zi;
+//Unit[-]:Shape trend Data.Limit:[-,-]
+static short    ora_shpdt36;
+static short    ora_shpdt36Zi;
+//Unit[-]:Shape trend Data.Limit:[-,-]
+static short    ora_shpdt37;
+static short    ora_shpdt37Zi;
+//Unit[-]:Shape trend Data.Limit:[-,-]
+static short    ora_shpdt38;
+static short    ora_shpdt38Zi;
+//Unit[-]:create time.Limit:[-,-]
+static VARCHAR  ora_toc[15];
+static short    ora_tocZi;
+//Unit[-]:modify time.Limit:[-,-]
+static VARCHAR  ora_tom[15];
+static short    ora_tomZi;
+//Unit[-]:creator or modifyer.Limit:[-,-]
+static VARCHAR  ora_mop[121];
+static short    ora_mopZi;
+// Host arguments for Primary key
+static VARCHAR  k_ora_hcoil[17];   // Unit[-]:Hot coil number.Limit:[-,-]
+static short    k_ora_shpdtno;   // Unit[-]:Shape trend Data NO.Limit:[-,-]
+
+EXEC SQL END DECLARE SECTION;             
+             
+// 				             
+//C O N S T R U C T O R S    
+//=======================    
+//                           
+SHAPE_DAT::SHAPE_DAT()
+{
+	initial();                                             
+}
+
+//					
+//C O P Y  -  C O N S T R U C T O R 
+//==================================
+SHAPE_DAT::SHAPE_DAT(const SHAPE_DAT &inst)
+{
+//----------------------------------------------------------
+	this->set_hcoil(inst.hcoil());
+//----------------------------------------------------------
+	this->set_shpdtno(inst.shpdtno());
+//----------------------------------------------------------
+	this->set_mespos(inst.mespos());
+	this->set_mesposZi(inst.mesposZi());
+//----------------------------------------------------------
+	this->set_mestim(inst.mestim());
+	this->set_mestimZi(inst.mestimZi());
+//----------------------------------------------------------
+	this->set_low(inst.low());
+	this->set_lowZi(inst.lowZi());
+//----------------------------------------------------------
+	this->set_high(inst.high());
+	this->set_highZi(inst.highZi());
+//----------------------------------------------------------
+	this->set_shpdt1(inst.shpdt1());
+	this->set_shpdt1Zi(inst.shpdt1Zi());
+//----------------------------------------------------------
+	this->set_shpdt2(inst.shpdt2());
+	this->set_shpdt2Zi(inst.shpdt2Zi());
+//----------------------------------------------------------
+	this->set_shpdt3(inst.shpdt3());
+	this->set_shpdt3Zi(inst.shpdt3Zi());
+//----------------------------------------------------------
+	this->set_shpdt4(inst.shpdt4());
+	this->set_shpdt4Zi(inst.shpdt4Zi());
+//----------------------------------------------------------
+	this->set_shpdt5(inst.shpdt5());
+	this->set_shpdt5Zi(inst.shpdt5Zi());
+//----------------------------------------------------------
+	this->set_shpdt6(inst.shpdt6());
+	this->set_shpdt6Zi(inst.shpdt6Zi());
+//----------------------------------------------------------
+	this->set_shpdt7(inst.shpdt7());
+	this->set_shpdt7Zi(inst.shpdt7Zi());
+//----------------------------------------------------------
+	this->set_shpdt8(inst.shpdt8());
+	this->set_shpdt8Zi(inst.shpdt8Zi());
+//----------------------------------------------------------
+	this->set_shpdt9(inst.shpdt9());
+	this->set_shpdt9Zi(inst.shpdt9Zi());
+//----------------------------------------------------------
+	this->set_shpdt10(inst.shpdt10());
+	this->set_shpdt10Zi(inst.shpdt10Zi());
+//----------------------------------------------------------
+	this->set_shpdt11(inst.shpdt11());
+	this->set_shpdt11Zi(inst.shpdt11Zi());
+//----------------------------------------------------------
+	this->set_shpdt12(inst.shpdt12());
+	this->set_shpdt12Zi(inst.shpdt12Zi());
+//----------------------------------------------------------
+	this->set_shpdt13(inst.shpdt13());
+	this->set_shpdt13Zi(inst.shpdt13Zi());
+//----------------------------------------------------------
+	this->set_shpdt14(inst.shpdt14());
+	this->set_shpdt14Zi(inst.shpdt14Zi());
+//----------------------------------------------------------
+	this->set_shpdt15(inst.shpdt15());
+	this->set_shpdt15Zi(inst.shpdt15Zi());
+//----------------------------------------------------------
+	this->set_shpdt16(inst.shpdt16());
+	this->set_shpdt16Zi(inst.shpdt16Zi());
+//----------------------------------------------------------
+	this->set_shpdt17(inst.shpdt17());
+	this->set_shpdt17Zi(inst.shpdt17Zi());
+//----------------------------------------------------------
+	this->set_shpdt18(inst.shpdt18());
+	this->set_shpdt18Zi(inst.shpdt18Zi());
+//----------------------------------------------------------
+	this->set_shpdt19(inst.shpdt19());
+	this->set_shpdt19Zi(inst.shpdt19Zi());
+//----------------------------------------------------------
+	this->set_shpdt20(inst.shpdt20());
+	this->set_shpdt20Zi(inst.shpdt20Zi());
+//----------------------------------------------------------
+	this->set_shpdt21(inst.shpdt21());
+	this->set_shpdt21Zi(inst.shpdt21Zi());
+//----------------------------------------------------------
+	this->set_shpdt22(inst.shpdt22());
+	this->set_shpdt22Zi(inst.shpdt22Zi());
+//----------------------------------------------------------
+	this->set_shpdt23(inst.shpdt23());
+	this->set_shpdt23Zi(inst.shpdt23Zi());
+//----------------------------------------------------------
+	this->set_shpdt24(inst.shpdt24());
+	this->set_shpdt24Zi(inst.shpdt24Zi());
+//----------------------------------------------------------
+	this->set_shpdt25(inst.shpdt25());
+	this->set_shpdt25Zi(inst.shpdt25Zi());
+//----------------------------------------------------------
+	this->set_shpdt26(inst.shpdt26());
+	this->set_shpdt26Zi(inst.shpdt26Zi());
+//----------------------------------------------------------
+	this->set_shpdt27(inst.shpdt27());
+	this->set_shpdt27Zi(inst.shpdt27Zi());
+//----------------------------------------------------------
+	this->set_shpdt28(inst.shpdt28());
+	this->set_shpdt28Zi(inst.shpdt28Zi());
+//----------------------------------------------------------
+	this->set_shpdt29(inst.shpdt29());
+	this->set_shpdt29Zi(inst.shpdt29Zi());
+//----------------------------------------------------------
+	this->set_shpdt30(inst.shpdt30());
+	this->set_shpdt30Zi(inst.shpdt30Zi());
+//----------------------------------------------------------
+	this->set_shpdt31(inst.shpdt31());
+	this->set_shpdt31Zi(inst.shpdt31Zi());
+//----------------------------------------------------------
+	this->set_shpdt32(inst.shpdt32());
+	this->set_shpdt32Zi(inst.shpdt32Zi());
+//----------------------------------------------------------
+	this->set_shpdt33(inst.shpdt33());
+	this->set_shpdt33Zi(inst.shpdt33Zi());
+//----------------------------------------------------------
+	this->set_shpdt34(inst.shpdt34());
+	this->set_shpdt34Zi(inst.shpdt34Zi());
+//----------------------------------------------------------
+	this->set_shpdt35(inst.shpdt35());
+	this->set_shpdt35Zi(inst.shpdt35Zi());
+//----------------------------------------------------------
+	this->set_shpdt36(inst.shpdt36());
+	this->set_shpdt36Zi(inst.shpdt36Zi());
+//----------------------------------------------------------
+	this->set_shpdt37(inst.shpdt37());
+	this->set_shpdt37Zi(inst.shpdt37Zi());
+//----------------------------------------------------------
+	this->set_shpdt38(inst.shpdt38());
+	this->set_shpdt38Zi(inst.shpdt38Zi());
+//----------------------------------------------------------
+	this->set_toc(inst.toc());
+	this->set_tocZi(inst.tocZi());
+//----------------------------------------------------------
+	this->set_tom(inst.tom());
+	this->set_tomZi(inst.tomZi());
+//----------------------------------------------------------
+	this->set_mop(inst.mop());
+	this->set_mopZi(inst.mopZi());
+}
+
+//					
+//C O N S T R U C T O R -W I T H P A R A M E T E R S
+//===================================================
+//					
+SHAPE_DAT::SHAPE_DAT(char* arg1,short arg2)
+{
+	initial();					               
+	setPrimKey (arg1,arg2);    
+	//read DB record                           
+	dbAccess = true;                           
+	dbMessage = readDB();                      
+	if ( dbMessage != NULL ) dbAccess = false; 
+}
+
+//D E S T R U C T O R S  
+//=======================
+//                       
+SHAPE_DAT::~SHAPE_DAT()
+{
+}
+
+//initialise all member variables
+void SHAPE_DAT::initial()
+{
+	set_hcoil("");
+	set_shpdtno(0);
+	set_mespos(0);
+	set_mesposZi(-1);
+	set_mestim("");
+	set_mestimZi(-1);
+	set_low(0);
+	set_lowZi(-1);
+	set_high(0);
+	set_highZi(-1);
+	set_shpdt1(0);
+	set_shpdt1Zi(-1);
+	set_shpdt2(0);
+	set_shpdt2Zi(-1);
+	set_shpdt3(0);
+	set_shpdt3Zi(-1);
+	set_shpdt4(0);
+	set_shpdt4Zi(-1);
+	set_shpdt5(0);
+	set_shpdt5Zi(-1);
+	set_shpdt6(0);
+	set_shpdt6Zi(-1);
+	set_shpdt7(0);
+	set_shpdt7Zi(-1);
+	set_shpdt8(0);
+	set_shpdt8Zi(-1);
+	set_shpdt9(0);
+	set_shpdt9Zi(-1);
+	set_shpdt10(0);
+	set_shpdt10Zi(-1);
+	set_shpdt11(0);
+	set_shpdt11Zi(-1);
+	set_shpdt12(0);
+	set_shpdt12Zi(-1);
+	set_shpdt13(0);
+	set_shpdt13Zi(-1);
+	set_shpdt14(0);
+	set_shpdt14Zi(-1);
+	set_shpdt15(0);
+	set_shpdt15Zi(-1);
+	set_shpdt16(0);
+	set_shpdt16Zi(-1);
+	set_shpdt17(0);
+	set_shpdt17Zi(-1);
+	set_shpdt18(0);
+	set_shpdt18Zi(-1);
+	set_shpdt19(0);
+	set_shpdt19Zi(-1);
+	set_shpdt20(0);
+	set_shpdt20Zi(-1);
+	set_shpdt21(0);
+	set_shpdt21Zi(-1);
+	set_shpdt22(0);
+	set_shpdt22Zi(-1);
+	set_shpdt23(0);
+	set_shpdt23Zi(-1);
+	set_shpdt24(0);
+	set_shpdt24Zi(-1);
+	set_shpdt25(0);
+	set_shpdt25Zi(-1);
+	set_shpdt26(0);
+	set_shpdt26Zi(-1);
+	set_shpdt27(0);
+	set_shpdt27Zi(-1);
+	set_shpdt28(0);
+	set_shpdt28Zi(-1);
+	set_shpdt29(0);
+	set_shpdt29Zi(-1);
+	set_shpdt30(0);
+	set_shpdt30Zi(-1);
+	set_shpdt31(0);
+	set_shpdt31Zi(-1);
+	set_shpdt32(0);
+	set_shpdt32Zi(-1);
+	set_shpdt33(0);
+	set_shpdt33Zi(-1);
+	set_shpdt34(0);
+	set_shpdt34Zi(-1);
+	set_shpdt35(0);
+	set_shpdt35Zi(-1);
+	set_shpdt36(0);
+	set_shpdt36Zi(-1);
+	set_shpdt37(0);
+	set_shpdt37Zi(-1);
+	set_shpdt38(0);
+	set_shpdt38Zi(-1);
+	set_toc("");
+	set_tocZi(-1);
+	set_tom("");
+	set_tomZi(-1);
+	set_mop("");
+	set_mopZi(-1);
+	//initialies Primary key members
+	set_k_hcoil("");
+	set_k_shpdtno(0);
+// Initial Oracle Options
+	oraca.oradbgf  = 1; // gather debug informations       
+	oraca.oracchf  = 1; // gather cursor cache informations
+	oraca.orahchf  = 1; // check heap                      
+	oraca.orastxtf = 3; // always save last sql-statement  
+	                                                       
+	EXEC ORACLE OPTION (ORACA=YES);                        
+	EXEC ORACLE OPTION (HOLD_CURSOR=YES);                  
+	EXEC ORACLE OPTION (RELEASE_CURSOR=NO);                
+	EXEC ORACLE OPTION (MAXOPENCURSORS=50);                
+	pCatch = CatchDbaxError::instance();                   
+	                                                       
+}
+
+//read a single entry from DB.
+char* SHAPE_DAT::readDB()
+{
+	//
+	//copy the host variables (k_...) to Oracle Host Keys (k_ora_..)
+	//
+		copyKeyToHost();
+	//
+	// Do SELECT
+	//
+	EXEC SQL SELECT 
+		hcoil,
+		shpdtno,
+		mespos,
+		mestim,
+		low,
+		high,
+		shpdt1,
+		shpdt2,
+		shpdt3,
+		shpdt4,
+		shpdt5,
+		shpdt6,
+		shpdt7,
+		shpdt8,
+		shpdt9,
+		shpdt10,
+		shpdt11,
+		shpdt12,
+		shpdt13,
+		shpdt14,
+		shpdt15,
+		shpdt16,
+		shpdt17,
+		shpdt18,
+		shpdt19,
+		shpdt20,
+		shpdt21,
+		shpdt22,
+		shpdt23,
+		shpdt24,
+		shpdt25,
+		shpdt26,
+		shpdt27,
+		shpdt28,
+		shpdt29,
+		shpdt30,
+		shpdt31,
+		shpdt32,
+		shpdt33,
+		shpdt34,
+		shpdt35,
+		shpdt36,
+		shpdt37,
+		shpdt38,
+		TO_CHAR(toc , 'YYYYMMDDHH24MISS'),
+		TO_CHAR(tom , 'YYYYMMDDHH24MISS'),
+		mop
+	INTO
+		:ora_hcoil,
+		:ora_shpdtno,
+		:ora_mespos:ora_mesposZi,
+		:ora_mestim:ora_mestimZi,
+		:ora_low:ora_lowZi,
+		:ora_high:ora_highZi,
+		:ora_shpdt1:ora_shpdt1Zi,
+		:ora_shpdt2:ora_shpdt2Zi,
+		:ora_shpdt3:ora_shpdt3Zi,
+		:ora_shpdt4:ora_shpdt4Zi,
+		:ora_shpdt5:ora_shpdt5Zi,
+		:ora_shpdt6:ora_shpdt6Zi,
+		:ora_shpdt7:ora_shpdt7Zi,
+		:ora_shpdt8:ora_shpdt8Zi,
+		:ora_shpdt9:ora_shpdt9Zi,
+		:ora_shpdt10:ora_shpdt10Zi,
+		:ora_shpdt11:ora_shpdt11Zi,
+		:ora_shpdt12:ora_shpdt12Zi,
+		:ora_shpdt13:ora_shpdt13Zi,
+		:ora_shpdt14:ora_shpdt14Zi,
+		:ora_shpdt15:ora_shpdt15Zi,
+		:ora_shpdt16:ora_shpdt16Zi,
+		:ora_shpdt17:ora_shpdt17Zi,
+		:ora_shpdt18:ora_shpdt18Zi,
+		:ora_shpdt19:ora_shpdt19Zi,
+		:ora_shpdt20:ora_shpdt20Zi,
+		:ora_shpdt21:ora_shpdt21Zi,
+		:ora_shpdt22:ora_shpdt22Zi,
+		:ora_shpdt23:ora_shpdt23Zi,
+		:ora_shpdt24:ora_shpdt24Zi,
+		:ora_shpdt25:ora_shpdt25Zi,
+		:ora_shpdt26:ora_shpdt26Zi,
+		:ora_shpdt27:ora_shpdt27Zi,
+		:ora_shpdt28:ora_shpdt28Zi,
+		:ora_shpdt29:ora_shpdt29Zi,
+		:ora_shpdt30:ora_shpdt30Zi,
+		:ora_shpdt31:ora_shpdt31Zi,
+		:ora_shpdt32:ora_shpdt32Zi,
+		:ora_shpdt33:ora_shpdt33Zi,
+		:ora_shpdt34:ora_shpdt34Zi,
+		:ora_shpdt35:ora_shpdt35Zi,
+		:ora_shpdt36:ora_shpdt36Zi,
+		:ora_shpdt37:ora_shpdt37Zi,
+		:ora_shpdt38:ora_shpdt38Zi,
+		:ora_toc:ora_tocZi,
+		:ora_tom:ora_tomZi,
+		:ora_mop:ora_mopZi
+	FROM SHAPE_DAT
+	WHERE
+				hcoil           = :k_ora_hcoil AND 
+				shpdtno         = :k_ora_shpdtno ;
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	//
+	// copy host variables into Class attributes
+	//
+	copyOracleToAttribute();
+	return ( NULL );
+}
+
+//updates a single entry from DB
+char* SHAPE_DAT::updateDB()
+{
+	//
+	//copy the host variables (k_...) to Oracle Host Keys (k_ora_..)
+	//
+		copyKeyToHost();
+	//copy the attributes ( ...) to Oracle Hosts( ora_..)
+	//
+		copyAttributeToOracle();
+	//
+	// Do UPDATE
+	//
+	EXEC SQL UPDATE SHAPE_DAT
+	SET 
+		hcoil               =:ora_hcoil,
+		shpdtno             =:ora_shpdtno,
+		mespos              =:ora_mespos:ora_mesposZi,
+		mestim              =:ora_mestim:ora_mestimZi,
+		low                 =:ora_low:ora_lowZi,
+		high                =:ora_high:ora_highZi,
+		shpdt1              =:ora_shpdt1:ora_shpdt1Zi,
+		shpdt2              =:ora_shpdt2:ora_shpdt2Zi,
+		shpdt3              =:ora_shpdt3:ora_shpdt3Zi,
+		shpdt4              =:ora_shpdt4:ora_shpdt4Zi,
+		shpdt5              =:ora_shpdt5:ora_shpdt5Zi,
+		shpdt6              =:ora_shpdt6:ora_shpdt6Zi,
+		shpdt7              =:ora_shpdt7:ora_shpdt7Zi,
+		shpdt8              =:ora_shpdt8:ora_shpdt8Zi,
+		shpdt9              =:ora_shpdt9:ora_shpdt9Zi,
+		shpdt10             =:ora_shpdt10:ora_shpdt10Zi,
+		shpdt11             =:ora_shpdt11:ora_shpdt11Zi,
+		shpdt12             =:ora_shpdt12:ora_shpdt12Zi,
+		shpdt13             =:ora_shpdt13:ora_shpdt13Zi,
+		shpdt14             =:ora_shpdt14:ora_shpdt14Zi,
+		shpdt15             =:ora_shpdt15:ora_shpdt15Zi,
+		shpdt16             =:ora_shpdt16:ora_shpdt16Zi,
+		shpdt17             =:ora_shpdt17:ora_shpdt17Zi,
+		shpdt18             =:ora_shpdt18:ora_shpdt18Zi,
+		shpdt19             =:ora_shpdt19:ora_shpdt19Zi,
+		shpdt20             =:ora_shpdt20:ora_shpdt20Zi,
+		shpdt21             =:ora_shpdt21:ora_shpdt21Zi,
+		shpdt22             =:ora_shpdt22:ora_shpdt22Zi,
+		shpdt23             =:ora_shpdt23:ora_shpdt23Zi,
+		shpdt24             =:ora_shpdt24:ora_shpdt24Zi,
+		shpdt25             =:ora_shpdt25:ora_shpdt25Zi,
+		shpdt26             =:ora_shpdt26:ora_shpdt26Zi,
+		shpdt27             =:ora_shpdt27:ora_shpdt27Zi,
+		shpdt28             =:ora_shpdt28:ora_shpdt28Zi,
+		shpdt29             =:ora_shpdt29:ora_shpdt29Zi,
+		shpdt30             =:ora_shpdt30:ora_shpdt30Zi,
+		shpdt31             =:ora_shpdt31:ora_shpdt31Zi,
+		shpdt32             =:ora_shpdt32:ora_shpdt32Zi,
+		shpdt33             =:ora_shpdt33:ora_shpdt33Zi,
+		shpdt34             =:ora_shpdt34:ora_shpdt34Zi,
+		shpdt35             =:ora_shpdt35:ora_shpdt35Zi,
+		shpdt36             =:ora_shpdt36:ora_shpdt36Zi,
+		shpdt37             =:ora_shpdt37:ora_shpdt37Zi,
+		shpdt38             =:ora_shpdt38:ora_shpdt38Zi,
+		toc                 =TO_DATE( :ora_toc:ora_tocZi,'YYYYMMDDHH24MISS'),
+		tom                 =TO_DATE( :ora_tom:ora_tomZi,'YYYYMMDDHH24MISS'),
+		mop                 =:ora_mop:ora_mopZi
+	WHERE
+		hcoil           = :k_ora_hcoil AND 
+		shpdtno         = :k_ora_shpdtno ;
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//inserts a single entry from DB
+char* SHAPE_DAT::insertDB()
+{
+	//
+	//copy the attributes ( ...) to Oracle Hosts( ora_..) 
+	//
+		copyAttributeToOracle();
+	//
+	// Do INSERT
+	//
+	EXEC SQL INSERT INTO SHAPE_DAT
+	(
+		hcoil,
+		shpdtno,
+		mespos,
+		mestim,
+		low,
+		high,
+		shpdt1,
+		shpdt2,
+		shpdt3,
+		shpdt4,
+		shpdt5,
+		shpdt6,
+		shpdt7,
+		shpdt8,
+		shpdt9,
+		shpdt10,
+		shpdt11,
+		shpdt12,
+		shpdt13,
+		shpdt14,
+		shpdt15,
+		shpdt16,
+		shpdt17,
+		shpdt18,
+		shpdt19,
+		shpdt20,
+		shpdt21,
+		shpdt22,
+		shpdt23,
+		shpdt24,
+		shpdt25,
+		shpdt26,
+		shpdt27,
+		shpdt28,
+		shpdt29,
+		shpdt30,
+		shpdt31,
+		shpdt32,
+		shpdt33,
+		shpdt34,
+		shpdt35,
+		shpdt36,
+		shpdt37,
+		shpdt38,
+		toc,
+		tom,
+		mop
+	)
+
+	VALUES
+	(
+		:ora_hcoil,
+		:ora_shpdtno,
+		:ora_mespos:ora_mesposZi,
+		:ora_mestim:ora_mestimZi,
+		:ora_low:ora_lowZi,
+		:ora_high:ora_highZi,
+		:ora_shpdt1:ora_shpdt1Zi,
+		:ora_shpdt2:ora_shpdt2Zi,
+		:ora_shpdt3:ora_shpdt3Zi,
+		:ora_shpdt4:ora_shpdt4Zi,
+		:ora_shpdt5:ora_shpdt5Zi,
+		:ora_shpdt6:ora_shpdt6Zi,
+		:ora_shpdt7:ora_shpdt7Zi,
+		:ora_shpdt8:ora_shpdt8Zi,
+		:ora_shpdt9:ora_shpdt9Zi,
+		:ora_shpdt10:ora_shpdt10Zi,
+		:ora_shpdt11:ora_shpdt11Zi,
+		:ora_shpdt12:ora_shpdt12Zi,
+		:ora_shpdt13:ora_shpdt13Zi,
+		:ora_shpdt14:ora_shpdt14Zi,
+		:ora_shpdt15:ora_shpdt15Zi,
+		:ora_shpdt16:ora_shpdt16Zi,
+		:ora_shpdt17:ora_shpdt17Zi,
+		:ora_shpdt18:ora_shpdt18Zi,
+		:ora_shpdt19:ora_shpdt19Zi,
+		:ora_shpdt20:ora_shpdt20Zi,
+		:ora_shpdt21:ora_shpdt21Zi,
+		:ora_shpdt22:ora_shpdt22Zi,
+		:ora_shpdt23:ora_shpdt23Zi,
+		:ora_shpdt24:ora_shpdt24Zi,
+		:ora_shpdt25:ora_shpdt25Zi,
+		:ora_shpdt26:ora_shpdt26Zi,
+		:ora_shpdt27:ora_shpdt27Zi,
+		:ora_shpdt28:ora_shpdt28Zi,
+		:ora_shpdt29:ora_shpdt29Zi,
+		:ora_shpdt30:ora_shpdt30Zi,
+		:ora_shpdt31:ora_shpdt31Zi,
+		:ora_shpdt32:ora_shpdt32Zi,
+		:ora_shpdt33:ora_shpdt33Zi,
+		:ora_shpdt34:ora_shpdt34Zi,
+		:ora_shpdt35:ora_shpdt35Zi,
+		:ora_shpdt36:ora_shpdt36Zi,
+		:ora_shpdt37:ora_shpdt37Zi,
+		:ora_shpdt38:ora_shpdt38Zi,
+		TO_DATE( :ora_toc:ora_tocZi,'YYYYMMDDHH24MISS'),
+		TO_DATE( :ora_tom:ora_tomZi,'YYYYMMDDHH24MISS'),
+		:ora_mop:ora_mopZi
+	);
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//this methode tries to update a DB record,when the update fails.
+char* SHAPE_DAT::storeDB()
+{
+	char* ret = NULL;
+	setKeysFromRecord();
+	ret=updateDB();
+	if(ret != NULL)
+	{
+		ret=insertDB();
+		if(ret != NULL)
+		{
+			dbAccess = false;
+			return(ret);
+		}
+	}
+	return(ret);
+}
+
+//deletes a single entry from DB
+char* SHAPE_DAT::deleteDB()
+{
+//
+//copy the host variables (k_...) to Oracle Host Keys (k_ora_..)
+//
+	copyKeyToHost();
+
+//
+// Do Delete 
+//
+	EXEC SQL DELETE FROM SHAPE_DAT
+	WHERE
+				hcoil           = :k_ora_hcoil AND 
+				shpdtno         = :k_ora_shpdtno ;
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+// Executes the SQL DELETE with a where clause
+char* SHAPE_DAT::deleteDB(const char* where,long* count)
+{
+	*(count) = -1L;
+// Create dynamic statement.
+//
+	strcpy((char*)dynstr.arr,"DELETE");
+	strcat((char*)dynstr.arr," FROM SHAPE_DAT");
+	if ( where != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, where );
+	}
+
+	dynstr.len = strlen( (char*) dynstr.arr);
+	EXEC SQL EXECUTE IMMEDIATE :dynstr;
+	oracleSqlCode = sqlca.sqlcode;
+		oracleRowsProcessed = sqlca.sqlerrd[2];
+	if (sqlca.sqlcode == 0 )
+		*(count) = sqlca.sqlerrd[2];
+	else 
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//openSetDB data with where condition and sort order.
+char* SHAPE_DAT::openSetDB(const char* where,char* order)
+{
+//
+// Create dynamic statement.
+//
+	strcpy((char*)dynstr.arr,"SELECT ");
+	strcat((char*)dynstr.arr,"hcoil,");
+	strcat((char*)dynstr.arr,"shpdtno,");
+	strcat((char*)dynstr.arr,"mespos,");
+	strcat((char*)dynstr.arr,"mestim,");
+	strcat((char*)dynstr.arr,"low,");
+	strcat((char*)dynstr.arr,"high,");
+	strcat((char*)dynstr.arr,"shpdt1,");
+	strcat((char*)dynstr.arr,"shpdt2,");
+	strcat((char*)dynstr.arr,"shpdt3,");
+	strcat((char*)dynstr.arr,"shpdt4,");
+	strcat((char*)dynstr.arr,"shpdt5,");
+	strcat((char*)dynstr.arr,"shpdt6,");
+	strcat((char*)dynstr.arr,"shpdt7,");
+	strcat((char*)dynstr.arr,"shpdt8,");
+	strcat((char*)dynstr.arr,"shpdt9,");
+	strcat((char*)dynstr.arr,"shpdt10,");
+	strcat((char*)dynstr.arr,"shpdt11,");
+	strcat((char*)dynstr.arr,"shpdt12,");
+	strcat((char*)dynstr.arr,"shpdt13,");
+	strcat((char*)dynstr.arr,"shpdt14,");
+	strcat((char*)dynstr.arr,"shpdt15,");
+	strcat((char*)dynstr.arr,"shpdt16,");
+	strcat((char*)dynstr.arr,"shpdt17,");
+	strcat((char*)dynstr.arr,"shpdt18,");
+	strcat((char*)dynstr.arr,"shpdt19,");
+	strcat((char*)dynstr.arr,"shpdt20,");
+	strcat((char*)dynstr.arr,"shpdt21,");
+	strcat((char*)dynstr.arr,"shpdt22,");
+	strcat((char*)dynstr.arr,"shpdt23,");
+	strcat((char*)dynstr.arr,"shpdt24,");
+	strcat((char*)dynstr.arr,"shpdt25,");
+	strcat((char*)dynstr.arr,"shpdt26,");
+	strcat((char*)dynstr.arr,"shpdt27,");
+	strcat((char*)dynstr.arr,"shpdt28,");
+	strcat((char*)dynstr.arr,"shpdt29,");
+	strcat((char*)dynstr.arr,"shpdt30,");
+	strcat((char*)dynstr.arr,"shpdt31,");
+	strcat((char*)dynstr.arr,"shpdt32,");
+	strcat((char*)dynstr.arr,"shpdt33,");
+	strcat((char*)dynstr.arr,"shpdt34,");
+	strcat((char*)dynstr.arr,"shpdt35,");
+	strcat((char*)dynstr.arr,"shpdt36,");
+	strcat((char*)dynstr.arr,"shpdt37,");
+	strcat((char*)dynstr.arr,"shpdt38,");
+	strcat((char*)dynstr.arr,"TO_CHAR(toc , 'YYYYMMDDHH24MISS'),");
+	strcat((char*)dynstr.arr,"TO_CHAR(tom , 'YYYYMMDDHH24MISS'),");
+	strcat((char*)dynstr.arr,"mop");
+
+	strcat((char*)dynstr.arr," FROM SHAPE_DAT ");
+	if ( where != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, where);
+	}
+	if ( order != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, order);
+	}
+
+	dynstr.len = strlen( (char*) dynstr.arr);
+	EXEC SQL PREPARE set_SHAPE_DAT FROM :dynstr;
+	if (sqlca.sqlcode == 0 )
+	{
+		EXEC SQL DECLARE cu_SHAPE_DAT CURSOR FOR set_SHAPE_DAT;
+		if (sqlca.sqlcode == 0 )
+			EXEC SQL OPEN cu_SHAPE_DAT;
+	}
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	cuFl = OPENED;
+	return ( NULL );
+}
+
+//Executes the SQL FETCH Statement .
+char* SHAPE_DAT::getSetDB()
+{
+	if ( cuFl != OPENED ) return ("No open Cursor Table:Me");
+	EXEC SQL FETCH cu_SHAPE_DAT INTO
+		:ora_hcoil,
+		:ora_shpdtno,
+		:ora_mespos:ora_mesposZi,
+		:ora_mestim:ora_mestimZi,
+		:ora_low:ora_lowZi,
+		:ora_high:ora_highZi,
+		:ora_shpdt1:ora_shpdt1Zi,
+		:ora_shpdt2:ora_shpdt2Zi,
+		:ora_shpdt3:ora_shpdt3Zi,
+		:ora_shpdt4:ora_shpdt4Zi,
+		:ora_shpdt5:ora_shpdt5Zi,
+		:ora_shpdt6:ora_shpdt6Zi,
+		:ora_shpdt7:ora_shpdt7Zi,
+		:ora_shpdt8:ora_shpdt8Zi,
+		:ora_shpdt9:ora_shpdt9Zi,
+		:ora_shpdt10:ora_shpdt10Zi,
+		:ora_shpdt11:ora_shpdt11Zi,
+		:ora_shpdt12:ora_shpdt12Zi,
+		:ora_shpdt13:ora_shpdt13Zi,
+		:ora_shpdt14:ora_shpdt14Zi,
+		:ora_shpdt15:ora_shpdt15Zi,
+		:ora_shpdt16:ora_shpdt16Zi,
+		:ora_shpdt17:ora_shpdt17Zi,
+		:ora_shpdt18:ora_shpdt18Zi,
+		:ora_shpdt19:ora_shpdt19Zi,
+		:ora_shpdt20:ora_shpdt20Zi,
+		:ora_shpdt21:ora_shpdt21Zi,
+		:ora_shpdt22:ora_shpdt22Zi,
+		:ora_shpdt23:ora_shpdt23Zi,
+		:ora_shpdt24:ora_shpdt24Zi,
+		:ora_shpdt25:ora_shpdt25Zi,
+		:ora_shpdt26:ora_shpdt26Zi,
+		:ora_shpdt27:ora_shpdt27Zi,
+		:ora_shpdt28:ora_shpdt28Zi,
+		:ora_shpdt29:ora_shpdt29Zi,
+		:ora_shpdt30:ora_shpdt30Zi,
+		:ora_shpdt31:ora_shpdt31Zi,
+		:ora_shpdt32:ora_shpdt32Zi,
+		:ora_shpdt33:ora_shpdt33Zi,
+		:ora_shpdt34:ora_shpdt34Zi,
+		:ora_shpdt35:ora_shpdt35Zi,
+		:ora_shpdt36:ora_shpdt36Zi,
+		:ora_shpdt37:ora_shpdt37Zi,
+		:ora_shpdt38:ora_shpdt38Zi,
+		:ora_toc:ora_tocZi,
+		:ora_tom:ora_tomZi,
+		:ora_mop:ora_mopZi;
+
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		pCatch->catchError(sqlca.sqlcode);
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		return (char*) sqlca.sqlerrm.sqlerrmc ;
+	}
+	//
+	// copy host variables into Class attributes
+	//
+	copyOracleToAttribute();
+	copyHostToKey();
+	return ( NULL );
+}
+
+//Close a Oracle Cursor
+char* SHAPE_DAT::closeSetDB()
+{
+	EXEC SQL CLOSE cu_SHAPE_DAT;
+	oracleSqlCode = sqlca.sqlcode;         
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		pCatch->catchError(sqlca.sqlcode);
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		return (char*) sqlca.sqlerrm.sqlerrmc ;
+	}
+	cuFl = CLOSED;
+	return ( NULL );
+}
+
+//Executes the SQL count(key) for a where clause
+char* SHAPE_DAT::countDB(const char* where,long* count)
+{
+	*(count) = -1L;
+//
+// Create dynamic statement. 
+//
+	strncpy((char*)dynstr.arr,"SELECT count(hcoil)", sizeof(dynstr.arr));
+	strcat((char*)dynstr.arr," FROM SHAPE_DAT");
+	if ( where != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, where );
+	}
+	dynstr.len = strlen( (char*) dynstr.arr);
+	EXEC SQL PREPARE c_SHAPE_DAT FROM :dynstr;
+	
+	if (sqlca.sqlcode == 0 )
+	{
+		EXEC SQL DECLARE ct_SHAPE_DAT CURSOR FOR c_SHAPE_DAT;
+		if (sqlca.sqlcode == 0 )
+		{
+			EXEC SQL OPEN ct_SHAPE_DAT;
+			if (sqlca.sqlcode == 0 )			{
+				EXEC SQL FETCH ct_SHAPE_DAT INTO :rowCnt;
+				if (sqlca.sqlcode == 0 )
+				*(count) = rowCnt;
+			}
+			EXEC SQL CLOSE ct_SHAPE_DAT;
+		}
+	}
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//private methode copy Attribute to Oracle
+//copys Object attributes into Oracle Host variables.
+void SHAPE_DAT::copyAttributeToOracle()
+{
+	char* ptrStr;
+	ptrStr = this->hcoil();
+	if( strlen(ptrStr)< sizeof(ora_hcoil.arr))
+	{
+		strncpy((char*)ora_hcoil.arr, ptrStr, sizeof(ora_hcoil.arr));
+		ora_hcoil.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_hcoil.len = 0;
+	ora_shpdtno = this->shpdtno();
+	ora_mespos = this->mespos();
+	ora_mesposZi = this->mesposZi();
+	ptrStr = this->mestim();
+	if( strlen(ptrStr)< sizeof(ora_mestim.arr))
+	{
+		strncpy((char*)ora_mestim.arr, ptrStr, sizeof(ora_mestim.arr));
+		ora_mestim.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_mestim.len = 0;
+	ora_mestimZi = this->mestimZi();
+	ora_low = this->low();
+	ora_lowZi = this->lowZi();
+	ora_high = this->high();
+	ora_highZi = this->highZi();
+	ora_shpdt1 = this->shpdt1();
+	ora_shpdt1Zi = this->shpdt1Zi();
+	ora_shpdt2 = this->shpdt2();
+	ora_shpdt2Zi = this->shpdt2Zi();
+	ora_shpdt3 = this->shpdt3();
+	ora_shpdt3Zi = this->shpdt3Zi();
+	ora_shpdt4 = this->shpdt4();
+	ora_shpdt4Zi = this->shpdt4Zi();
+	ora_shpdt5 = this->shpdt5();
+	ora_shpdt5Zi = this->shpdt5Zi();
+	ora_shpdt6 = this->shpdt6();
+	ora_shpdt6Zi = this->shpdt6Zi();
+	ora_shpdt7 = this->shpdt7();
+	ora_shpdt7Zi = this->shpdt7Zi();
+	ora_shpdt8 = this->shpdt8();
+	ora_shpdt8Zi = this->shpdt8Zi();
+	ora_shpdt9 = this->shpdt9();
+	ora_shpdt9Zi = this->shpdt9Zi();
+	ora_shpdt10 = this->shpdt10();
+	ora_shpdt10Zi = this->shpdt10Zi();
+	ora_shpdt11 = this->shpdt11();
+	ora_shpdt11Zi = this->shpdt11Zi();
+	ora_shpdt12 = this->shpdt12();
+	ora_shpdt12Zi = this->shpdt12Zi();
+	ora_shpdt13 = this->shpdt13();
+	ora_shpdt13Zi = this->shpdt13Zi();
+	ora_shpdt14 = this->shpdt14();
+	ora_shpdt14Zi = this->shpdt14Zi();
+	ora_shpdt15 = this->shpdt15();
+	ora_shpdt15Zi = this->shpdt15Zi();
+	ora_shpdt16 = this->shpdt16();
+	ora_shpdt16Zi = this->shpdt16Zi();
+	ora_shpdt17 = this->shpdt17();
+	ora_shpdt17Zi = this->shpdt17Zi();
+	ora_shpdt18 = this->shpdt18();
+	ora_shpdt18Zi = this->shpdt18Zi();
+	ora_shpdt19 = this->shpdt19();
+	ora_shpdt19Zi = this->shpdt19Zi();
+	ora_shpdt20 = this->shpdt20();
+	ora_shpdt20Zi = this->shpdt20Zi();
+	ora_shpdt21 = this->shpdt21();
+	ora_shpdt21Zi = this->shpdt21Zi();
+	ora_shpdt22 = this->shpdt22();
+	ora_shpdt22Zi = this->shpdt22Zi();
+	ora_shpdt23 = this->shpdt23();
+	ora_shpdt23Zi = this->shpdt23Zi();
+	ora_shpdt24 = this->shpdt24();
+	ora_shpdt24Zi = this->shpdt24Zi();
+	ora_shpdt25 = this->shpdt25();
+	ora_shpdt25Zi = this->shpdt25Zi();
+	ora_shpdt26 = this->shpdt26();
+	ora_shpdt26Zi = this->shpdt26Zi();
+	ora_shpdt27 = this->shpdt27();
+	ora_shpdt27Zi = this->shpdt27Zi();
+	ora_shpdt28 = this->shpdt28();
+	ora_shpdt28Zi = this->shpdt28Zi();
+	ora_shpdt29 = this->shpdt29();
+	ora_shpdt29Zi = this->shpdt29Zi();
+	ora_shpdt30 = this->shpdt30();
+	ora_shpdt30Zi = this->shpdt30Zi();
+	ora_shpdt31 = this->shpdt31();
+	ora_shpdt31Zi = this->shpdt31Zi();
+	ora_shpdt32 = this->shpdt32();
+	ora_shpdt32Zi = this->shpdt32Zi();
+	ora_shpdt33 = this->shpdt33();
+	ora_shpdt33Zi = this->shpdt33Zi();
+	ora_shpdt34 = this->shpdt34();
+	ora_shpdt34Zi = this->shpdt34Zi();
+	ora_shpdt35 = this->shpdt35();
+	ora_shpdt35Zi = this->shpdt35Zi();
+	ora_shpdt36 = this->shpdt36();
+	ora_shpdt36Zi = this->shpdt36Zi();
+	ora_shpdt37 = this->shpdt37();
+	ora_shpdt37Zi = this->shpdt37Zi();
+	ora_shpdt38 = this->shpdt38();
+	ora_shpdt38Zi = this->shpdt38Zi();
+	ptrStr = this->toc();
+	if( strlen(ptrStr)< sizeof(ora_toc.arr))
+	{
+		strncpy((char*)ora_toc.arr, ptrStr, sizeof(ora_toc.arr));
+		ora_toc.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_toc.len = 0;
+	ora_tocZi = this->tocZi();
+	ptrStr = this->tom();
+	if( strlen(ptrStr)< sizeof(ora_tom.arr))
+	{
+		strncpy((char*)ora_tom.arr, ptrStr, sizeof(ora_tom.arr));
+		ora_tom.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_tom.len = 0;
+	ora_tomZi = this->tomZi();
+	ptrStr = this->mop();
+	if( strlen(ptrStr)< sizeof(ora_mop.arr))
+	{
+		strncpy((char*)ora_mop.arr, ptrStr, sizeof(ora_mop.arr));
+		ora_mop.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_mop.len = 0;
+	ora_mopZi = this->mopZi();
+}
+
+//private methode copy Oracle to Attribute
+//copys Oracle Host variables into Object attributes.
+void SHAPE_DAT::copyOracleToAttribute()
+{
+	ora_hcoil.arr[ora_hcoil.len] = '\0';
+	this->set_hcoil((char*) ora_hcoil.arr);
+	this->set_shpdtno((short)ora_shpdtno);
+	this->set_mespos((short)ora_mespos);
+	this->set_mesposZi((short)ora_mesposZi);
+	ora_mestim.arr[ora_mestim.len] = '\0';
+	this->set_mestim((char*) ora_mestim.arr);
+	this->set_mestimZi((short)ora_mestimZi);
+	this->set_low((short)ora_low);
+	this->set_lowZi((short)ora_lowZi);
+	this->set_high((short)ora_high);
+	this->set_highZi((short)ora_highZi);
+	this->set_shpdt1((short)ora_shpdt1);
+	this->set_shpdt1Zi((short)ora_shpdt1Zi);
+	this->set_shpdt2((short)ora_shpdt2);
+	this->set_shpdt2Zi((short)ora_shpdt2Zi);
+	this->set_shpdt3((short)ora_shpdt3);
+	this->set_shpdt3Zi((short)ora_shpdt3Zi);
+	this->set_shpdt4((short)ora_shpdt4);
+	this->set_shpdt4Zi((short)ora_shpdt4Zi);
+	this->set_shpdt5((short)ora_shpdt5);
+	this->set_shpdt5Zi((short)ora_shpdt5Zi);
+	this->set_shpdt6((short)ora_shpdt6);
+	this->set_shpdt6Zi((short)ora_shpdt6Zi);
+	this->set_shpdt7((short)ora_shpdt7);
+	this->set_shpdt7Zi((short)ora_shpdt7Zi);
+	this->set_shpdt8((short)ora_shpdt8);
+	this->set_shpdt8Zi((short)ora_shpdt8Zi);
+	this->set_shpdt9((short)ora_shpdt9);
+	this->set_shpdt9Zi((short)ora_shpdt9Zi);
+	this->set_shpdt10((short)ora_shpdt10);
+	this->set_shpdt10Zi((short)ora_shpdt10Zi);
+	this->set_shpdt11((short)ora_shpdt11);
+	this->set_shpdt11Zi((short)ora_shpdt11Zi);
+	this->set_shpdt12((short)ora_shpdt12);
+	this->set_shpdt12Zi((short)ora_shpdt12Zi);
+	this->set_shpdt13((short)ora_shpdt13);
+	this->set_shpdt13Zi((short)ora_shpdt13Zi);
+	this->set_shpdt14((short)ora_shpdt14);
+	this->set_shpdt14Zi((short)ora_shpdt14Zi);
+	this->set_shpdt15((short)ora_shpdt15);
+	this->set_shpdt15Zi((short)ora_shpdt15Zi);
+	this->set_shpdt16((short)ora_shpdt16);
+	this->set_shpdt16Zi((short)ora_shpdt16Zi);
+	this->set_shpdt17((short)ora_shpdt17);
+	this->set_shpdt17Zi((short)ora_shpdt17Zi);
+	this->set_shpdt18((short)ora_shpdt18);
+	this->set_shpdt18Zi((short)ora_shpdt18Zi);
+	this->set_shpdt19((short)ora_shpdt19);
+	this->set_shpdt19Zi((short)ora_shpdt19Zi);
+	this->set_shpdt20((short)ora_shpdt20);
+	this->set_shpdt20Zi((short)ora_shpdt20Zi);
+	this->set_shpdt21((short)ora_shpdt21);
+	this->set_shpdt21Zi((short)ora_shpdt21Zi);
+	this->set_shpdt22((short)ora_shpdt22);
+	this->set_shpdt22Zi((short)ora_shpdt22Zi);
+	this->set_shpdt23((short)ora_shpdt23);
+	this->set_shpdt23Zi((short)ora_shpdt23Zi);
+	this->set_shpdt24((short)ora_shpdt24);
+	this->set_shpdt24Zi((short)ora_shpdt24Zi);
+	this->set_shpdt25((short)ora_shpdt25);
+	this->set_shpdt25Zi((short)ora_shpdt25Zi);
+	this->set_shpdt26((short)ora_shpdt26);
+	this->set_shpdt26Zi((short)ora_shpdt26Zi);
+	this->set_shpdt27((short)ora_shpdt27);
+	this->set_shpdt27Zi((short)ora_shpdt27Zi);
+	this->set_shpdt28((short)ora_shpdt28);
+	this->set_shpdt28Zi((short)ora_shpdt28Zi);
+	this->set_shpdt29((short)ora_shpdt29);
+	this->set_shpdt29Zi((short)ora_shpdt29Zi);
+	this->set_shpdt30((short)ora_shpdt30);
+	this->set_shpdt30Zi((short)ora_shpdt30Zi);
+	this->set_shpdt31((short)ora_shpdt31);
+	this->set_shpdt31Zi((short)ora_shpdt31Zi);
+	this->set_shpdt32((short)ora_shpdt32);
+	this->set_shpdt32Zi((short)ora_shpdt32Zi);
+	this->set_shpdt33((short)ora_shpdt33);
+	this->set_shpdt33Zi((short)ora_shpdt33Zi);
+	this->set_shpdt34((short)ora_shpdt34);
+	this->set_shpdt34Zi((short)ora_shpdt34Zi);
+	this->set_shpdt35((short)ora_shpdt35);
+	this->set_shpdt35Zi((short)ora_shpdt35Zi);
+	this->set_shpdt36((short)ora_shpdt36);
+	this->set_shpdt36Zi((short)ora_shpdt36Zi);
+	this->set_shpdt37((short)ora_shpdt37);
+	this->set_shpdt37Zi((short)ora_shpdt37Zi);
+	this->set_shpdt38((short)ora_shpdt38);
+	this->set_shpdt38Zi((short)ora_shpdt38Zi);
+	ora_toc.arr[ora_toc.len] = '\0';
+	this->set_toc((char*) ora_toc.arr);
+	this->set_tocZi((short)ora_tocZi);
+	ora_tom.arr[ora_tom.len] = '\0';
+	this->set_tom((char*) ora_tom.arr);
+	this->set_tomZi((short)ora_tomZi);
+	ora_mop.arr[ora_mop.len] = '\0';
+	this->set_mop((char*) ora_mop.arr);
+	this->set_mopZi((short)ora_mopZi);
+}
+
+//private methode copy Key to host
+//copys Object attributes into Oralce Key variables.
+void SHAPE_DAT::copyKeyToHost()
+{
+	char* ptrStr;
+	ptrStr = this->k_hcoil();
+	if( strlen(ptrStr)< sizeof(k_ora_hcoil.arr))
+	{
+		strncpy((char*)k_ora_hcoil.arr, ptrStr, sizeof(k_ora_hcoil.arr));
+		k_ora_hcoil.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		k_ora_hcoil.len = 0;
+	k_ora_shpdtno = this->k_shpdtno();
+}
+
+//private methode copy Host to Key
+// copys Oracle Host Key variables into Object Key attributes.
+void SHAPE_DAT::copyHostToKey()
+{
+	ora_hcoil.arr[ora_hcoil.len] = '\0';
+	this->set_k_hcoil((char*) ora_hcoil.arr);
+	this->set_k_shpdtno((short)ora_shpdtno);
+}
+
+//private methode log Oracle message information
+void SHAPE_DAT::logOraMessageInfo()
+{
+	LOG d("SHAPE_DAT::logOraMessageInfo()");
+	sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+	oraca.orastxt.orastxtc[oraca.orastxt.orastxtl] = '\0';
+	oraca.orasfnm.orasfnmc[oraca.orasfnm.orasfnml] = '\0';
+	
+	//* negating a error code submitted perhaps positively.
+	if (sqlca.sqlcode > 0) sqlca.sqlcode *= -1;
+	
+	//* Distribute fault text, SQL statement and file in the Debug System.
+	d << "ORA-Error: "<< sqlca.sqlerrm.sqlerrmc; d.Info();
+	d << "OracaText: "<< oraca.orastxt.orastxtc; d.Info();
+	d << "in line " << oraca.oraslnr << " in file " << oraca.orasfnm.orasfnmc; d.Info();
+}
+
+//this methode stores the unique key attributes
+void SHAPE_DAT::setPrimKey(char* arg1,short arg2)
+{
+	strncpy( (char*)c_k_hcoil, arg1, sizeof(c_k_hcoil));
+	c_k_hcoil[sizeof(c_k_hcoil)-1] = '\0';
+	s_k_shpdtno = arg2;
+}
+
+//this methode stores the unique key attributes
+void SHAPE_DAT::initInsertKeys(char* arg1,short arg2)
+{
+	setPrimKey(arg1,arg2);
+	strncpy( (char*)c_hcoil, arg1, sizeof(c_hcoil));
+	c_hcoil[sizeof(c_hcoil)-1] = '\0';
+	s_shpdtno = arg2;
+}
+
+//this methode set the unique key attributes from the DB Record Attributes
+void SHAPE_DAT::setKeysFromRecord()
+{
+	set_k_hcoil( hcoil() );
+	set_k_shpdtno( shpdtno() );
+}
+
+//			         
+//O P E R A T O R  + 
+//===================
+//                   
+SHAPE_DAT SHAPE_DAT::operator+(const SHAPE_DAT &inst) const
+{
+	SHAPE_DAT ptrSHAPE_DAT(*this);
+//----------------------------------------------------------
+	ptrSHAPE_DAT.set_hcoil(inst.hcoil());
+//----------------------------------------------------------
+	ptrSHAPE_DAT.set_shpdtno(inst.shpdtno());
+//----------------------------------------------------------
+	if(inst.mesposZi() != -1)
+	{
+		ptrSHAPE_DAT.set_mespos(inst.mespos());
+		ptrSHAPE_DAT.set_mesposZi(inst.mesposZi());
+	}
+//----------------------------------------------------------
+	if(inst.mestimZi() != -1)
+	{
+		ptrSHAPE_DAT.set_mestim(inst.mestim());
+		ptrSHAPE_DAT.set_mestimZi(inst.mestimZi());
+	}
+//----------------------------------------------------------
+	if(inst.lowZi() != -1)
+	{
+		ptrSHAPE_DAT.set_low(inst.low());
+		ptrSHAPE_DAT.set_lowZi(inst.lowZi());
+	}
+//----------------------------------------------------------
+	if(inst.highZi() != -1)
+	{
+		ptrSHAPE_DAT.set_high(inst.high());
+		ptrSHAPE_DAT.set_highZi(inst.highZi());
+	}
+//----------------------------------------------------------
+	if(inst.shpdt1Zi() != -1)
+	{
+		ptrSHAPE_DAT.set_shpdt1(inst.shpdt1());
+		ptrSHAPE_DAT.set_shpdt1Zi(inst.shpdt1Zi());
+	}
+//----------------------------------------------------------
+	if(inst.shpdt2Zi() != -1)
+	{
+		ptrSHAPE_DAT.set_shpdt2(inst.shpdt2());
+		ptrSHAPE_DAT.set_shpdt2Zi(inst.shpdt2Zi());
+	}
+//----------------------------------------------------------
+	if(inst.shpdt3Zi() != -1)
+	{
+		ptrSHAPE_DAT.set_shpdt3(inst.shpdt3());
+		ptrSHAPE_DAT.set_shpdt3Zi(inst.shpdt3Zi());
+	}
+//----------------------------------------------------------
+	if(inst.shpdt4Zi() != -1)
+	{
+		ptrSHAPE_DAT.set_shpdt4(inst.shpdt4());
+		ptrSHAPE_DAT.set_shpdt4Zi(inst.shpdt4Zi());
+	}
+//----------------------------------------------------------
+	if(inst.shpdt5Zi() != -1)
+	{
+		ptrSHAPE_DAT.set_shpdt5(inst.shpdt5());
+		ptrSHAPE_DAT.set_shpdt5Zi(inst.shpdt5Zi());
+	}
+//----------------------------------------------------------
+	if(inst.shpdt6Zi() != -1)
+	{
+		ptrSHAPE_DAT.set_shpdt6(inst.shpdt6());
+		ptrSHAPE_DAT.set_shpdt6Zi(inst.shpdt6Zi());
+	}
+//----------------------------------------------------------
+	if(inst.shpdt7Zi() != -1)
+	{
+		ptrSHAPE_DAT.set_shpdt7(inst.shpdt7());
+		ptrSHAPE_DAT.set_shpdt7Zi(inst.shpdt7Zi());
+	}
+//----------------------------------------------------------
+	if(inst.shpdt8Zi() != -1)
+	{
+		ptrSHAPE_DAT.set_shpdt8(inst.shpdt8());
+		ptrSHAPE_DAT.set_shpdt8Zi(inst.shpdt8Zi());
+	}
+//----------------------------------------------------------
+	if(inst.shpdt9Zi() != -1)
+	{
+		ptrSHAPE_DAT.set_shpdt9(inst.shpdt9());
+		ptrSHAPE_DAT.set_shpdt9Zi(inst.shpdt9Zi());
+	}
+//----------------------------------------------------------
+	if(inst.shpdt10Zi() != -1)
+	{
+		ptrSHAPE_DAT.set_shpdt10(inst.shpdt10());
+		ptrSHAPE_DAT.set_shpdt10Zi(inst.shpdt10Zi());
+	}
+//----------------------------------------------------------
+	if(inst.shpdt11Zi() != -1)
+	{
+		ptrSHAPE_DAT.set_shpdt11(inst.shpdt11());
+		ptrSHAPE_DAT.set_shpdt11Zi(inst.shpdt11Zi());
+	}
+//----------------------------------------------------------
+	if(inst.shpdt12Zi() != -1)
+	{
+		ptrSHAPE_DAT.set_shpdt12(inst.shpdt12());
+		ptrSHAPE_DAT.set_shpdt12Zi(inst.shpdt12Zi());
+	}
+//----------------------------------------------------------
+	if(inst.shpdt13Zi() != -1)
+	{
+		ptrSHAPE_DAT.set_shpdt13(inst.shpdt13());
+		ptrSHAPE_DAT.set_shpdt13Zi(inst.shpdt13Zi());
+	}
+//----------------------------------------------------------
+	if(inst.shpdt14Zi() != -1)
+	{
+		ptrSHAPE_DAT.set_shpdt14(inst.shpdt14());
+		ptrSHAPE_DAT.set_shpdt14Zi(inst.shpdt14Zi());
+	}
+//----------------------------------------------------------
+	if(inst.shpdt15Zi() != -1)
+	{
+		ptrSHAPE_DAT.set_shpdt15(inst.shpdt15());
+		ptrSHAPE_DAT.set_shpdt15Zi(inst.shpdt15Zi());
+	}
+//----------------------------------------------------------
+	if(inst.shpdt16Zi() != -1)
+	{
+		ptrSHAPE_DAT.set_shpdt16(inst.shpdt16());
+		ptrSHAPE_DAT.set_shpdt16Zi(inst.shpdt16Zi());
+	}
+//----------------------------------------------------------
+	if(inst.shpdt17Zi() != -1)
+	{
+		ptrSHAPE_DAT.set_shpdt17(inst.shpdt17());
+		ptrSHAPE_DAT.set_shpdt17Zi(inst.shpdt17Zi());
+	}
+//----------------------------------------------------------
+	if(inst.shpdt18Zi() != -1)
+	{
+		ptrSHAPE_DAT.set_shpdt18(inst.shpdt18());
+		ptrSHAPE_DAT.set_shpdt18Zi(inst.shpdt18Zi());
+	}
+//----------------------------------------------------------
+	if(inst.shpdt19Zi() != -1)
+	{
+		ptrSHAPE_DAT.set_shpdt19(inst.shpdt19());
+		ptrSHAPE_DAT.set_shpdt19Zi(inst.shpdt19Zi());
+	}
+//----------------------------------------------------------
+	if(inst.shpdt20Zi() != -1)
+	{
+		ptrSHAPE_DAT.set_shpdt20(inst.shpdt20());
+		ptrSHAPE_DAT.set_shpdt20Zi(inst.shpdt20Zi());
+	}
+//----------------------------------------------------------
+	if(inst.shpdt21Zi() != -1)
+	{
+		ptrSHAPE_DAT.set_shpdt21(inst.shpdt21());
+		ptrSHAPE_DAT.set_shpdt21Zi(inst.shpdt21Zi());
+	}
+//----------------------------------------------------------
+	if(inst.shpdt22Zi() != -1)
+	{
+		ptrSHAPE_DAT.set_shpdt22(inst.shpdt22());
+		ptrSHAPE_DAT.set_shpdt22Zi(inst.shpdt22Zi());
+	}
+//----------------------------------------------------------
+	if(inst.shpdt23Zi() != -1)
+	{
+		ptrSHAPE_DAT.set_shpdt23(inst.shpdt23());
+		ptrSHAPE_DAT.set_shpdt23Zi(inst.shpdt23Zi());
+	}
+//----------------------------------------------------------
+	if(inst.shpdt24Zi() != -1)
+	{
+		ptrSHAPE_DAT.set_shpdt24(inst.shpdt24());
+		ptrSHAPE_DAT.set_shpdt24Zi(inst.shpdt24Zi());
+	}
+//----------------------------------------------------------
+	if(inst.shpdt25Zi() != -1)
+	{
+		ptrSHAPE_DAT.set_shpdt25(inst.shpdt25());
+		ptrSHAPE_DAT.set_shpdt25Zi(inst.shpdt25Zi());
+	}
+//----------------------------------------------------------
+	if(inst.shpdt26Zi() != -1)
+	{
+		ptrSHAPE_DAT.set_shpdt26(inst.shpdt26());
+		ptrSHAPE_DAT.set_shpdt26Zi(inst.shpdt26Zi());
+	}
+//----------------------------------------------------------
+	if(inst.shpdt27Zi() != -1)
+	{
+		ptrSHAPE_DAT.set_shpdt27(inst.shpdt27());
+		ptrSHAPE_DAT.set_shpdt27Zi(inst.shpdt27Zi());
+	}
+//----------------------------------------------------------
+	if(inst.shpdt28Zi() != -1)
+	{
+		ptrSHAPE_DAT.set_shpdt28(inst.shpdt28());
+		ptrSHAPE_DAT.set_shpdt28Zi(inst.shpdt28Zi());
+	}
+//----------------------------------------------------------
+	if(inst.shpdt29Zi() != -1)
+	{
+		ptrSHAPE_DAT.set_shpdt29(inst.shpdt29());
+		ptrSHAPE_DAT.set_shpdt29Zi(inst.shpdt29Zi());
+	}
+//----------------------------------------------------------
+	if(inst.shpdt30Zi() != -1)
+	{
+		ptrSHAPE_DAT.set_shpdt30(inst.shpdt30());
+		ptrSHAPE_DAT.set_shpdt30Zi(inst.shpdt30Zi());
+	}
+//----------------------------------------------------------
+	if(inst.shpdt31Zi() != -1)
+	{
+		ptrSHAPE_DAT.set_shpdt31(inst.shpdt31());
+		ptrSHAPE_DAT.set_shpdt31Zi(inst.shpdt31Zi());
+	}
+//----------------------------------------------------------
+	if(inst.shpdt32Zi() != -1)
+	{
+		ptrSHAPE_DAT.set_shpdt32(inst.shpdt32());
+		ptrSHAPE_DAT.set_shpdt32Zi(inst.shpdt32Zi());
+	}
+//----------------------------------------------------------
+	if(inst.shpdt33Zi() != -1)
+	{
+		ptrSHAPE_DAT.set_shpdt33(inst.shpdt33());
+		ptrSHAPE_DAT.set_shpdt33Zi(inst.shpdt33Zi());
+	}
+//----------------------------------------------------------
+	if(inst.shpdt34Zi() != -1)
+	{
+		ptrSHAPE_DAT.set_shpdt34(inst.shpdt34());
+		ptrSHAPE_DAT.set_shpdt34Zi(inst.shpdt34Zi());
+	}
+//----------------------------------------------------------
+	if(inst.shpdt35Zi() != -1)
+	{
+		ptrSHAPE_DAT.set_shpdt35(inst.shpdt35());
+		ptrSHAPE_DAT.set_shpdt35Zi(inst.shpdt35Zi());
+	}
+//----------------------------------------------------------
+	if(inst.shpdt36Zi() != -1)
+	{
+		ptrSHAPE_DAT.set_shpdt36(inst.shpdt36());
+		ptrSHAPE_DAT.set_shpdt36Zi(inst.shpdt36Zi());
+	}
+//----------------------------------------------------------
+	if(inst.shpdt37Zi() != -1)
+	{
+		ptrSHAPE_DAT.set_shpdt37(inst.shpdt37());
+		ptrSHAPE_DAT.set_shpdt37Zi(inst.shpdt37Zi());
+	}
+//----------------------------------------------------------
+	if(inst.shpdt38Zi() != -1)
+	{
+		ptrSHAPE_DAT.set_shpdt38(inst.shpdt38());
+		ptrSHAPE_DAT.set_shpdt38Zi(inst.shpdt38Zi());
+	}
+//----------------------------------------------------------
+	if(inst.tocZi() != -1)
+	{
+		ptrSHAPE_DAT.set_toc(inst.toc());
+		ptrSHAPE_DAT.set_tocZi(inst.tocZi());
+	}
+//----------------------------------------------------------
+	if(inst.tomZi() != -1)
+	{
+		ptrSHAPE_DAT.set_tom(inst.tom());
+		ptrSHAPE_DAT.set_tomZi(inst.tomZi());
+	}
+//----------------------------------------------------------
+	if(inst.mopZi() != -1)
+	{
+		ptrSHAPE_DAT.set_mop(inst.mop());
+		ptrSHAPE_DAT.set_mopZi(inst.mopZi());
+	}
+	return( ptrSHAPE_DAT );
+}
+
+//			         
+//O P E R A T O R  = 
+//===================
+//                   
+const SHAPE_DAT& SHAPE_DAT::operator=(const SHAPE_DAT &inst)
+{
+//----------------------------------------------------------
+	this->set_hcoil(inst.hcoil());
+//----------------------------------------------------------
+	this->set_shpdtno(inst.shpdtno());
+//----------------------------------------------------------
+	this->set_mespos(inst.mespos());
+	this->set_mesposZi(inst.mesposZi());
+//----------------------------------------------------------
+	this->set_mestim(inst.mestim());
+	this->set_mestimZi(inst.mestimZi());
+//----------------------------------------------------------
+	this->set_low(inst.low());
+	this->set_lowZi(inst.lowZi());
+//----------------------------------------------------------
+	this->set_high(inst.high());
+	this->set_highZi(inst.highZi());
+//----------------------------------------------------------
+	this->set_shpdt1(inst.shpdt1());
+	this->set_shpdt1Zi(inst.shpdt1Zi());
+//----------------------------------------------------------
+	this->set_shpdt2(inst.shpdt2());
+	this->set_shpdt2Zi(inst.shpdt2Zi());
+//----------------------------------------------------------
+	this->set_shpdt3(inst.shpdt3());
+	this->set_shpdt3Zi(inst.shpdt3Zi());
+//----------------------------------------------------------
+	this->set_shpdt4(inst.shpdt4());
+	this->set_shpdt4Zi(inst.shpdt4Zi());
+//----------------------------------------------------------
+	this->set_shpdt5(inst.shpdt5());
+	this->set_shpdt5Zi(inst.shpdt5Zi());
+//----------------------------------------------------------
+	this->set_shpdt6(inst.shpdt6());
+	this->set_shpdt6Zi(inst.shpdt6Zi());
+//----------------------------------------------------------
+	this->set_shpdt7(inst.shpdt7());
+	this->set_shpdt7Zi(inst.shpdt7Zi());
+//----------------------------------------------------------
+	this->set_shpdt8(inst.shpdt8());
+	this->set_shpdt8Zi(inst.shpdt8Zi());
+//----------------------------------------------------------
+	this->set_shpdt9(inst.shpdt9());
+	this->set_shpdt9Zi(inst.shpdt9Zi());
+//----------------------------------------------------------
+	this->set_shpdt10(inst.shpdt10());
+	this->set_shpdt10Zi(inst.shpdt10Zi());
+//----------------------------------------------------------
+	this->set_shpdt11(inst.shpdt11());
+	this->set_shpdt11Zi(inst.shpdt11Zi());
+//----------------------------------------------------------
+	this->set_shpdt12(inst.shpdt12());
+	this->set_shpdt12Zi(inst.shpdt12Zi());
+//----------------------------------------------------------
+	this->set_shpdt13(inst.shpdt13());
+	this->set_shpdt13Zi(inst.shpdt13Zi());
+//----------------------------------------------------------
+	this->set_shpdt14(inst.shpdt14());
+	this->set_shpdt14Zi(inst.shpdt14Zi());
+//----------------------------------------------------------
+	this->set_shpdt15(inst.shpdt15());
+	this->set_shpdt15Zi(inst.shpdt15Zi());
+//----------------------------------------------------------
+	this->set_shpdt16(inst.shpdt16());
+	this->set_shpdt16Zi(inst.shpdt16Zi());
+//----------------------------------------------------------
+	this->set_shpdt17(inst.shpdt17());
+	this->set_shpdt17Zi(inst.shpdt17Zi());
+//----------------------------------------------------------
+	this->set_shpdt18(inst.shpdt18());
+	this->set_shpdt18Zi(inst.shpdt18Zi());
+//----------------------------------------------------------
+	this->set_shpdt19(inst.shpdt19());
+	this->set_shpdt19Zi(inst.shpdt19Zi());
+//----------------------------------------------------------
+	this->set_shpdt20(inst.shpdt20());
+	this->set_shpdt20Zi(inst.shpdt20Zi());
+//----------------------------------------------------------
+	this->set_shpdt21(inst.shpdt21());
+	this->set_shpdt21Zi(inst.shpdt21Zi());
+//----------------------------------------------------------
+	this->set_shpdt22(inst.shpdt22());
+	this->set_shpdt22Zi(inst.shpdt22Zi());
+//----------------------------------------------------------
+	this->set_shpdt23(inst.shpdt23());
+	this->set_shpdt23Zi(inst.shpdt23Zi());
+//----------------------------------------------------------
+	this->set_shpdt24(inst.shpdt24());
+	this->set_shpdt24Zi(inst.shpdt24Zi());
+//----------------------------------------------------------
+	this->set_shpdt25(inst.shpdt25());
+	this->set_shpdt25Zi(inst.shpdt25Zi());
+//----------------------------------------------------------
+	this->set_shpdt26(inst.shpdt26());
+	this->set_shpdt26Zi(inst.shpdt26Zi());
+//----------------------------------------------------------
+	this->set_shpdt27(inst.shpdt27());
+	this->set_shpdt27Zi(inst.shpdt27Zi());
+//----------------------------------------------------------
+	this->set_shpdt28(inst.shpdt28());
+	this->set_shpdt28Zi(inst.shpdt28Zi());
+//----------------------------------------------------------
+	this->set_shpdt29(inst.shpdt29());
+	this->set_shpdt29Zi(inst.shpdt29Zi());
+//----------------------------------------------------------
+	this->set_shpdt30(inst.shpdt30());
+	this->set_shpdt30Zi(inst.shpdt30Zi());
+//----------------------------------------------------------
+	this->set_shpdt31(inst.shpdt31());
+	this->set_shpdt31Zi(inst.shpdt31Zi());
+//----------------------------------------------------------
+	this->set_shpdt32(inst.shpdt32());
+	this->set_shpdt32Zi(inst.shpdt32Zi());
+//----------------------------------------------------------
+	this->set_shpdt33(inst.shpdt33());
+	this->set_shpdt33Zi(inst.shpdt33Zi());
+//----------------------------------------------------------
+	this->set_shpdt34(inst.shpdt34());
+	this->set_shpdt34Zi(inst.shpdt34Zi());
+//----------------------------------------------------------
+	this->set_shpdt35(inst.shpdt35());
+	this->set_shpdt35Zi(inst.shpdt35Zi());
+//----------------------------------------------------------
+	this->set_shpdt36(inst.shpdt36());
+	this->set_shpdt36Zi(inst.shpdt36Zi());
+//----------------------------------------------------------
+	this->set_shpdt37(inst.shpdt37());
+	this->set_shpdt37Zi(inst.shpdt37Zi());
+//----------------------------------------------------------
+	this->set_shpdt38(inst.shpdt38());
+	this->set_shpdt38Zi(inst.shpdt38Zi());
+//----------------------------------------------------------
+	this->set_toc(inst.toc());
+	this->set_tocZi(inst.tocZi());
+//----------------------------------------------------------
+	this->set_tom(inst.tom());
+	this->set_tomZi(inst.tomZi());
+//----------------------------------------------------------
+	this->set_mop(inst.mop());
+	this->set_mopZi(inst.mopZi());
+	return(*this);
+}
+

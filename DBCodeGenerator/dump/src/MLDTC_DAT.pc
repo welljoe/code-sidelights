@@ -1,0 +1,672 @@
+/* *******************************************************************/
+/* *   File               :    MLDTC_DAT.pc
+/* *   Short Description  :    ORACLE DATABASE ACCESS
+/* * 		                   PRODUCTION COIL DATA
+/* *   Author             :    DB CODE Generator
+/* *   Created Date       :    13.06.2013
+/* *   Tech.Support       :    LiuWeiZhao. email:welljoe@hotmail.com 
+/* *******************************************************************/
+/* *   Copyright (c)  SGAI AI 2009   All Rights Reserved
+/* *******************************************************************/
+
+#include "LOG.h"
+#include "MLDTC_DAT.h"
+//
+// Declare ORACLE Host Variables
+//
+
+#define SQLCA_STORAGE_CLASS static
+#define ORACA_STORAGE_CLASS static
+EXEC SQL INCLUDE sqlca;
+EXEC SQL INCLUDE oraca;
+
+#define OPENED 1
+#define CLOSED 2
+EXEC SQL BEGIN DECLARE SECTION;
+/* ****************************************************************************** */
+/*                                                                                */
+/*                               define Oracle                                    */
+/*                               Host Variables                                   */
+/*                                                          .                     */
+/*                                                                                */
+/* ****************************************************************************** */
+
+static VARCHAR	dynstr[16000];
+static long		rowCnt;       
+static long		cuFl;         
+//Unit[-]:Product coil number.Limit:[-,-]
+static VARCHAR  ora_pcoil[17];
+//Unit[-]:Hot coil number.Limit:[-,-]
+static VARCHAR  ora_hcoil[17];
+//Unit[-]:record number.Limit:[-,1]
+static short    ora_rno;
+static short    ora_rnoZi;
+//Unit[-]:recevice time.Limit:[-,-]
+static short    ora_rectime;
+static short    ora_rectimeZi;
+//Unit[-]:MLDTC data.Limit:[-,-]
+static VARCHAR  ora_value[100001];
+static short    ora_valueZi;
+// Host arguments for Primary key
+static VARCHAR  k_ora_pcoil[17];   // Unit[-]:Product coil number.Limit:[-,-]
+static VARCHAR  k_ora_hcoil[17];   // Unit[-]:Hot coil number.Limit:[-,-]
+
+EXEC SQL END DECLARE SECTION;        
+             
+// 				             
+//C O N S T R U C T O R S    
+//=======================    
+//                           
+MLDTC_DAT::MLDTC_DAT()
+{
+	initial();                                             
+}
+
+//					
+//C O P Y  -  C O N S T R U C T O R 
+//==================================
+MLDTC_DAT::MLDTC_DAT(const MLDTC_DAT &inst)
+{
+//----------------------------------------------------------
+	this->set_pcoil(inst.pcoil());
+//----------------------------------------------------------
+	this->set_hcoil(inst.hcoil());
+//----------------------------------------------------------
+	this->set_rno(inst.rno());
+	this->set_rnoZi(inst.rnoZi());
+//----------------------------------------------------------
+	this->set_rectime(inst.rectime());
+	this->set_rectimeZi(inst.rectimeZi());
+//----------------------------------------------------------
+	this->set_value(inst.value());
+	this->set_valueZi(inst.valueZi());
+}
+
+//					
+//C O N S T R U C T O R -W I T H P A R A M E T E R S
+//===================================================
+//					
+MLDTC_DAT::MLDTC_DAT(char* arg1,char* arg2)
+{
+	initial();					               
+	setPrimKey (arg1,arg2);    
+	//read DB record                           
+	dbAccess = true;                           
+	dbMessage = readDB();                      
+	if ( dbMessage != NULL ) dbAccess = false; 
+}
+
+//D E S T R U C T O R S  
+//=======================
+//                       
+MLDTC_DAT::~MLDTC_DAT()
+{
+}
+
+//initialise all member variables
+void MLDTC_DAT::initial()
+{
+	set_pcoil("");
+	set_hcoil("");
+	set_rno(0);
+	set_rnoZi(-1);
+	set_rectime(0);
+	set_rectimeZi(-1);
+	set_value("");
+	set_valueZi(-1);
+	//initialies Primary key members
+	set_k_pcoil("");
+	set_k_hcoil("");
+// Initial Oracle Options
+	oraca.oradbgf  = 1; // gather debug informations       
+	oraca.oracchf  = 1; // gather cursor cache informations
+	oraca.orahchf  = 1; // check heap                      
+	oraca.orastxtf = 3; // always save last sql-statement  
+	                                                       
+	EXEC ORACLE OPTION (ORACA=YES);                        
+	EXEC ORACLE OPTION (HOLD_CURSOR=YES);                  
+	EXEC ORACLE OPTION (RELEASE_CURSOR=NO);                
+	EXEC ORACLE OPTION (MAXOPENCURSORS=50);                
+	pCatch = CatchDbaxError::instance();                   
+	                                                       
+}
+
+//read a single entry from DB.
+char* MLDTC_DAT::readDB()
+{
+	//
+	//copy the host variables (k_...) to Oracle Host Keys (k_ora_..)
+	//
+		copyKeyToHost();
+	//
+	// Do SELECT
+	//
+	EXEC SQL SELECT 
+		pcoil,
+		hcoil,
+		rno,
+		rectime,
+		value
+	INTO
+		:ora_pcoil,
+		:ora_hcoil,
+		:ora_rno:ora_rnoZi,
+		:ora_rectime:ora_rectimeZi,
+		:ora_value:ora_valueZi
+	FROM MLDTC_DAT
+	WHERE
+				pcoil           = :k_ora_pcoil AND 
+				hcoil           = :k_ora_hcoil ;
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	//
+	// copy host variables into Class attributes
+	//
+	copyOracleToAttribute();
+	return ( NULL );
+}
+
+//updates a single entry from DB
+char* MLDTC_DAT::updateDB()
+{
+	//
+	//copy the host variables (k_...) to Oracle Host Keys (k_ora_..)
+	//
+		copyKeyToHost();
+	//copy the attributes ( ...) to Oracle Hosts( ora_..)
+	//
+		copyAttributeToOracle();
+	//
+	// Do UPDATE
+	//
+	EXEC SQL UPDATE MLDTC_DAT
+	SET 
+		pcoil               =:ora_pcoil,
+		hcoil               =:ora_hcoil,
+		rno                 =:ora_rno:ora_rnoZi,
+		rectime             =:ora_rectime:ora_rectimeZi,
+		value               =:ora_value:ora_valueZi
+	WHERE
+		pcoil           = :k_ora_pcoil AND 
+		hcoil           = :k_ora_hcoil ;
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//inserts a single entry from DB
+char* MLDTC_DAT::insertDB()
+{
+	//
+	//copy the attributes ( ...) to Oracle Hosts( ora_..) 
+	//
+		copyAttributeToOracle();
+	//
+	// Do INSERT
+	//
+	EXEC SQL INSERT INTO MLDTC_DAT
+	(
+		pcoil,
+		hcoil,
+		rno,
+		rectime,
+		value
+	)
+
+	VALUES
+	(
+		:ora_pcoil,
+		:ora_hcoil,
+		:ora_rno:ora_rnoZi,
+		:ora_rectime:ora_rectimeZi,
+		:ora_value:ora_valueZi
+	);
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//this methode tries to update a DB record,when the update fails.
+char* MLDTC_DAT::storeDB()
+{
+	char* ret = NULL;
+	setKeysFromRecord();
+	ret=updateDB();
+	if(ret != NULL)
+	{
+		ret=insertDB();
+		if(ret != NULL)
+		{
+			dbAccess = false;
+			return(ret);
+		}
+	}
+	return(ret);
+}
+
+//deletes a single entry from DB
+char* MLDTC_DAT::deleteDB()
+{
+//
+//copy the host variables (k_...) to Oracle Host Keys (k_ora_..)
+//
+	copyKeyToHost();
+
+//
+// Do Delete 
+//
+	EXEC SQL DELETE FROM MLDTC_DAT
+	WHERE
+				pcoil           = :k_ora_pcoil AND 
+				hcoil           = :k_ora_hcoil ;
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+// Executes the SQL DELETE with a where clause
+char* MLDTC_DAT::deleteDB(const char* where,long* count)
+{
+	*(count) = -1L;
+// Create dynamic statement.
+//
+	strcpy((char*)dynstr.arr,"DELETE");
+	strcat((char*)dynstr.arr," FROM MLDTC_DAT");
+	if ( where != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, where );
+	}
+
+	dynstr.len = strlen( (char*) dynstr.arr);
+	EXEC SQL EXECUTE IMMEDIATE :dynstr;
+	oracleSqlCode = sqlca.sqlcode;
+		oracleRowsProcessed = sqlca.sqlerrd[2];
+	if (sqlca.sqlcode == 0 )
+		*(count) = sqlca.sqlerrd[2];
+	else 
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//openSetDB data with where condition and sort order.
+char* MLDTC_DAT::openSetDB(const char* where,char* order)
+{
+//
+// Create dynamic statement.
+//
+	strcpy((char*)dynstr.arr,"SELECT ");
+	strcat((char*)dynstr.arr,"pcoil,");
+	strcat((char*)dynstr.arr,"hcoil,");
+	strcat((char*)dynstr.arr,"rno,");
+	strcat((char*)dynstr.arr,"rectime,");
+	strcat((char*)dynstr.arr,"value");
+
+	strcat((char*)dynstr.arr," FROM MLDTC_DAT ");
+	if ( where != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, where);
+	}
+	if ( order != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, order);
+	}
+
+	dynstr.len = strlen( (char*) dynstr.arr);
+	EXEC SQL PREPARE set_MLDTC_DAT FROM :dynstr;
+	if (sqlca.sqlcode == 0 )
+	{
+		EXEC SQL DECLARE cu_MLDTC_DAT CURSOR FOR set_MLDTC_DAT;
+		if (sqlca.sqlcode == 0 )
+			EXEC SQL OPEN cu_MLDTC_DAT;
+	}
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	cuFl = OPENED;
+	return ( NULL );
+}
+
+//Executes the SQL FETCH Statement .
+char* MLDTC_DAT::getSetDB()
+{
+	if ( cuFl != OPENED ) return ("No open Cursor Table:Me");
+	EXEC SQL FETCH cu_MLDTC_DAT INTO
+		:ora_pcoil,
+		:ora_hcoil,
+		:ora_rno:ora_rnoZi,
+		:ora_rectime:ora_rectimeZi,
+		:ora_value:ora_valueZi;
+
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		pCatch->catchError(sqlca.sqlcode);
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		return (char*) sqlca.sqlerrm.sqlerrmc ;
+	}
+	//
+	// copy host variables into Class attributes
+	//
+	copyOracleToAttribute();
+	copyHostToKey();
+	return ( NULL );
+}
+
+//Close a Oracle Cursor
+char* MLDTC_DAT::closeSetDB()
+{
+	EXEC SQL CLOSE cu_MLDTC_DAT;
+	oracleSqlCode = sqlca.sqlcode;         
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		pCatch->catchError(sqlca.sqlcode);
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		return (char*) sqlca.sqlerrm.sqlerrmc ;
+	}
+	cuFl = CLOSED;
+	return ( NULL );
+}
+
+//Executes the SQL count(key) for a where clause
+char* MLDTC_DAT::countDB(const char* where,long* count)
+{
+	*(count) = -1L;
+//
+// Create dynamic statement. 
+//
+	strncpy((char*)dynstr.arr,"SELECT count(pcoil)", sizeof(dynstr.arr));
+	strcat((char*)dynstr.arr," FROM MLDTC_DAT");
+	if ( where != (char*)NULL )
+	{
+		strcat( (char*)dynstr.arr," ");
+		 strcat( (char*)dynstr.arr, where );
+	}
+	dynstr.len = strlen( (char*) dynstr.arr);
+	EXEC SQL PREPARE c_MLDTC_DAT FROM :dynstr;
+	
+	if (sqlca.sqlcode == 0 )
+	{
+		EXEC SQL DECLARE ct_MLDTC_DAT CURSOR FOR c_MLDTC_DAT;
+		if (sqlca.sqlcode == 0 )
+		{
+			EXEC SQL OPEN ct_MLDTC_DAT;
+			if (sqlca.sqlcode == 0 )			{
+				EXEC SQL FETCH ct_MLDTC_DAT INTO :rowCnt;
+				if (sqlca.sqlcode == 0 )
+				*(count) = rowCnt;
+			}
+			EXEC SQL CLOSE ct_MLDTC_DAT;
+		}
+	}
+
+	//
+	// ORACLE Error 
+	//
+	oracleSqlCode = sqlca.sqlcode;
+	oracleRowsProcessed = sqlca.sqlerrd[2];
+	if ( sqlca.sqlcode != 0 )
+	{
+		sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+		logOraMessageInfo();
+		pCatch->catchError(sqlca.sqlcode);
+		return (char*)sqlca.sqlerrm.sqlerrmc;
+	}
+	return ( NULL );
+}
+
+//private methode copy Attribute to Oracle
+//copys Object attributes into Oracle Host variables.
+void MLDTC_DAT::copyAttributeToOracle()
+{
+	char* ptrStr;
+	ptrStr = this->pcoil();
+	if( strlen(ptrStr)< sizeof(ora_pcoil.arr))
+	{
+		strncpy((char*)ora_pcoil.arr, ptrStr, sizeof(ora_pcoil.arr));
+		ora_pcoil.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_pcoil.len = 0;
+	ptrStr = this->hcoil();
+	if( strlen(ptrStr)< sizeof(ora_hcoil.arr))
+	{
+		strncpy((char*)ora_hcoil.arr, ptrStr, sizeof(ora_hcoil.arr));
+		ora_hcoil.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_hcoil.len = 0;
+	ora_rno = this->rno();
+	ora_rnoZi = this->rnoZi();
+	ora_rectime = this->rectime();
+	ora_rectimeZi = this->rectimeZi();
+	ptrStr = this->value();
+	if( strlen(ptrStr)< sizeof(ora_value.arr))
+	{
+		strncpy((char*)ora_value.arr, ptrStr, sizeof(ora_value.arr));
+		ora_value.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		ora_value.len = 0;
+	ora_valueZi = this->valueZi();
+}
+
+//private methode copy Oracle to Attribute
+//copys Oracle Host variables into Object attributes.
+void MLDTC_DAT::copyOracleToAttribute()
+{
+	ora_pcoil.arr[ora_pcoil.len] = '\0';
+	this->set_pcoil((char*) ora_pcoil.arr);
+	ora_hcoil.arr[ora_hcoil.len] = '\0';
+	this->set_hcoil((char*) ora_hcoil.arr);
+	this->set_rno((short)ora_rno);
+	this->set_rnoZi((short)ora_rnoZi);
+	this->set_rectime((short)ora_rectime);
+	this->set_rectimeZi((short)ora_rectimeZi);
+	ora_value.arr[ora_value.len] = '\0';
+	this->set_value((char*) ora_value.arr);
+	this->set_valueZi((short)ora_valueZi);
+}
+
+//private methode copy Key to host
+//copys Object attributes into Oralce Key variables.
+void MLDTC_DAT::copyKeyToHost()
+{
+	char* ptrStr;
+	ptrStr = this->k_pcoil();
+	if( strlen(ptrStr)< sizeof(k_ora_pcoil.arr))
+	{
+		strncpy((char*)k_ora_pcoil.arr, ptrStr, sizeof(k_ora_pcoil.arr));
+		k_ora_pcoil.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		k_ora_pcoil.len = 0;
+	ptrStr = this->k_hcoil();
+	if( strlen(ptrStr)< sizeof(k_ora_hcoil.arr))
+	{
+		strncpy((char*)k_ora_hcoil.arr, ptrStr, sizeof(k_ora_hcoil.arr));
+		k_ora_hcoil.len = strlen (ptrStr);
+	}
+	else
+	// set length to zero.
+		k_ora_hcoil.len = 0;
+}
+
+//private methode copy Host to Key
+// copys Oracle Host Key variables into Object Key attributes.
+void MLDTC_DAT::copyHostToKey()
+{
+	ora_pcoil.arr[ora_pcoil.len] = '\0';
+	this->set_k_pcoil((char*) ora_pcoil.arr);
+	ora_hcoil.arr[ora_hcoil.len] = '\0';
+	this->set_k_hcoil((char*) ora_hcoil.arr);
+}
+
+//private methode log Oracle message information
+void MLDTC_DAT::logOraMessageInfo()
+{
+	LOG d("MLDTC_DAT::logOraMessageInfo()");
+	sqlca.sqlerrm.sqlerrmc[sqlca.sqlerrm.sqlerrml] = '\0';
+	oraca.orastxt.orastxtc[oraca.orastxt.orastxtl] = '\0';
+	oraca.orasfnm.orasfnmc[oraca.orasfnm.orasfnml] = '\0';
+	
+	//* negating a error code submitted perhaps positively.
+	if (sqlca.sqlcode > 0) sqlca.sqlcode *= -1;
+	
+	//* Distribute fault text, SQL statement and file in the Debug System.
+	d << "ORA-Error: "<< sqlca.sqlerrm.sqlerrmc; d.Info();
+	d << "OracaText: "<< oraca.orastxt.orastxtc; d.Info();
+	d << "in line " << oraca.oraslnr << " in file " << oraca.orasfnm.orasfnmc; d.Info();
+}
+
+//this methode stores the unique key attributes
+void MLDTC_DAT::setPrimKey(char* arg1,char* arg2)
+{
+	strncpy( (char*)c_k_pcoil, arg1, sizeof(c_k_pcoil));
+	c_k_pcoil[sizeof(c_k_pcoil)-1] = '\0';
+	strncpy( (char*)c_k_hcoil, arg2, sizeof(c_k_hcoil));
+	c_k_hcoil[sizeof(c_k_hcoil)-1] = '\0';
+}
+
+//this methode stores the unique key attributes
+void MLDTC_DAT::initInsertKeys(char* arg1,char* arg2)
+{
+	setPrimKey(arg1,arg2);
+	strncpy( (char*)c_pcoil, arg1, sizeof(c_pcoil));
+	c_pcoil[sizeof(c_pcoil)-1] = '\0';
+	strncpy( (char*)c_hcoil, arg2, sizeof(c_hcoil));
+	c_hcoil[sizeof(c_hcoil)-1] = '\0';
+}
+
+//this methode set the unique key attributes from the DB Record Attributes
+void MLDTC_DAT::setKeysFromRecord()
+{
+	set_k_pcoil( pcoil() );
+	set_k_hcoil( hcoil() );
+}
+
+//			         
+//O P E R A T O R  + 
+//===================
+//                   
+MLDTC_DAT MLDTC_DAT::operator+(const MLDTC_DAT &inst) const
+{
+	MLDTC_DAT ptrMLDTC_DAT(*this);
+//----------------------------------------------------------
+	ptrMLDTC_DAT.set_pcoil(inst.pcoil());
+//----------------------------------------------------------
+	ptrMLDTC_DAT.set_hcoil(inst.hcoil());
+//----------------------------------------------------------
+	if(inst.rnoZi() != -1)
+	{
+		ptrMLDTC_DAT.set_rno(inst.rno());
+		ptrMLDTC_DAT.set_rnoZi(inst.rnoZi());
+	}
+//----------------------------------------------------------
+	if(inst.rectimeZi() != -1)
+	{
+		ptrMLDTC_DAT.set_rectime(inst.rectime());
+		ptrMLDTC_DAT.set_rectimeZi(inst.rectimeZi());
+	}
+//----------------------------------------------------------
+	if(inst.valueZi() != -1)
+	{
+		ptrMLDTC_DAT.set_value(inst.value());
+		ptrMLDTC_DAT.set_valueZi(inst.valueZi());
+	}
+	return( ptrMLDTC_DAT );
+}
+
+//			         
+//O P E R A T O R  = 
+//===================
+//                   
+const MLDTC_DAT& MLDTC_DAT::operator=(const MLDTC_DAT &inst)
+{
+//----------------------------------------------------------
+	this->set_pcoil(inst.pcoil());
+//----------------------------------------------------------
+	this->set_hcoil(inst.hcoil());
+//----------------------------------------------------------
+	this->set_rno(inst.rno());
+	this->set_rnoZi(inst.rnoZi());
+//----------------------------------------------------------
+	this->set_rectime(inst.rectime());
+	this->set_rectimeZi(inst.rectimeZi());
+//----------------------------------------------------------
+	this->set_value(inst.value());
+	this->set_valueZi(inst.valueZi());
+	return(*this);
+}
+
